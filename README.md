@@ -53,6 +53,7 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 2.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成                   | 2025年11月10日 | wwwzhouhui | 2.0.0 |
 | jimeng_mcp_skill        | AI 图像和视频生成技能，通过 jimeng-mcp-server 实现文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年11月15日 | wwwzhouhui | 1.0.0 |
+| mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
 
 ## Skill 功能详解
 
@@ -339,14 +340,136 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 
 ![image-20251115143620819](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115143620819.png.png)
 
-**技术特点：**
+**技术特点:**
 
-- 基于 MCP（模型上下文协议）标准
+- 基于 MCP(模型上下文协议)标准
 - 支持 stdio、SSE、HTTP 三种运行模式
-- 完全免费（每日 66 积分）
-- 响应时间：图像 10-20秒，视频 30-60秒
+- 完全免费(每日 66 积分)
+- 响应时间:图像 10-20秒,视频 30-60秒
+
+---
+
+### 🎨 MP Cover Generator (公众号封面生成器)
+
+**核心功能:**
+
+- ✅ 根据主题自动生成 3D 插画风格封面底图
+- ✅ 智能叠加文字层（日期、标题、作者）
+- ✅ 描边卡通字体效果（鲜艳色彩 + 多层描边）
+- ✅ 垂直居中布局，视觉平衡完美
+- ✅ 双格式输出：HTML + 高清图片（PNG/JPG）
+- ✅ 完整页面截图（5120x2916，2x 像素密度）
+- ✅ 可爱圆润的卡通 3D 风格（类似皮克斯）
+- ✅ 返回 4 张不同风格供选择
+
+**适用场景:**
+
+- 公众号文章封面图制作
+- 社交媒体横幅图生成
+- 技术博客头图创作
+- 宣传海报快速设计
+
+**前置条件:**
+
+1. jimeng-free-api-all Docker 容器运行
+2. 配置 JIMENG_API_KEY 环境变量
+3. jimeng-mcp-server 正确安装
+4. Node.js 16+ 环境（图片输出功能）
+5. Playwright 已安装（自动安装）
+
+**生成流程:**
+
+1. **收集信息**：主题关键词、标题文字
+2. **生成底图**：调用 jimeng-mcp-server text_to_image 工具
+3. **构建 HTML**：叠加文字层、响应式样式、描边效果
+4. **输出文件**：保存为独立 HTML 文件
+5. **转换图片**：使用 Playwright 自动转换为 PNG/JPG
+
+**使用示例:**
+
+```
+请使用 mp-cover-generator skill 生成一个 MCP案例分享 claude调用AI生图视频教程 介绍的文章的公众号封面
+```
+
+![image-20251115183718247](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115183718247.png.png)
+
+![image-20251115183746503](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115183746503.png.png)
+
+**生成参数:**
+
+- 日期：自动获取当前星期和日期（格式：Fri. 11.15）
+- 作者：固定为"O3sky"
+- 模型：推荐使用 jimeng-3.1
+- 尺寸：1536x864（16:9 比例）
+- 采样强度：0.6（平衡创意性和真实性）
+- 字号：5vw（大字体，响应式）
+- 位置：垂直居中（`top: 50%; transform: translateY(-50%);`）
+
+**视觉风格:**
+
+- 主题风格：可爱、圆润、简洁的 3D 插画
+- 质感：类似皮克斯动画或黏土定格动画
+- 色彩：和谐明快，低饱和度渐变背景
+- 构图：右图左文，主体位于右侧 30-40% 区域
+- 留白：左侧 60-70% 干净留白供文字显示
+- 文字样式：
+  - **主标题**：红色（#FF3333）+ 白色描边，8 方向文字阴影
+  - **副标题**：橙黄色（#FFB84D）+ 深棕色描边，单行不折行
+  - **立体感**：多层阴影模拟描边 + 额外立体阴影
+
+**禁止元素:**
+
+- ❌ 任何形式的文字、数字、符号
+- ❌ 霓虹/赛博朋克风格
+- ❌ 暗黑深沉风格
+- ❌ 抽象科技线条
+- ❌ 玻璃质感或写实渲染
+
+**技术特点:**
+
+- 基于 jimeng-mcp-server MCP 协议
+- 返回 4 张可选图片，提供更多选择
+- Playwright 驱动，高性能截图
+- 自动检测内容高度并调整视口
+- 完整页面截图，无截断
+- 响应式设计，支持多设备显示
+- 完全本地化处理，无需上传
+
+**输出对比:**
+
+| 格式 | 文件大小 | 分辨率 | 质量 | 用途 |
+|------|---------|--------|------|------|
+| HTML | 4.5 KB | 响应式 | 最佳 | 网页预览、编辑 |
+| PNG | 4.10 MB | 5120x2916 | 无损 | 高质量发布、打印 |
+| JPEG | 1.44 MB | 5120x2916 | 优秀 | 一般发布、节省空间 |
+
+**版本历史:**
+
+- v3.1.1（2025-11-15）：新增描边卡通字体、垂直居中布局、完整页面截图
+- v3.1.0（2025-11-15）：新增 HTML 转图片功能，集成 Playwright
+- v3.0.0（2025-11-15）：从 jimeng-image-generator 迁移到 jimeng-mcp-server
+- v2.0.0：初始版本，使用 jimeng-image-generator
 
 ## 更新说明
+
+### 2025年11月15日 - version 0.0.5
+
+- ✅ 更新 mp-cover-generator Skill 到 v3.1.1
+- ✅ 新增描边卡通字体效果（鲜艳色彩 + 多层描边）
+- ✅ 新增垂直居中布局（完美视觉平衡）
+- ✅ 增大字体（4vw → 5vw），更加醒目
+- ✅ 禁止副标题折行（保持单行显示）
+- ✅ 新增 HTML 转图片功能（Playwright 驱动）
+- ✅ 完整页面截图（修复截断问题，5120x2916 高清）
+- ✅ 自动检测内容高度并调整视口
+- ✅ 支持 PNG 和 JPEG 双格式输出
+
+### 2025年11月15日 - version 0.0.4
+
+- ✅ 新增 mp-cover-generator Skill v3.0.0
+- ✅ 从 jimeng-image-generator 迁移到 jimeng-mcp-server
+- ✅ 支持 21:9 公众号封面图生成
+- ✅ 返回 4 张可选图片,提供更多风格选择
 
 ### 2025年11月15日 - version 0.0.3
 
@@ -500,6 +623,45 @@ version: 1.0.0
 5. 将此值配置为 JIMENG_API_KEY 环境变量
 </details>
 
+<details>
+<summary>公众号封面生成器无法生成图片？</summary>
+1. 确认 jimeng-free-api-all Docker 容器正在运行<br>
+2. 检查 JIMENG_API_KEY 是否正确配置<br>
+3. 确保使用 jimeng-3.1 模型（在生成时指定）<br>
+4. 图像生成需要 10-20 秒，请耐心等待<br>
+5. 检查后端服务可访问：curl http://localhost:8001<br>
+6. 验证有足够的 API 积分（免费层每天 66 积分）<br>
+7. 如果 HTML 转图片失败，确认已安装 Node.js 16+ 和 Playwright
+</details>
+
+<details>
+<summary>生成的封面风格不符合预期怎么办？</summary>
+1. 在主题关键词中更明确地描述期望的元素<br>
+2. 尝试调整 sample_strength 参数（0.3-0.7 之间）<br>
+3. jimeng-mcp-server 返回 4 张图片，可以选择最合适的一张<br>
+4. 确认提示词中包含了风格要求（可爱、圆润、3D 插画）<br>
+5. 避免使用会触发禁止风格的词汇（霓虹、赛博朋克、暗黑等）
+</details>
+
+<details>
+<summary>如何自定义封面的文字内容？</summary>
+1. 标题：在请求时指定，会自动智能换行<br>
+2. 日期：自动获取当前日期，格式为英文星期缩写（如 Fri. 11.15）<br>
+3. 作者：目前固定为"O3sky"，如需修改需编辑 SKILL.md 中的规范<br>
+4. 文字样式：描边卡通字体，主标题红色 + 白色描边，副标题橙黄色 + 深棕色描边<br>
+5. 字体位置：垂直居中（`top: 50%; transform: translateY(-50%);`）
+</details>
+
+<details>
+<summary>HTML 转图片失败怎么办？</summary>
+1. 确认 Node.js 版本：node --version（需要 16+）<br>
+2. 安装依赖：cd skill目录 && npm install<br>
+3. 安装 Chromium：npx playwright install chromium<br>
+4. 检查 HTML 文件路径是否正确<br>
+5. 增加等待时间：--wait 3000<br>
+6. 查看详细错误信息并根据提示修复
+</details>
+
 
 ## 技术交流群
 
@@ -523,9 +685,9 @@ version: 1.0.0
 
 ### 技能统计
 
-- **总技能数**: 3
+- **总技能数**: 4
 - **自动化工具**: 1 (excel-report-generator)
-- **内容生成**: 1 (xiaohuihui-tech-article)
+- **内容生成**: 2 (xiaohuihui-tech-article, mp-cover-generator)
 - **AI 多模态**: 1 (jimeng_mcp_skill)
 
 ### 开发语言

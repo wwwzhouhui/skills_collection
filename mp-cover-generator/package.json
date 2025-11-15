@@ -1,0 +1,27 @@
+{
+  "name": "mp-cover-generator",
+  "version": "3.1.1",
+  "description": "公众号封面生成器 - 使用 jimeng-mcp-server 生成 3D 插画风格封面并转换为高质量图片",
+  "main": "scripts/capture.js",
+  "scripts": {
+    "capture": "node scripts/capture.js",
+    "install-browsers": "npx playwright install chromium",
+    "postinstall": "npx playwright install chromium"
+  },
+  "keywords": [
+    "wechat",
+    "cover",
+    "generator",
+    "jimeng",
+    "ai",
+    "3d-illustration",
+    "playwright",
+    "screenshot",
+    "mcp"
+  ],
+  "author": "wwwzhouhui",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}
