@@ -54,6 +54,7 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成                   | 2025年11月10日 | wwwzhouhui | 2.0.0 |
 | jimeng_mcp_skill        | AI 图像和视频生成技能，通过 jimeng-mcp-server 实现文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年11月15日 | wwwzhouhui | 1.0.0 |
 | mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
+| siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
 
 ## Skill 功能详解
 
@@ -450,7 +451,463 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 - v3.0.0（2025-11-15）：从 jimeng-image-generator 迁移到 jimeng-mcp-server
 - v2.0.0：初始版本，使用 jimeng-image-generator
 
+---
+
+### 🌐 SiliconFlow API Skills
+
+**核心功能：**
+
+- ✅ 大语言模型 API 调用指南
+- ✅ Chat Completions API 完整文档
+- ✅ Stream 流式输出模式支持
+- ✅ 图片生成 API 使用说明
+- ✅ 向量模型/Embedding API 文档
+- ✅ 模型列表和参数配置
+- ✅ 最佳实践和代码示例
+
+**适用场景：**
+
+- 在 Claude Code 中调用硅基流动 API
+- 开发基于 SiliconFlow 的 AI 应用
+- 学习大语言模型 API 调用方式
+- 调试和优化 API 调用代码
+- 了解 SiliconFlow 平台功能特性
+
+**参考文档：**
+
+- `api_reference.md` - API 参考文档
+- `deployment.md` - 部署文档
+- `faqs.md` - 常见问题
+- `features.md` - 功能特性
+- `models.md` - 模型列表
+- `userguide.md` - 用户指南
+- `use_cases.md` - 使用案例
+
+**示例用法：**
+
+```
+请帮我使用siliconflow-api-skills 这个skill技能包生成调用硅基流动的API 实现文本生成的模型接口，使用python 代码实现，
+使用deepseek-ai/DeepSeek-V3.2-Exp 模型
+```
+
+![image-20251119171818824](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119171818824.png)
+
+接下来AI 获取这个技能包api_reference.md 生成接口代码
+
+![image-20251119165401648](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119165401648.png)
+
+我们查看生成的接口代码
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+硅基流动（SiliconFlow）API 文本生成接口
+使用 DeepSeek-V3.2-Exp 模型
+
+基于 SiliconFlow 技能包文档生成
+API 文档: https://docs.siliconflow.cn/cn/api-reference/chat-completions/chat-completions
+"""
+
+import os
+from openai import OpenAI
+
+# ============================================================
+# 配置部分
+# ============================================================
+
+# API 配置
+API_KEY = os.getenv("SILICONFLOW_API_KEY", "YOUR_API_KEY")  # 从环境变量获取或直接填写
+BASE_URL = "https://api.siliconflow.cn/v1"
+MODEL = "deepseek-ai/DeepSeek-V3.2-Exp"  # 使用 DeepSeek-V3.2-Exp 模型
+
+# 初始化客户端
+client = OpenAI(
+    api_key=API_KEY,
+    base_url=BASE_URL
+)
+
+
+# ============================================================
+# 方式一：普通请求（非流式）
+# ============================================================
+
+def chat_completion(
+    messages: list,
+    model: str = MODEL,
+    temperature: float = 0.7,
+    max_tokens: int = 2048,
+    top_p: float = 0.7
+) -> str:
+    """
+    普通对话请求（非流式）
+
+    Args:
+        messages: 对话消息列表
+        model: 模型名称
+        temperature: 温度参数，控制随机性 (0-1)
+        max_tokens: 最大生成 token 数
+        top_p: 核采样参数
+
+    Returns:
+        生成的文本内容
+    """
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            stream=False
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        print(f"请求错误: {e}")
+        raise
+
+
+# ============================================================
+# 方式二：流式请求（实时输出）
+# ============================================================
+
+def chat_completion_stream(
+    messages: list,
+    model: str = MODEL,
+    temperature: float = 0.7,
+    max_tokens: int = 2048,
+    top_p: float = 0.7
+):
+    """
+    流式对话请求
+
+    Args:
+        messages: 对话消息列表
+        model: 模型名称
+        temperature: 温度参数
+        max_tokens: 最大生成 token 数
+        top_p: 核采样参数
+
+    Yields:
+        生成的文本片段
+    """
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            stream=True
+        )
+
+        for chunk in response:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+
+    except Exception as e:
+        print(f"请求错误: {e}")
+        raise
+
+
+# ============================================================
+# 方式三：使用 requests 库直接调用 API
+# ============================================================
+
+def chat_completion_requests(
+    messages: list,
+    model: str = MODEL,
+    stream: bool = False,
+    temperature: float = 0.7,
+    max_tokens: int = 2048
+):
+    """
+    使用 requests 库直接调用 API
+
+    Args:
+        messages: 对话消息列表
+        model: 模型名称
+        stream: 是否启用流式输出
+        temperature: 温度参数
+        max_tokens: 最大生成 token 数
+
+    Returns:
+        生成的文本内容或流式响应
+    """
+    import requests
+
+    url = f"{BASE_URL}/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": model,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "stream": stream
+    }
+
+    try:
+        if stream:
+            # 流式请求：payload 和 request 都需要设置 stream
+            response = requests.post(url, headers=headers, json=payload, stream=True)
+            response.raise_for_status()
+
+            for line in response.iter_lines():
+                if line:
+                    line = line.decode('utf-8')
+                    if line.startswith('data: '):
+                        data = line[6:]
+                        if data != '[DONE]':
+                            import json
+                            chunk = json.loads(data)
+                            if chunk['choices'][0]['delta'].get('content'):
+                                yield chunk['choices'][0]['delta']['content']
+        else:
+            # 非流式请求
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+
+            result = response.json()
+            return result['choices'][0]['message']['content']
+
+    except requests.exceptions.RequestException as e:
+        print(f"请求错误: {e}")
+        raise
+
+
+# ============================================================
+# 高级功能：多轮对话
+# ============================================================
+
+class ChatSession:
+    """多轮对话会话管理"""
+
+    def __init__(self, system_prompt: str = None, model: str = MODEL):
+        """
+        初始化对话会话
+
+        Args:
+            system_prompt: 系统提示词
+            model: 模型名称
+        """
+        self.model = model
+        self.messages = []
+
+        if system_prompt:
+            self.messages.append({
+                "role": "system",
+                "content": system_prompt
+            })
+
+    def chat(self, user_input: str, stream: bool = False, **kwargs):
+        """
+        发送消息并获取回复
+
+        Args:
+            user_input: 用户输入
+            stream: 是否使用流式输出
+            **kwargs: 其他参数
+
+        Returns:
+            助手的回复
+        """
+        # 添加用户消息
+        self.messages.append({
+            "role": "user",
+            "content": user_input
+        })
+
+        if stream:
+            # 流式输出
+            full_response = ""
+            for chunk in chat_completion_stream(self.messages, model=self.model, **kwargs):
+                print(chunk, end="", flush=True)
+                full_response += chunk
+            print()  # 换行
+
+            # 保存助手回复
+            self.messages.append({
+                "role": "assistant",
+                "content": full_response
+            })
+
+            return full_response
+        else:
+            # 普通输出
+            response = chat_completion(self.messages, model=self.model, **kwargs)
+
+            # 保存助手回复
+            self.messages.append({
+                "role": "assistant",
+                "content": response
+            })
+
+            return response
+
+    def clear(self):
+        """清空对话历史（保留系统提示词）"""
+        if self.messages and self.messages[0]["role"] == "system":
+            self.messages = [self.messages[0]]
+        else:
+            self.messages = []
+
+    def get_history(self):
+        """获取对话历史"""
+        return self.messages.copy()
+
+
+# ============================================================
+# 使用示例
+# ============================================================
+
+def main():
+    """主函数 - 演示各种使用方式"""
+
+    print("=" * 60)
+    print("硅基流动 API 文本生成示例")
+    print(f"模型: {MODEL}")
+    print("=" * 60)
+
+    # 示例消息
+    messages = [
+        {
+            "role": "system",
+            "content": "你是一个有帮助的 AI 助手。"
+        },
+        {
+            "role": "user",
+            "content": "请用简洁的语言解释什么是机器学习？"
+        }
+    ]
+
+    # --------------------------------------------------------
+    # 示例 1: 普通请求
+    # --------------------------------------------------------
+    print("\n【示例 1】普通请求（非流式）:")
+    print("-" * 40)
+
+    try:
+        response = chat_completion(messages)
+        print(response)
+    except Exception as e:
+        print(f"错误: {e}")
+
+    # --------------------------------------------------------
+    # 示例 2: 流式请求
+    # --------------------------------------------------------
+    print("\n【示例 2】流式请求:")
+    print("-" * 40)
+
+    try:
+        for chunk in chat_completion_stream(messages):
+            print(chunk, end="", flush=True)
+        print()  # 换行
+    except Exception as e:
+        print(f"错误: {e}")
+
+    # --------------------------------------------------------
+    # 示例 3: 多轮对话
+    # --------------------------------------------------------
+    print("\n【示例 3】多轮对话:")
+    print("-" * 40)
+
+    try:
+        # 创建对话会话
+        session = ChatSession(
+            system_prompt="你是一个专业的 Python 编程助手。",
+            model=MODEL
+        )
+
+        # 第一轮对话
+        print("用户: 什么是列表推导式？")
+        print("助手: ", end="")
+        session.chat("什么是列表推导式？", stream=True)
+
+        # 第二轮对话（上下文相关）
+        print("\n用户: 能给我一个例子吗？")
+        print("助手: ", end="")
+        session.chat("能给我一个例子吗？", stream=True)
+
+    except Exception as e:
+        print(f"错误: {e}")
+
+    print("\n" + "=" * 60)
+    print("示例完成")
+    print("=" * 60)
+
+
+# ============================================================
+# 快速使用函数
+# ============================================================
+
+def quick_chat(prompt: str, stream: bool = True) -> str:
+    """
+    快速对话函数
+
+    Args:
+        prompt: 用户输入
+        stream: 是否使用流式输出
+
+    Returns:
+        助手的回复
+    """
+    messages = [
+        {"role": "user", "content": prompt}
+    ]
+
+    if stream:
+        response = ""
+        for chunk in chat_completion_stream(messages):
+            print(chunk, end="", flush=True)
+            response += chunk
+        print()
+        return response
+    else:
+        return chat_completion(messages)
+
+
+if __name__ == "__main__":
+    # 检查 API Key
+    if API_KEY == "YOUR_API_KEY":
+        print("⚠️  请先设置 API Key!")
+        print("")
+        print("方式 1: 设置环境变量")
+        print("  export SILICONFLOW_API_KEY='your-api-key'")
+        print("")
+        print("方式 2: 直接修改代码中的 API_KEY 变量")
+        print("")
+        print("获取 API Key: https://cloud.siliconflow.cn/account/ak")
+        exit(1)
+
+    main()
+```
+
+我们填入API key让它测试一下 
+
+![image-20251119165745083](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119165745083.png)
+
+**技术特点：**
+
+- 基于官方文档自动生成
+- 包含完整的代码示例
+- 支持多种编程语言
+- 涵盖从入门到高级的所有内容
+
 ## 更新说明
+
+### 2025年11月19日 - version 0.0.6
+
+- ✅ 新增 siliconflow-api-skills Skill
+- ✅ 支持硅基流动云服务平台完整文档
+- ✅ 包含大语言模型 API、图片生成、向量模型等文档
+- ✅ 提供 Chat Completions API 和 Stream 模式指南
 
 ### 2025年11月15日 - version 0.0.5
 
@@ -685,15 +1142,16 @@ version: 1.0.0
 
 ### 技能统计
 
-- **总技能数**: 4
+- **总技能数**: 5
 - **自动化工具**: 1 (excel-report-generator)
 - **内容生成**: 2 (xiaohuihui-tech-article, mp-cover-generator)
 - **AI 多模态**: 1 (jimeng_mcp_skill)
+- **API 文档**: 1 (siliconflow-api-skills)
 
 ### 开发语言
 
 - Python: 2
-- Markdown: 1
+- Markdown: 2
 - MCP: 1
 
 ### 维护状态
