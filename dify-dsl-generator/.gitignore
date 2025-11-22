@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 操作系统
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# 临时文件
+*.tmp
+temp/
+tmp/
+*.log
+
+# 生成的 DSL 文件(如果不想提交)
+generated/
+output/
+
+# 但保留示例文件
+!examples/*.yml

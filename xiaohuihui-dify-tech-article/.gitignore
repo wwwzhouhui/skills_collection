@@ -1,0 +1,58 @@
+# 环境变量文件(包含敏感信息)
+.env
+
+# Python 相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+temp/
+tmp/
+
+# 图片文件(如果不希望提交本地图片)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.svg
+
+# 但保留 references 目录中的示例图片
+!references/**/*.png
+!references/**/*.jpg

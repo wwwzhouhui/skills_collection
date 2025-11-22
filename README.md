@@ -55,6 +55,8 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | jimeng_mcp_skill        | AI 图像和视频生成技能，通过 jimeng-mcp-server 实现文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年11月15日 | wwwzhouhui | 1.0.0 |
 | mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
 | siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
+| dify-dsl-generator      | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
+| xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
 
 ## Skill 功能详解
 
@@ -450,6 +452,119 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 - v3.1.0（2025-11-15）：新增 HTML 转图片功能，集成 Playwright
 - v3.0.0（2025-11-15）：从 jimeng-image-generator 迁移到 jimeng-mcp-server
 - v2.0.0：初始版本，使用 jimeng-image-generator
+
+---
+
+### 🤖 Dify DSL Generator
+
+**核心功能：**
+
+- ✅ 自动生成完整的 Dify 工作流 DSL/YML 文件
+- ✅ 支持多种节点类型（start、llm、answer、code、http-request、if-else、tool 等）
+- ✅ 智能生成节点间的连接关系（edges）
+- ✅ 自动配置模型参数和提示词
+- ✅ 识别并配置所需的 Dify 插件依赖
+- ✅ 严格遵循 Dify 0.3.0 版本的 DSL 规范
+- ✅ 基于 86+ 真实工作流案例深度学习
+
+**适用场景：**
+
+- 快速构建 Dify 工作流配置文件
+- 批量生成工作流模板
+- 学习 Dify DSL 文件结构
+- 自动化工作流开发
+
+**知识库覆盖：**
+
+- App 配置（mode、icon、描述等）
+- Dependencies 依赖管理
+- 各类节点详解（LLM、Code、HTTP、If-Else、Tool、Variable Aggregator、Parameter Extractor）
+- Edges 连接规则
+- Position 坐标布局
+- 变量引用格式
+
+**示例用法：**
+
+```
+生成一个 Dify 工作流用于图片 OCR 识别:
+- 功能: 上传图片并识别文字
+- 输入: 图片文件
+- 处理: 使用 LLM 视觉能力进行 OCR
+- 输出: 识别到的文字内容
+```
+
+![image-20251122214416059](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251122214416059.png)
+
+生成的dsl导入dify 平台
+
+![image-20251122214446776](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251122214446776.png)
+
+**技术特点：**
+
+- 完整 DSL 结构生成（app + dependencies + workflow）
+- 智能节点 ID 生成（时间戳格式）
+- 合理的节点布局坐标
+- 支持复杂工作流逻辑（分支、循环、聚合）
+- 提供常用提示词模板（Text-to-SQL、数据提取、HTML 生成）
+
+---
+
+### 📝 XiaoHuiHui Dify Tech Article
+
+**核心功能：**
+
+- ✅ Dify 专属三段式结构（前言 → 工作流制作 → 总结）
+- ✅ 工作流节点详细配置说明
+- ✅ 插件安装和授权步骤图文教程
+- ✅ MCP Server 部署集成指南
+- ✅ 优先展示工作流效果
+- ✅ 口语化技术表达（"话不多说"、"手把手搭建"）
+- ✅ 魔搭社区免费模型推荐
+- ✅ 自动生成配图并上传腾讯云 COS 图床
+
+**文章结构：**
+
+- **前言**（300-400字）：技术背景 + 问题引入 + 解决方案展示
+- **工作流制作**（1500-2500字）：前置准备 + 节点配置 + 测试验证
+- **总结**（单段300-400字）：完整流程回顾 + 核心价值 + 扩展场景
+
+**配图系统：**
+
+- 工作流全局图（1张）
+- 节点配置截图（6-10张）
+- 插件安装截图（2-3张）
+- 效果演示图（2-3张）
+- 代码配置图（1-2张）
+- 总计要求 >= 10 张实际截图
+
+**示例用法：**
+
+```
+用小灰灰公众号风格写一篇 Dify 文生视频工作流的案例分享:
+- 功能: 调用即梦AI实现文生视频
+- 涉及插件: Agent策略插件
+- 核心节点: LLM、Agent、代码执行
+- 技术栈: MCP、即梦API
+```
+
+**质量标准：**
+
+- 总字数 > 1800字（优秀 > 2500字）
+- 标题格式：`dify案例分享-[功能名称]`
+- 工作流截图 >= 10个（优秀 >= 15个）
+- 节点配置说明 >= 5个
+- 代码块 >= 3个
+- 总结单段 300-400字，禁止分段
+- 固定结束语："今天的分享就到这里结束了,我们下一篇文章见。"
+
+**技术特点：**
+
+- 遵循小灰灰公众号写作规范
+- 专注 Dify 工作流案例分享
+- 包含完整的插件安装教程
+- 支持 MCP Server 集成说明
+- 提供腾讯云 COS 图床上传脚本
+- 真实图片 URL，无占位符
 
 ---
 
@@ -902,6 +1017,18 @@ if __name__ == "__main__":
 
 ## 更新说明
 
+### 2025年11月22日 - version 0.0.7
+
+- ✅ 新增 dify-dsl-generator Skill
+- ✅ 支持自动生成 Dify 工作流 DSL/YML 文件
+- ✅ 基于 86+ 真实案例深度学习
+- ✅ 支持所有主要节点类型和复杂工作流逻辑
+- ✅ 新增 xiaohuihui-dify-tech-article Skill
+- ✅ 专为 Dify 工作流案例分享设计
+- ✅ 遵循小灰灰公众号写作规范
+- ✅ 包含工作流节点详解、插件安装教程、MCP 集成指南
+- ✅ 支持自动生成配图并上传腾讯云 COS 图床
+
 ### 2025年11月19日 - version 0.0.6
 
 - ✅ 新增 siliconflow-api-skills Skill
@@ -1119,12 +1246,55 @@ version: 1.0.0
 6. 查看详细错误信息并根据提示修复
 </details>
 
+<details>
+<summary>Dify DSL 生成的工作流无法导入?</summary>
+1. 检查 YAML 格式是否正确（使用在线 YAML 验证器）<br>
+2. 确认 Dify 版本是否兼容（推荐 0.3.0+）<br>
+3. 检查节点 ID 是否唯一<br>
+4. 验证变量引用格式是否正确（{{#节点ID.变量#}}）<br>
+5. 确保所有必填字段完整<br>
+6. 查看 Dify 导入错误提示并修复对应问题
+</details>
+
+<details>
+<summary>生成的 Dify DSL 节点连接有问题?</summary>
+1. 检查 edges 数组中的连接关系是否完整<br>
+2. 验证 sourceType 和 targetType 是否与节点实际类型匹配<br>
+3. 确认每个节点（除 start）都有入边<br>
+4. 检查是否有孤立节点未连接<br>
+5. 验证最终是否连接到 answer 或其他输出节点
+</details>
+
+<details>
+<summary>Dify 案例文章图片如何上传到 COS?</summary>
+1. 在项目根目录创建 .env 文件<br>
+2. 配置腾讯云 COS 信息（SECRET_ID、SECRET_KEY、BUCKET、REGION）<br>
+3. 安装依赖：pip install -r scripts/requirements.txt<br>
+4. 使用命令上传：python scripts/upload_to_cos.py /path/to/image.png<br>
+5. 复制返回的 URL 用于文章中
+</details>
+
+<details>
+<summary>Dify 案例文章质量不达标怎么办?</summary>
+1. 检查总字数是否 > 1800字<br>
+2. 确认工作流截图 >= 10个<br>
+3. 验证节点配置说明 >= 5个<br>
+4. 检查是否包含代码块 >= 3个<br>
+5. 确认总结是否单段 300-400字且未分段<br>
+6. 检查是否包含固定结束语
+</details>
+
+<details>
+<summary>如何自定义 Dify DSL 生成模板?</summary>
+编辑 dify-dsl-generator/SKILL.md 文件，修改节点模板、提示词模板等。可以参考 references/dsl-structure.md 了解完整的 DSL 结构规范。
+</details>
+
 
 ## 技术交流群
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![微信图片_20251113205305_66_292](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/%25E5%25BE%25AE%25E4%25BF%25A1%25E5%259B%25BE%25E7%2589%2587_20251113205305_66_292.jpg)
+![image-20251122214700783](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251122214700783.png)
 
 ## 打赏
 
@@ -1142,17 +1312,19 @@ version: 1.0.0
 
 ### 技能统计
 
-- **总技能数**: 5
+- **总技能数**: 7
 - **自动化工具**: 1 (excel-report-generator)
-- **内容生成**: 2 (xiaohuihui-tech-article, mp-cover-generator)
+- **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 1 (jimeng_mcp_skill)
 - **API 文档**: 1 (siliconflow-api-skills)
+- **工作流工具**: 1 (dify-dsl-generator)
 
 ### 开发语言
 
 - Python: 2
-- Markdown: 2
+- Markdown: 3
 - MCP: 1
+- YAML/DSL: 1
 
 ### 维护状态
 
@@ -1176,6 +1348,9 @@ version: 1.0.0
 - [ ] 扩展技术文章支持的平台风格
 - [ ] 提供交互式配置工具
 - [ ] 增加中英文双语支持
+- [ ] 扩展 Dify DSL 生成器支持更多节点类型
+- [ ] 优化 Dify 案例文章的图片自动生成功能
+- [ ] 添加 Dify 工作流 DSL 校验工具
 
 ## License
 
