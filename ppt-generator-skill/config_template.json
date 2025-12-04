@@ -1,0 +1,149 @@
+{
+  "title": "示例PPT演示",
+  "subtitle": "工作汇报 / 项目总结 / 述职报告",
+  "year": "2025",
+  "theme": "商务简约",
+  "filename": "示例演示.pptx",
+  "chapters": [
+    {
+      "title": "第一部分标题",
+      "description": "这里是第一部分的简要描述，建议控制在200字以内。可以简单介绍本章节的主要内容和重点。",
+      "pages": [
+        {
+          "title": "第一页标题",
+          "content": [
+            {
+              "title": "要点一",
+              "description": "这里填写要点一的详细描述，建议50-100字左右，保持简洁明了。"
+            },
+            {
+              "title": "要点二",
+              "description": "这里填写要点二的详细描述，建议50-100字左右，保持简洁明了。"
+            }
+          ]
+        },
+        {
+          "title": "第二页标题",
+          "content": [
+            {
+              "title": "要点三",
+              "description": "这里填写要点三的详细描述。"
+            },
+            {
+              "title": "要点四",
+              "description": "这里填写要点四的详细描述。"
+            }
+          ]
+        },
+        {
+          "title": "第三页标题",
+          "content": [
+            {
+              "title": "要点五",
+              "description": "这里填写要点五的详细描述。"
+            }
+          ]
+        },
+        {
+          "title": "第四页标题",
+          "content": [
+            {
+              "title": "小结",
+              "description": "这里可以对本章节进行小结。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "第二部分标题",
+      "description": "第二部分的简要描述。",
+      "pages": [
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "第三部分标题",
+      "description": "第三部分的简要描述。",
+      "pages": [
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "第四部分标题",
+      "description": "第四部分的简要描述。",
+      "pages": [
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        },
+        {
+          "title": "页面标题",
+          "content": [
+            {"title": "标题", "description": "描述内容"}
+          ]
+        }
+      ]
+    }
+  ]
+}

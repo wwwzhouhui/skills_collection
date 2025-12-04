@@ -57,8 +57,121 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
 | dify-dsl-generator      | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
+| ppt-generator-skill     | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx                 | 2025年12月4日  | o3sky      | 1.0.0 |
 
 ## Skill 功能详解
+
+### 📊 PPT Generator (PPT 生成器)
+
+**核心功能：**
+
+- ✅ 固定 25 页专业商务 PPT 结构（封面→目录→4章节→结束→字体说明→版权）
+- ✅ 三种主题风格：暖色调、商务简约（默认）、莫兰迪色系
+- ✅ 每章节 5 页（1 个过渡页 + 4 个内容页）
+- ✅ 支持 JSON 配置文件和代码调用两种方式
+- ✅ 专业设计风格：商务简约、暖色调装饰、莫兰迪色系
+- ✅ 规范化布局：统一页面布局和文本规范
+
+**PPT 结构（25 页）：**
+
+1. **第1页**：封面 - 主标题、副标题、年份
+2. **第2页**：目录 - 4 个章节列表
+3. **第3-7页**：第一章节（1 个过渡页 + 4 个内容页）
+4. **第8-12页**：第二章节（1 个过渡页 + 4 个内容页）
+5. **第13-17页**：第三章节（1 个过渡页 + 4 个内容页）
+6. **第18-22页**：第四章节（1 个过渡页 + 4 个内容页）
+7. **第23页**：结束页 - "谢谢观看"
+8. **第24页**：字体说明
+9. **第25页**：版权声明
+
+**适用场景：**
+
+- 年度工作总结
+- 项目汇报
+- 工作述职
+- 产品发布
+- 季度/月度报告
+
+**使用方式：**
+
+```bash
+# 方法1：直接运行生成示例 PPT
+python3 ppt_generator.py
+
+# 方法2：使用 JSON 配置文件
+python3 ppt_generator.py my_ppt_config.json
+```
+
+**JSON 配置示例：**
+
+```json
+{
+  "title": "2025年度工作总结",
+  "subtitle": "工作总结 / 汇报",
+  "year": "2025",
+  "theme": "商务简约",
+  "filename": "2025年度工作总结.pptx",
+  "chapters": [
+    {
+      "title": "年度工作概况",
+      "description": "介绍全年工作整体情况",
+      "pages": [
+        {
+          "title": "工作概述",
+          "content": [
+            {"title": "项目数量", "description": "完成 15 个重点项目"},
+            {"title": "团队规模", "description": "团队扩展至 20 人"}
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**代码调用示例：**
+
+```python
+from ppt_generator import PPTGenerator
+
+# 创建生成器实例
+generator = PPTGenerator(theme="商务简约")
+
+# 配置 PPT 内容
+config = {
+    "title": "2025年度总结",
+    "subtitle": "工作总结 / 汇报",
+    "year": "2025",
+    "chapters": [...]  # 章节配置
+}
+
+# 生成并保存 PPT
+generator.generate_full_ppt(config)
+generator.save("output.pptx")
+```
+
+**主题风格：**
+
+| 主题 | 特点 | 适用场景 |
+|------|------|----------|
+| 暖色调 | 活泼热情 | 创意类汇报 |
+| 商务简约 | 专业稳重（默认） | 工作总结 |
+| 莫兰迪色系 | 优雅柔和 | 品牌展示 |
+
+**技术要求：**
+
+- Python 3.7+
+- 依赖库：python-pptx (`pip install python-pptx`)
+- 推荐字体：阿里巴巴普惠体 2.0、HarmonyOS Sans SC、MiSans Heavy、思源宋体 CN
+
+**配置要点：**
+
+- 4 个章节必填：每个 PPT 必须有 4 个主要章节
+- 每章节 4 页内容：不足自动补充占位页
+- 每页最多 4 个要点：采用 2x2 布局
+- 文本简洁：描述控制在 50-100 字
+
+---
 
 ### 📊 Excel Report Generator
 
@@ -1017,6 +1130,15 @@ if __name__ == "__main__":
 
 ## 更新说明
 
+### 2025年12月4日 - version 0.0.8
+
+- ✅ 新增 ppt-generator-skill Skill
+- ✅ 基于商务模板的专业 PPT 生成器
+- ✅ 固定 25 页结构（封面→目录→4章节→结束→字体说明→版权）
+- ✅ 三种主题风格：暖色调、商务简约、莫兰迪色系
+- ✅ 支持 JSON 配置文件和 Python 代码调用
+- ✅ 适用于年度总结、项目汇报、工作述职等场景
+
 ### 2025年11月22日 - version 0.0.7
 
 - ✅ 新增 dify-dsl-generator Skill
@@ -1289,12 +1411,43 @@ version: 1.0.0
 编辑 dify-dsl-generator/SKILL.md 文件，修改节点模板、提示词模板等。可以参考 references/dsl-structure.md 了解完整的 DSL 结构规范。
 </details>
 
+<details>
+<summary>PPT 生成器生成的文件打不开?</summary>
+1. 确认安装了 python-pptx 库：pip install python-pptx<br>
+2. 检查 Python 版本是否为 3.7+<br>
+3. 确认文件扩展名为 .pptx<br>
+4. 验证 JSON 配置文件格式是否正确<br>
+5. 使用 PowerPoint 或 WPS 打开文件查看具体错误
+</details>
+
+<details>
+<summary>PPT 生成的样式与预期不符?</summary>
+1. 确认使用了正确的主题参数（暖色调、商务简约、莫兰迪色系）<br>
+2. 检查配置文件中的 4 个章节是否完整<br>
+3. 验证每页内容要点是否不超过 4 个<br>
+4. 确保文本描述控制在 50-100 字以内<br>
+5. 可在生成后使用 PowerPoint 进行微调
+</details>
+
+<details>
+<summary>PPT 字体显示不正确?</summary>
+1. 推荐安装字体：阿里巴巴普惠体 2.0、HarmonyOS Sans SC、MiSans Heavy、思源宋体 CN<br>
+2. 如果没有这些字体，系统会使用默认字体替代<br>
+3. 可在 PowerPoint 中手动替换为已安装的字体<br>
+4. 编辑 ppt_generator.py 中的字体配置自定义使用的字体
+</details>
+
+<details>
+<summary>如何自定义 PPT 主题颜色?</summary>
+编辑 ppt_generator.py 中的 COLOR_SCHEMES 字典，添加或修改主题颜色配置。每个主题包含 primary、secondary、accent、text、background 五种颜色。
+</details>
+
 
 ## 技术交流群
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![image-20251122214700783](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251122214700783.png)
+![image-20251204212933573](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251204212933573.png)
 
 ## 打赏
 
@@ -1312,8 +1465,8 @@ version: 1.0.0
 
 ### 技能统计
 
-- **总技能数**: 7
-- **自动化工具**: 1 (excel-report-generator)
+- **总技能数**: 8
+- **自动化工具**: 2 (excel-report-generator, ppt-generator-skill)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 1 (jimeng_mcp_skill)
 - **API 文档**: 1 (siliconflow-api-skills)
@@ -1321,7 +1474,7 @@ version: 1.0.0
 
 ### 开发语言
 
-- Python: 2
+- Python: 3
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
