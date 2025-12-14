@@ -5,7 +5,7 @@
 **🎨 AI 驱动的图像和视频生成技能**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/wwwzhouhui/jimeng-mcp-server)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/wwwzhouhui/jimeng-mcp-server)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-purple.svg)](https://code.anthropic.com)
 
 </div>
@@ -53,7 +53,7 @@
    ```bash
    JIMENG_API_KEY=your_api_key_here
    JIMENG_API_URL=http://127.0.0.1:8001
-   JIMENG_MODEL=jimeng-4.0
+   JIMENG_MODEL=jimeng-4.5
    ```
 
 3. **启动后端服务**
@@ -115,9 +115,8 @@ git clone https://github.com/wwwzhouhui/jimeng-mcp-skill.git ~/.claude/skills/ji
 - 调用 `text_to_image` 工具
 - 使用参数：
   - `prompt`: "樱花树下的柴犬，夕阳余晖，动漫风格"
-  - `width`: 1536
-  - `height`: 864
-  - `sample_strength`: 0.6
+  - `ratio`: "16:9"
+  - `resolution`: "2k"
 
 **返回结果：**
 ```
@@ -152,7 +151,8 @@ git clone https://github.com/wwwzhouhui/jimeng-mcp-skill.git ~/.claude/skills/ji
 - 使用参数：
   - `prompt`: "将两张图片无缝融合，保持第一张图片的艺术风格"
   - `images`: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-  - `sample_strength`: 0.6
+  - `ratio`: "4:3"
+  - `resolution`: "2k"
 
 **返回结果：**
 
@@ -162,8 +162,8 @@ git clone https://github.com/wwwzhouhui/jimeng-mcp-skill.git ~/.claude/skills/ji
   🎨 合成结果
 
   合成参数：
-  - 📐 输出尺寸：1536x864 (16:9 横向)
-  - 🎭 合成强度：0.6（中等，保持原图特征的同时进行融合）
+  - 📐 输出比例：4:3 横向
+  - 🎨 分辨率：2k 高清
   - 🖼️ 输入图片：2 张
   - ✨ 生成结果：4 个不同的合成版本
 
@@ -199,6 +199,7 @@ git clone https://github.com/wwwzhouhui/jimeng-mcp-skill.git ~/.claude/skills/ji
 - 调用 `text_to_video` 工具
 - 使用参数：
   - `prompt`: "一只橘色小猫坐在河边，手持鱼竿专注地钓鱼，阳光明媚的午后"
+  - `ratio`: "16:9"
   - `resolution`: "720p"
 
 **返回结果：**
@@ -254,6 +255,7 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 - 使用参数：
   - `prompt`: "添加轻柔的运动效果和自然的镜头缩放，营造电影感"
   - `file_paths`: ["https://example.com/photo.jpg"]
+  - `ratio`: "16:9"
   - `resolution`: "720p"
 
 **返回结果：**
@@ -298,21 +300,21 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 
 你可以在对话中指定更详细的参数：
 
-**指定分辨率：**
+**指定宽高比和分辨率：**
 ```
-生成一张 1920x1080 的图片：未来城市夜景
+生成一张 16:9 宽屏 4k 高清的图片：未来城市夜景
 ```
 
-**调整创意度：**
+**指定分辨率预设：**
 ```
-生成图片，创意度要高一些：抽象的太空场景
-# sample_strength 会自动设置为 0.7-0.8
+生成图片，使用 2k 分辨率：抽象的太空场景
+# resolution 会自动设置为 "2k"
 ```
 
 **使用负面提示词：**
 ```
 生成图片：可爱的小狗，但不要有猫
-# 会自动添加 negative_prompt: "猫"
+# 会自动添加 negativePrompt: "猫"
 ```
 
 ### 批量生成
@@ -347,10 +349,10 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 | 参数 | 类型 | 必需 | 默认值 | 说明 |
 |------|------|------|--------|------|
 | `prompt` | string | ✅ | - | 图像描述 |
-| `width` | int | ❌ | 1536 | 图像宽度 (512/768/1024/1536/2048) |
-| `height` | int | ❌ | 864 | 图像高度 (512/768/864/1024/2048) |
-| `sample_strength` | float | ❌ | 0.5 | 采样强度 (0.0-1.0) |
-| `negative_prompt` | string | ❌ | "" | 负面提示词 |
+| `model` | string | ❌ | "jimeng-4.5" | 模型版本 |
+| `ratio` | string | ❌ | "1:1" | 宽高比 (1:1/4:3/3:4/16:9/9:16) |
+| `resolution` | string | ❌ | "2k" | 分辨率预设 (1k/2k/4k) |
+| `negativePrompt` | string | ❌ | "" | 负面提示词 |
 
 ### 图像合成 (image_composition)
 
@@ -358,18 +360,18 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 |------|------|------|--------|------|
 | `prompt` | string | ✅ | - | 合成描述 |
 | `images` | array | ✅ | - | 图片URL数组 (2-5张) |
-| `width` | int | ❌ | 1536 | 输出宽度 |
-| `height` | int | ❌ | 864 | 输出高度 |
-| `sample_strength` | float | ❌ | 0.5 | 合成强度 |
+| `model` | string | ❌ | "jimeng-4.5" | 模型版本 |
+| `ratio` | string | ❌ | "1:1" | 输出宽高比 |
+| `resolution` | string | ❌ | "2k" | 分辨率预设 |
 
 ### 文本生成视频 (text_to_video)
 
 | 参数 | 类型 | 必需 | 默认值 | 说明 |
 |------|------|------|--------|------|
 | `prompt` | string | ✅ | - | 视频场景描述 |
+| `model` | string | ❌ | "jimeng-video-3.0" | 视频模型版本 |
+| `ratio` | string | ❌ | "16:9" | 视频宽高比 |
 | `resolution` | string | ❌ | "720p" | 分辨率 (480p/720p/1080p) |
-| `width` | int | ❌ | 1280 | 视频宽度 |
-| `height` | int | ❌ | 720 | 视频高度 |
 
 ### 图像生成视频 (image_to_video)
 
@@ -377,9 +379,9 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 |------|------|------|--------|------|
 | `prompt` | string | ✅ | - | 动画效果描述 |
 | `file_paths` | array | ✅ | - | 图片URL数组 |
+| `model` | string | ❌ | "jimeng-video-3.0" | 视频模型版本 |
+| `ratio` | string | ❌ | "16:9" | 输出宽高比 |
 | `resolution` | string | ❌ | "720p" | 输出分辨率 |
-| `width` | int | ❌ | 1280 | 视频宽度 |
-| `height` | int | ❌ | 720 | 视频高度 |
 
 ---
 
@@ -426,8 +428,9 @@ A: 这是正常现象：
 A: 优化提示词：
 - 使用更具体、详细的描述
 - 添加艺术风格、光照、氛围等细节
-- 调整 `sample_strength` 参数
-- 使用负面提示词排除不需要的元素
+- 尝试不同的 `ratio` 宽高比
+- 使用更高的 `resolution` 分辨率（2k 或 4k）
+- 使用 `negativePrompt` 排除不需要的元素
 
 ---
 
@@ -459,7 +462,16 @@ jimeng_mcp_skill/
 
 ## 📝 更新日志
 
-### v1.0.0 (2025-01-15)
+### v2.0.0 (2025-12-14)
+- ✅ 升级模型版本至 jimeng-4.5
+- ✅ 新参数系统：使用 `ratio` 替代 `width`/`height`
+- ✅ 新参数系统：使用 `resolution` 替代 `sample_strength`
+- ✅ 支持新的宽高比预设（1:1, 4:3, 3:4, 16:9, 9:16）
+- ✅ 支持新的分辨率预设（1k, 2k, 4k）
+- ✅ 参数命名更新：`negative_prompt` → `negativePrompt`
+- ✅ 更新所有文档和示例
+
+### v1.0.0 (2025-11-15)
 - ✅ 初始版本发布
 - ✅ 支持文本生成图像
 - ✅ 支持图像合成

@@ -1,0 +1,64 @@
+--请求文生图
+curl --location --request POST 'https://jimeng1.duckcloud.fun/v1/images/generations' \
+--header 'Authorization: Bearer 73795a52a17c7ee7e95c213a22135c96' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "model": "jimeng-4.5",
+  "prompt": "请给我生成4张连续的儿童故事绘本-小斑马和小花猫",
+  "negativePrompt": "",
+  "ratio": "4:3",
+  "resolution": "2k"
+}'
+
+-- 返回
+{
+    "created": 1765202702,
+    "data": [
+        {
+            "url": "https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/ba64f2ac04dd4c9ca5dcfda774202a1a~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765209600&x-signature=hilP%2FOzkVyOhcjsaAzklX3slyz4%3D&format=.png"
+        },
+        {
+            "url": "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/0b958c5156344f63b28053fc26a4d60e~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765209600&x-signature=xXbSa1TY1O%2FaMLCqB7LueikBSR0%3D&format=.png"
+        },
+        {
+            "url": "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/16f706bce75949d9b7256164873ff05d~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765209600&x-signature=zjYt3xJvu14jv7Xy02x2kCDKhzE%3D&format=.png"
+        },
+        {
+            "url": "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/b814b55636f242e08d743c82372e7ff6~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765209600&x-signature=ZyanbqXVur93SSQDFdhu9UnN%2FUQ%3D&format=.png"
+        }
+    ]
+}
+
+-- 请求图生图
+curl --location --request POST 'https://jimeng1.duckcloud.fun/v1/images/compositions' \
+--header 'Authorization: Bearer 0c461c8440a06e796ff904494b6f1f4a' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "model": "jimeng-4.5",
+  "prompt": "请把这个2个图片进行合成",
+  "images": [
+        "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07897b16fec~tplv-tb4s082cfz-resize:0:0.image?lk3s=8e790bc3&x-expires=1788961069&x-signature=cbtnyeSIcqWpngHdoYWFkCra3cA%3D",
+        "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/6acf16d07c47413898aea2bdd1ad339e~tplv-tb4s082cfz-resize:0:0.image?lk3s=8e790bc3&x-expires=1788961069&x-signature=30S2i%2FvCH0eRR32CehcEaK8t5ns%3D"
+      ],
+  "ratio": "4:3",
+  "resolution": "2k"
+}'
+
+--返回
+{
+    "created": 1765173538,
+    "data": [
+        {
+            "url": "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/85676890cf9e47d8845b9606609758b7~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765177200&x-signature=mioNCEWbRo5CMRwiGEy5vVMT118%3D&format=.png"
+        },
+        {
+            "url": "https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/478e86e5399f40909497b6f77e42af55~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765177200&x-signature=wymY0Rc1n75gsDXt4ttALlNaR4s%3D&format=.png"
+        },
+        {
+            "url": "https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/1f5266e8e8d84ec88ef21d3672eb8bdb~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765177200&x-signature=br2WPdPMMMcCNdSTpAqmhoJAmEo%3D&format=.png"
+        },
+        {
+            "url": "https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/b4109e66c7f243318ca3b02660100e79~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1765177200&x-signature=VQocodyh3yiEYf04O7zfkrj40F4%3D&format=.png"
+        }
+    ]
+}

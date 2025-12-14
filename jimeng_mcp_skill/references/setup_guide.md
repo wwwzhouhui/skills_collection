@@ -144,8 +144,8 @@ JIMENG_API_KEY=your_sessionid_here
 # API 基础 URL（可选，默认：https://jimeng.duckcloud.fun）
 JIMENG_API_URL=http://127.0.0.1:8001
 
-# 模型名称（可选，默认：jimeng-4.0）
-JIMENG_MODEL=jimeng-4.0
+# 模型名称（可选，默认：jimeng-4.5）
+JIMENG_MODEL=jimeng-4.5
 ```
 
 **重要说明：**
@@ -504,5 +504,5 @@ https://github.com/wwwzhouhui/jimeng-mcp-server/releases
 
 ---
 
-**最后更新**：2025-11-15
-**版本**：1.0.0
+**最后更新**：2025-12-14
+**版本**：2.0
