@@ -51,8 +51,8 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 2.0.0 |
-| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成                   | 2025年11月10日 | wwwzhouhui | 2.0.0 |
-| jimeng_mcp_skill        | AI 图像和视频生成技能，通过 jimeng-mcp-server 实现文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年11月15日 | wwwzhouhui | 1.0.0 |
+| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
+| jimeng_mcp_skill        | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年12月14日 | wwwzhouhui | 2.0.0 |
 | mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
 | siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
 | dify-dsl-generator      | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
@@ -211,6 +211,9 @@ generator.save("output.pptx")
 - ✅ 单段长句总结（300-500字）
 - ✅ 口语化技术表达
 - ✅ 完整资源附加（GitHub+体验地址+网盘）
+- ✅ **新增** 即梦AI自动配图与腾讯云COS上传功能
+- ✅ **新增** 图片占位符自动替换为真实URL
+- ✅ **新增** 内存直接上传避免本地缓存
 
 **文章结构：**
 
@@ -219,6 +222,24 @@ generator.save("output.pptx")
 - **第3章**：部署实战（约1500-2000字）
 - **第4章**：总结（单段300-500字）
 - **第5章**：附加资源
+
+**配图系统（v2.1.0新增）：**
+
+- 🤖 自动调用即梦AI生成技术配图
+- ☁️ 自动上传至腾讯云COS图床
+- 🔗 自动替换文章中的图片占位符
+- 📸 支持多种图片类型：工作流截图、效果演示图、代码配置图
+- 💾 内存上传，无需本地缓存文件
+
+**配置要求（v2.1.0）：**
+
+1. 配置腾讯云COS环境变量：
+   - `SECRET_ID`：腾讯云访问密钥ID
+   - `SECRET_KEY`：腾讯云访问密钥Key
+   - `COS_BUCKET`：COS存储桶名称
+   - `COS_REGION`：COS存储桶所在地域
+
+2. 确保 jimeng-mcp-server 正常运行
 
 **示例用法：**
 
@@ -241,7 +262,16 @@ generator.save("output.pptx")
 - ✅ 文本生成视频（text-to-video）
 - ✅ 图像生成视频（image-to-video）
 - ✅ 支持多种分辨率和宽高比
-- ✅ 可调节采样强度控制创意性
+- ✅ **v2.0.0** 升级至 jimeng-4.5 模型
+- ✅ **v2.0.0** 新参数系统：ratio（宽高比）+ resolution（分辨率）
+- ✅ **v2.0.0** 替代旧参数：width/height + sample_strength
+
+**模型升级（v2.0.0）：**
+
+- 🆙 **jimeng-4.0** → **jimeng-4.5**：更强大的生成能力
+- 📐 **ratio 参数**：16:9、4:3、1:1、3:4、9:16 等
+- 🎯 **resolution 参数**：360p、480p、720p、1080p 等
+- 📝 简化参数配置，提升易用性
 
 **适用场景：**
 
@@ -254,7 +284,7 @@ generator.save("output.pptx")
 
 1. jimeng-free-api-all Docker 容器运行
 2. 配置 JIMENG_API_KEY 环境变量
-3. jimeng-mcp-server 正确安装
+3. jimeng-mcp-server 正确安装（支持 jimeng-4.5 模型）
 
 #### 示例 1: 文本生成图像
 
@@ -565,6 +595,12 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 - v3.1.0（2025-11-15）：新增 HTML 转图片功能，集成 Playwright
 - v3.0.0（2025-11-15）：从 jimeng-image-generator 迁移到 jimeng-mcp-server
 - v2.0.0：初始版本，使用 jimeng-image-generator
+
+**技术升级（v2.0.0）：**
+
+- 模型升级：jimeng-4.0 → jimeng-4.5
+- 参数简化：width/height + sample_strength → ratio + resolution
+- 更好的生成效果和稳定性
 
 ---
 
@@ -1130,6 +1166,20 @@ if __name__ == "__main__":
 
 ## 更新说明
 
+### 2025年12月14日 - version 0.0.9
+
+- ✅ **重大更新** xiaohuihui-tech-article Skill 至 v2.1.0
+- ✅ 新增即梦AI自动配图与腾讯云COS上传功能
+- ✅ 集成 jimeng_mcp_skill 实现 AI 图片生成
+- ✅ 新增 cos_utils.py 实现腾讯云COS文件上传
+- ✅ 支持图片占位符自动替换为真实URL
+- ✅ 支持内存直接上传避免本地缓存
+- ✅ **重要更新** jimeng_mcp_skill 升级至 v2.0.0
+- ✅ 模型升级：从 jimeng-4.0 升级至 jimeng-4.5
+- ✅ 参数系统重构：ratio 替代 width/height，resolution 替代 sample_strength
+- ✅ 添加新的宽高比和分辨率预设选项
+- ✅ 更新所有文档、示例和 API 参考
+
 ### 2025年12月4日 - version 0.0.8
 
 - ✅ 新增 ppt-generator-skill Skill
@@ -1312,12 +1362,40 @@ version: 1.0.0
 </details>
 
 <details>
+<summary>技术文章自动配图功能如何使用（v2.1.0）？</summary>
+1. 确保已配置腾讯云COS环境变量（SECRET_ID、SECRET_KEY、COS_BUCKET、COS_REGION）<br>
+2. 在文章中插入图片占位符，如：`[配图1：工作流全局图]`、`[配图2：节点配置]`等<br>
+3. 生成文章时，Skill会自动调用即梦AI生成配图并上传至COS<br>
+4. 自动将文章中的占位符替换为真实的图片URL<br>
+5. 支持的图片类型：工作流截图、效果演示图、代码配置图等
+</details>
+
+<details>
+<summary>自动配图上传COS失败怎么办？</summary>
+1. 检查腾讯云COS环境变量是否正确配置<br>
+2. 验证COS存储桶权限是否开放<br>
+3. 确认网络连接正常，能够访问腾讯云COS服务<br>
+4. 检查COS存储桶所在地域是否配置正确<br>
+5. 查看生成日志中的具体错误信息
+</details>
+
+<details>
 <summary>jimeng 图像/视频生成失败？</summary>
 1. 确认 jimeng-free-api-all Docker 容器正在运行<br>
 2. 检查 JIMENG_API_KEY 是否正确配置<br>
 3. 验证后端服务可访问：curl http://localhost:8001<br>
 4. 确保有足够的 API 积分（免费层每天 66 积分）<br>
 5. 图像生成需要 10-20 秒，视频生成需要 30-60 秒，请耐心等待
+</details>
+
+<details>
+<summary>jimeng-4.5 模型的新参数如何使用（v2.0.0）？</summary>
+1. **新参数系统**：ratio（宽高比）+ resolution（分辨率）<br>
+2. **旧参数**：width/height + sample_strength 已废弃<br>
+3. **ratio 示例**：16:9、4:3、1:1、3:4、9:16<br>
+4. **resolution 示例**：360p、480p、720p、1080p<br>
+5. **参数简化**：无需手动计算宽高，更直观易用<br>
+6. **生成效果**：jimeng-4.5 模型相比 4.0 有显著提升
 </details>
 
 <details>
@@ -1447,7 +1525,7 @@ version: 1.0.0
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![image-20251204212933573](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251204212933573.png)
+![image-20251211212601566](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251211212601566.png)
 
 ## 打赏
 
@@ -1471,6 +1549,11 @@ version: 1.0.0
 - **AI 多模态**: 1 (jimeng_mcp_skill)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
+
+### 最新版本动态
+
+- **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
+- **jimeng_mcp_skill**: v2.0.0 (2025-12-14) - 升级至 jimeng-4.5 模型，参数系统重构
 
 ### 开发语言
 
