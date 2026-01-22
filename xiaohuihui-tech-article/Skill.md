@@ -1,12 +1,12 @@
 ---
 name: xiaohuihui-tech-article
-description: 专为技术实战教程设计的公众号文章生成器,遵循小灰灰公众号写作规范,自动生成包含前言、项目介绍、部署实战、总结的完整技术文章,配有详细操作步骤、代码示例,并通过即梦AI生成配图上传至腾讯云COS图床
-version: 2.1.0
+description: 专为技术实战教程设计的公众号文章生成器,遵循小灰灰公众号写作规范,自动生成包含前言、项目介绍、部署实战、总结的完整技术文章,配有详细操作步骤、代码示例,并通过 Gemini-3-Pro-Image-Preview 模型生成配图上传至腾讯云COS图床
+version: 2.2.0
 ---
 
 # 小灰灰技术文章生成器
 
-专业的技术实战教程创作助手,完全遵循小灰灰公众号的写作风格和结构规范。**新增即梦AI自动配图功能,一键生成并上传至腾讯云COS图床。**
+专业的技术实战教程创作助手,完全遵循小灰灰公众号的写作风格 and 结构规范。**新增 Gemini-3-Pro-Image-Preview 自动配图功能,一键生成并上传至腾讯云COS图床。**
 
 ## 核心功能
 
@@ -15,8 +15,7 @@ version: 2.1.0
 - ✅ **详细实战步骤**: 环境准备 → 依赖安装 → 配置 → 实现 → 测试
 - ✅ **单段长句总结**: 300-500字深度总结(必须单段不分段)
 - ✅ **口语化技术文**: "呵呵"、"好家伙"、"手把手教"等亲和表达
-- ✅ **完整资源附加**: GitHub + 体验地址 + 网盘下载
-- ✅ **智能配图生成**: 调用即梦AI(jimeng-mcp-server)自动生成配图
+- ✅ **智能配图生成**: 调用 Gemini-3-Pro-Image-Preview 自动生成配图
 - ✅ **图床自动上传**: 生成的图片自动上传至腾讯云COS图床
 
 ## 使用方法
@@ -52,9 +51,10 @@ version: 2.1.0
 
 使用图片自动生成功能前,请确保以下服务已正确配置:
 
-1. **即梦MCP服务器运行中**
-   - jimeng-mcp-server 通过 stdio/SSE/HTTP 模式运行
-   - 环境变量 `JIMENG_API_KEY` 已配置
+1. **Gemini API 配置**
+   - 访问地址: `http://115.190.165.156:3000/v1/chat/completions`
+   - API Key: `sk-LYGZYPL2zZhGcRizHRiZv2nEXsuVHeof7LtTsT4OWwkWCFT0`
+   - 模型名称: `gemini-3-pro-image-preview`
 
 2. **腾讯云COS配置**
    - 已创建存储桶
@@ -69,7 +69,7 @@ version: 2.1.0
 ```
 生成文章内容 → 识别图片占位符 → 生成图片描述(prompt)
      ↓
-调用即梦text_to_image → 获取生成图片URL → 下载图片
+调用 Gemini API → 获取 base64 图片数据 → 解码图片
      ↓
 上传至腾讯云COS → 获取永久链接 → 替换占位符
 ```
@@ -88,135 +88,53 @@ version: 2.1.0
 | 代码运行图 | `代码编辑器界面,{编程语言}代码,语法高亮,深色主题,专业开发` | `代码编辑器界面,Python代码,语法高亮,深色主题` |
 | 结果展示图 | `{功能}效果展示,前后对比,成功状态,绿色指示,清晰直观` | `OCR识别效果展示,前后对比,成功状态,绿色指示` |
 
-#### 2. 即梦MCP工具调用
+#### 2. Gemini API 调用
 
-使用 `mcp__jimeng-mcp-server__text_to_image` 工具生成图片:
+使用 `gemini-3-pro-image-preview` 模型生成图片:
 
 ```json
 {
-  "prompt": "技术架构图,DeepSeek-OCR光学压缩技术,Python FastAPI VLLM推理引擎,3D等距视角,蓝色科技风格,简洁专业,高清",
-  "ratio": "16:9",
-  "resolution": "2k",
-  "model": "jimeng-4.5",
-  "sample_strength": 0.5,
-  "negative_prompt": "模糊,低质量,文字错误,乱码"
+  "model": "gemini-3-pro-image-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "技术架构图,DeepSeek-OCR光学压缩技术,Python FastAPI VLLM推理引擎,3D等距视角,蓝色科技风格,简洁专业,高清"
+        }
+      ]
+    }
+  ]
 }
 ```
 
 **参数说明:**
-- `ratio`: 宽高比,推荐 16:9 适合公众号文章
-- `resolution`: 分辨率,推荐 2k 平衡质量与速度
-- `model`: 默认 jimeng-4.5,高质量生成
-- `sample_strength`: 0.3-0.7,值越高越有创意
+- `model`: 必须为 `gemini-3-pro-image-preview`
+- `content`: 包含图片描述的文本内容
 
-#### 3. 图片下载
+#### 3. 图片生成与处理
 
-从即梦返回的URL下载图片到本地:
+使用 `gemini_image_generator.py` 中的 `GeminiImageGenerator` 类进行生成与上传:
 
 ```python
-import httpx
-import os
-from datetime import datetime
-
-async def download_image(image_url: str, save_dir: str = "/tmp/article_images") -> str:
-    """
-    下载图片到本地
-    :param image_url: 即梦生成的图片URL
-    :param save_dir: 保存目录
-    :return: 本地文件路径
-    """
-    os.makedirs(save_dir, exist_ok=True)
-
-    # 生成文件名: image-YYYYMMDD-HHMMSS.png
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    filename = f"image-{timestamp}.png"
-    filepath = os.path.join(save_dir, filename)
-
-    async with httpx.AsyncClient(timeout=60) as client:
-        response = await client.get(image_url)
-        response.raise_for_status()
-
-        with open(filepath, 'wb') as f:
-            f.write(response.content)
-
-    return filepath
-```
-
-#### 4. 上传至腾讯云COS
-
-使用 `cos_utils.py` 中的 `TencentCOSUploader` 类上传图片:
-
-```python
-from cos_utils import TencentCOSUploader
+from gemini_image_generator import GeminiImageGenerator
 import os
 
-# COS配置 (建议通过环境变量配置)
-COS_CONFIG = {
-    "region": os.getenv("COS_REGION", "ap-nanjing"),
-    "secret_id": os.getenv("COS_SECRET_ID"),
-    "secret_key": os.getenv("COS_SECRET_KEY"),
-    "bucket": os.getenv("COS_BUCKET", "mypicture-1258720957")
-}
+# 初始化生成器
+generator = GeminiImageGenerator()
 
-def upload_to_cos(local_path: str, target_name: str = None) -> str:
+def generate_and_get_url(prompt: str) -> str:
     """
-    上传图片到腾讯云COS
-    :param local_path: 本地图片路径
-    :param target_name: COS中的文件名,不填则使用本地文件名
-    :return: 图片永久访问URL
-    """
-    uploader = TencentCOSUploader(**COS_CONFIG)
-
-    # 生成COS中的文件名
-    if not target_name:
-        target_name = os.path.basename(local_path)
-
-    result = uploader.upload_from_file(local_path, target_name)
-
-    if result["success"]:
-        return result["url"]
-    else:
-        raise Exception(f"上传失败: {result['error']}")
-
-# 使用示例
-# cos_url = upload_to_cos("/tmp/article_images/image-20251214-143703.png")
-# 返回: https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251214-143703.png
-```
-
-#### 5. 内存直接上传(推荐)
-
-无需保存本地文件,直接从内存上传:
-
-```python
-import httpx
-from cos_utils import TencentCOSUploader
-from datetime import datetime
-
-async def download_and_upload_image(image_url: str, cos_config: dict) -> str:
-    """
-    下载图片并直接上传到COS(不保存本地)
-    :param image_url: 即梦生成的图片URL
-    :param cos_config: COS配置字典
+    生成图片并直接上传到COS,返回永久访问URL
+    :param prompt: 图片描述
     :return: COS永久访问URL
     """
-    # 1. 下载图片到内存
-    async with httpx.AsyncClient(timeout=60) as client:
-        response = await client.get(image_url)
-        response.raise_for_status()
-        image_content = response.content
+    return generator.generate_and_upload(prompt)
 
-    # 2. 生成文件名
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    filename = f"image-{timestamp}.png"
-
-    # 3. 上传到COS
-    uploader = TencentCOSUploader(**cos_config)
-    result = uploader.upload_from_memory(image_content, filename)
-
-    if result["success"]:
-        return result["url"]
-    else:
-        raise Exception(f"上传失败: {result['error']}")
+# 使用示例
+# cos_url = generate_and_get_url("技术架构图,DeepSeek-OCR,3D等距视角,蓝色科技风格")
+# 返回: https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251214-143703.png
 ```
 
 ### 完整图片生成流程
@@ -252,27 +170,25 @@ def extract_image_placeholders(article_content: str) -> list:
 #### 步骤3: 批量生成并上传
 
 ```python
-async def process_article_images(article_content: str, cos_config: dict) -> str:
+from gemini_image_generator import GeminiImageGenerator
+
+# 初始化生成器
+generator = GeminiImageGenerator()
+
+def process_article_images(article_content: str) -> str:
     """
     处理文章中的所有图片占位符
     :param article_content: 原始文章内容
-    :param cos_config: COS配置
     :return: 替换后的文章内容
     """
     placeholders = extract_image_placeholders(article_content)
 
     for alt_text, prompt in placeholders:
-        # 1. 调用即梦生成图片 (使用MCP工具)
-        # 这里需要通过MCP客户端调用 mcp__jimeng-mcp-server__text_to_image
-        image_result = await generate_image_with_jimeng(prompt)
+        # 1. 调用 Gemini 生成图片并上传到 COS
+        cos_url = generator.generate_and_upload(prompt)
 
-        if image_result and image_result.get("data"):
-            image_url = image_result["data"][0]["url"]
-
-            # 2. 下载并上传到COS
-            cos_url = await download_and_upload_image(image_url, cos_config)
-
-            # 3. 替换占位符
+        if cos_url:
+            # 2. 替换占位符
             old_placeholder = f"![{alt_text}]({{{{IMAGE:{prompt}}}}})"
             new_image_tag = f"![{alt_text}]({cos_url})"
             article_content = article_content.replace(old_placeholder, new_image_tag)
@@ -537,7 +453,7 @@ docker logs -f app
 通过这套实践方案,[用户群体] 能够高效突破 [传统痛点] —— 
 借助 [具体操作](包括 [步骤1]、[步骤2]、[步骤3]),
 无需 [传统障碍],
-就能快速 [核心价值](如本次演示的 "[案例名称]")。
+就能快速 [核心价值](如本次演示 of "[案例名称]")。
 无论是 [功能1]、[功能2],还是 [功能3]、[功能4],
 都能通过 [实现方式] 完成,
 极大 [提升维度]。
@@ -742,33 +658,37 @@ app:
 
 ## 图片生成快速参考
 
-### MCP工具调用示例
+### Gemini API 调用示例
 
 #### 1. 基础文生图调用
 
-**工具名称:** `mcp__jimeng-mcp-server__text_to_image`
+**模型名称:** `gemini-3-pro-image-preview`
 
 **基础参数:**
 ```json
 {
-  "prompt": "图片描述内容",
-  "ratio": "16:9",
-  "resolution": "2k",
-  "model": "jimeng-4.5",
-  "sample_strength": 0.5,
-  "negative_prompt": "模糊,低质量,文字错误"
+  "model": "gemini-3-pro-image-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "图片描述内容"
+        }
+      ]
+    }
+  ]
 }
 ```
 
 **参数说明:**
-| 参数 | 类型 | 必填 | 默认值 | 说明 |
-|------|------|------|--------|------|
-| prompt | string | 是 | - | 图片描述,越详细效果越好 |
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| model | string | 是 | 必须为 `gemini-3-pro-image-preview` |
+| text | string | 是 | 图片描述,越详细效果越好 |
 | ratio | string | 否 | "1:1" | 宽高比: 1:1/4:3/3:4/16:9/9:16/3:2/2:3/21:9 |
 | resolution | string | 否 | "2k" | 分辨率: 1k/2k/4k |
-| model | string | 否 | jimeng-4.5 | 模型: jimeng-3.0/jimeng-4.5 |
-| sample_strength | float | 否 | 0.5 | 创意度: 0.0-1.0,越高越有创意 |
-| negative_prompt | string | 否 | "" | 负面提示词,避免生成的内容 |
 
 #### 2. 常用比例与分辨率配置
 
@@ -791,219 +711,23 @@ app:
 | 2k | 高清分辨率（推荐） | 通用使用、社交媒体、公众号 |
 | 4k | 超高清分辨率 | 印刷品、高质量展示 |
 
-#### 3. 完整调用示例
-
-**示例1: 生成项目架构图**
-```json
-{
-  "prompt": "技术架构图,微服务架构设计,包含API网关、服务注册中心、多个微服务模块,3D等距视角,蓝色科技风格,简洁专业,高清,无文字",
-  "ratio": "16:9",
-  "resolution": "2k",
-  "model": "jimeng-4.5",
-  "sample_strength": 0.5,
-  "negative_prompt": "模糊,低质量,杂乱,文字,中文,英文"
-}
-```
-
-**示例2: 生成终端界面**
-```json
-{
-  "prompt": "终端命令行界面,黑色背景,绿色代码文字,显示git clone命令执行,进度条,专业技术感,清晰",
-  "ratio": "16:9",
-  "resolution": "2k",
-  "model": "jimeng-4.5",
-  "sample_strength": 0.4,
-  "negative_prompt": "模糊,低质量,乱码"
-}
-```
-
-**示例3: 生成软件界面**
-```json
-{
-  "prompt": "现代Web应用界面,深色主题,左侧导航栏,右侧数据展示区,图表和卡片布局,科技感UI设计,专业美观",
-  "ratio": "16:9",
-  "resolution": "2k",
-  "model": "jimeng-4.5",
-  "sample_strength": 0.5,
-  "negative_prompt": "模糊,低质量,老旧设计"
-}
-```
-
----
-
-### 常用Prompt模板大全
-
-#### 1. 项目架构图模板
-
-**基础模板:**
-```
-技术架构图,{项目名称},{核心组件},3D等距视角,蓝色科技风格,简洁专业,高清,无文字
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| 微服务架构 | `技术架构图,微服务架构,API网关+服务注册+配置中心+多服务模块,3D等距视角,蓝色渐变背景,简洁专业,高清` |
-| AI项目架构 | `AI系统架构图,大模型推理服务,数据输入+模型处理+结果输出,流程箭头连接,紫色科技风,3D立体感` |
-| 数据流架构 | `数据流架构图,ETL数据处理,数据采集+清洗+存储+分析,管道连接,蓝绿渐变,清晰直观` |
-| 前后端分离 | `前后端分离架构图,Vue前端+FastAPI后端+MySQL数据库,三层结构,蓝色科技风,简洁专业` |
-| Docker部署 | `Docker容器部署架构图,多容器编排,网络连接,数据卷挂载,蓝色背景,技术感,清晰` |
-
-#### 2. 功能演示图模板
-
-**基础模板:**
-```
-软件界面展示,{功能描述},现代UI设计,深色主题,专业感,清晰
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| OCR识别 | `OCR文字识别界面,左侧图片上传区,右侧识别结果展示,现代UI设计,深色主题,绿色成功提示` |
-| 聊天界面 | `AI聊天对话界面,消息气泡布局,用户提问+AI回答,现代简洁设计,深色主题,专业美观` |
-| 数据分析 | `数据分析仪表盘,多图表展示,折线图+饼图+柱状图,深色主题,科技感,数据可视化` |
-| 文件管理 | `文件管理系统界面,文件列表展示,文件夹树形结构,操作按钮,现代UI,简洁专业` |
-| 配置面板 | `系统配置面板界面,表单输入框,开关按钮,下拉选择,分组设置,深色主题,清晰` |
-
-#### 3. 部署环境图模板
-
-**基础模板:**
-```
-云服务器配置界面,{平台名称},终端命令行,技术感,专业,清晰展示
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| AutoDL | `AutoDL云服务器控制台,GPU实例列表,显存使用率,运行状态指示,蓝色科技风,专业界面` |
-| 阿里云 | `阿里云ECS控制台界面,服务器实例管理,配置信息展示,蓝色主题,简洁专业` |
-| Docker | `Docker Desktop界面,容器列表展示,运行状态,端口映射,深色主题,技术感` |
-| K8s | `Kubernetes Dashboard界面,Pod状态展示,节点信息,资源监控,蓝色科技风` |
-| 终端SSH | `SSH终端连接界面,黑色背景,绿色命令提示符,服务器信息显示,专业技术感` |
-
-#### 4. 代码展示图模板
-
-**基础模板:**
-```
-代码编辑器界面,{语言}代码,语法高亮,深色主题,VS Code风格
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| Python代码 | `VS Code编辑器界面,Python代码,语法高亮,深色主题,左侧文件树,底部终端,专业开发环境` |
-| 配置文件 | `代码编辑器,YAML配置文件,语法高亮,缩进清晰,深色主题,专业感` |
-| API代码 | `代码编辑器界面,FastAPI路由代码,装饰器+函数定义,Python语法高亮,深色主题` |
-| Shell脚本 | `终端界面,Shell脚本执行,命令行高亮,绿色成功输出,黑色背景,技术感` |
-| JSON数据 | `代码编辑器,JSON数据格式,语法高亮,折叠展开,深色主题,清晰展示` |
-
-#### 5. 效果对比图模板
-
-**基础模板:**
-```
-{功能}效果对比图,左侧原始右侧结果,成功标识,清晰直观,专业
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| OCR对比 | `OCR识别效果对比,左侧原始图片,右侧提取文字结果,绿色成功标识,白色背景,清晰直观` |
-| 图像处理 | `图像处理效果对比,左侧原图右侧处理后,前后对比箭头,质量提升展示,专业` |
-| 性能对比 | `性能对比图表,柱状图展示,优化前后对比,绿色提升标识,数据标注,清晰` |
-| 代码优化 | `代码重构对比,左侧旧代码右侧新代码,高亮差异部分,深色主题,专业展示` |
-| 部署成功 | `部署成功状态展示,绿色对勾标识,服务运行正常,健康检查通过,专业界面` |
-
-#### 6. 流程图模板
-
-**基础模板:**
-```
-流程图,{流程描述},步骤节点,箭头连接,简洁清晰,专业
-```
-
-**详细示例:**
-
-| 场景 | Prompt |
-|------|--------|
-| 部署流程 | `部署流程图,环境准备→代码下载→依赖安装→配置→启动→测试,步骤节点,蓝色箭头,简洁专业` |
-| 数据处理 | `数据处理流程图,数据输入→预处理→模型推理→后处理→输出,流程箭头,蓝色科技风` |
-| CI/CD | `CI/CD流水线流程图,代码提交→构建→测试→部署→监控,自动化流程,蓝绿色调` |
-| 用户操作 | `用户操作流程图,注册→登录→使用功能→获取结果,步骤清晰,简洁直观` |
-
----
-
-### Prompt优化技巧
-
-#### 1. 提升图片质量的关键词
-
-**画质类:**
-- `高清` / `4K` / `超清晰`
-- `精细细节` / `高质量渲染`
-- `专业级` / `商业级品质`
-
-**风格类:**
-- `3D等距视角` / `扁平化设计` / `拟物化`
-- `科技感` / `未来感` / `现代简约`
-- `蓝色调` / `深色主题` / `渐变背景`
-
-**排除类(negative_prompt):**
-- `模糊,低质量,噪点`
-- `文字,中文,英文,乱码`
-- `变形,扭曲,不自然`
-
-#### 2. Prompt结构建议
-
-```
-[主体内容] + [细节描述] + [视角/构图] + [风格/色调] + [质量要求]
-```
-
-**示例:**
-```
-技术架构图(主体) + 微服务+API网关+数据库(细节) + 3D等距视角(构图) + 蓝色科技风(风格) + 高清专业(质量)
-```
-
-#### 3. 不同场景推荐配置
-
-| 场景 | model | ratio | resolution | sample_strength |
-|------|-------|-------|------------|-----------------|
-| 架构图 | jimeng-4.5 | 16:9 | 2k | 0.5 |
-| 界面图 | jimeng-4.5 | 16:9 | 2k | 0.4 |
-| 终端图 | jimeng-4.5 | 16:9 | 2k | 0.3 |
-| 流程图 | jimeng-4.5 | 16:9 | 2k | 0.5 |
-| 效果对比 | jimeng-4.5 | 16:9 | 2k | 0.4 |
-| 高质量图 | jimeng-4.5 | 16:9 | 4k | 0.5 |
-| 方形图标 | jimeng-4.5 | 1:1 | 2k | 0.5 |
-| 竖版海报 | jimeng-4.5 | 9:16 | 2k | 0.5 |
-
 ---
 
 ## 更新日志
 
+### v2.2.0 (2026-01-05)
+- ✅ 将图片生成模型从即梦 (jimeng-mcp-server) 更换为 Gemini-3-Pro-Image-Preview
+- ✅ 新增 `gemini_image_generator.py` 封装 API 调用与 COS 上传逻辑
+- ✅ 优化图片占位符替换流程，支持 base64 直接解码上传
+- ✅ 更新文档中的 API 调用示例和 Prompt 模板
+
 ### v2.1.0 (2025-12-14)
 - ✅ 更新即梦MCP接口参数：width/height → ratio/resolution
 - ✅ 默认模型升级为 jimeng-4.5
-- ✅ 新增更多宽高比支持：3:2/2:3/21:9
-- ✅ 优化参数说明和配置表格
 
 ### v2.0.0 (2025-12-14)
 - ✅ 新增即梦AI自动配图功能
 - ✅ 集成腾讯云COS图床上传
-- ✅ 图片占位符自动替换为真实URL
-- ✅ 支持多种配图类型模板
-- ✅ 添加图片生成工作流程文档
-- ✅ 内存直接上传,无需本地缓存
-
-### v1.0.0 (2025-11-10)
-- ✅ 初始版本
-- ✅ 四段式结构
-- ✅ 三段式开头
-- ✅ 单段式总结
-- ✅ 口语化风格
-- ✅ 质量标准
 
 ---
 
@@ -1014,11 +738,9 @@ app:
 - skill创建帮助文档.md
 
 图片生成相关:
-- jimeng_mcp_skill/SKILL.md - 即梦MCP技能文档
-- jimeng_mcp_skill/references/api_reference.md - 即梦API参考
+- gemini_image_generator.py - Gemini 图片生成与上传工具类
 - cos_utils.py - 腾讯云COS上传工具类
 
 项目链接:
-- **即梦MCP服务器**: https://github.com/wwwzhouhui/jimeng-mcp-server
-- **即梦后端API**: https://github.com/wwwzhouhui/jimeng-free-api-all
+- **Gemini API**: http://115.190.165.156:3000/
 - **腾讯云COS**: https://cloud.tencent.com/product/cos

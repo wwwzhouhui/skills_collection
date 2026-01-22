@@ -51,6 +51,7 @@ xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 2.0.0 |
+| github-trending         | 获取 GitHub Trending 前五项目 README 与摘要，推送企业微信消息，用于趋势跟踪与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日  | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
 | jimeng_mcp_skill        | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年12月14日 | wwwzhouhui | 2.0.0 |
 | mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
@@ -198,6 +199,43 @@ generator.save("output.pptx")
 ```
 
 ![image-20251112171422425](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251112171422425.png)
+
+---
+
+### 🔥 GitHub Trending
+
+**核心功能：**
+
+- ✅ 抓取 GitHub Trending 今日前 5 热门项目
+- ✅ 获取 README 并生成中文摘要（项目是什么、解决问题、技术栈、Star 数量）
+- ✅ 企业微信机器人推送摘要
+- ✅ 支持 GITHUB_TOKEN 提升 API 额度
+
+**适用场景：**
+
+- 技术趋势日报/周报
+- 团队技术分享与学习
+- 新项目调研与选型
+
+**使用方式：**
+
+```
+请帮我使用github-trending-skill 这个skill获取今天最热门的github开源项目内容，并使用ui-ux-pro-max-skill
+这个skill生成科技风格的日报信息，并输出html当前文件夹下
+```
+
+ 企业微信收到的消息
+
+![image-20260122235533966](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235533966.png)
+
+使用ui-ux-pro-max-skill 生成的html效果
+
+![image-20260122235640833](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235640833.png)
+
+**配置说明：**
+
+- `GITHUB_TOKEN`：可选，用于提高 GitHub API 额度
+- `WEIXIN_WEBHOOK`：可选，覆盖默认企业微信机器人地址
 
 ---
 
@@ -1166,6 +1204,14 @@ if __name__ == "__main__":
 
 ## 更新说明
 
+### 2026年1月22日 - version 0.0.10
+
+- ✅ 新增 github-trending Skill
+- ✅ 自动抓取 GitHub Trending 今日前 5 热门项目
+- ✅ 拉取 README 并生成中文摘要（项目是什么、解决问题、技术栈、Star 数量）
+- ✅ 企业微信机器人推送摘要
+- ✅ 支持 GITHUB_TOKEN/WEIXIN_WEBHOOK 可选配置
+
 ### 2025年12月14日 - version 0.0.9
 
 - ✅ **重大更新** xiaohuihui-tech-article Skill 至 v2.1.0
@@ -1525,7 +1571,7 @@ version: 1.0.0
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![image-20251211212601566](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251211212601566.png)
+![image-20260122235736120](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235736120.png)
 
 ## 打赏
 
@@ -1543,8 +1589,8 @@ version: 1.0.0
 
 ### 技能统计
 
-- **总技能数**: 8
-- **自动化工具**: 2 (excel-report-generator, ppt-generator-skill)
+- **总技能数**: 9
+- **自动化工具**: 3 (excel-report-generator, ppt-generator-skill, github-trending)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 1 (jimeng_mcp_skill)
 - **API 文档**: 1 (siliconflow-api-skills)
@@ -1557,7 +1603,7 @@ version: 1.0.0
 
 ### 开发语言
 
-- Python: 3
+- Python: 4
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
