@@ -210,7 +210,7 @@ generator.save("output.pptx")
 
 企业微信收到的消息
 
-![image-20260122235533966](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235533966.png)
+![image-20260123234615323](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260123234615323.png)
 
 使用ui-ux-pro-max-skill 生成的html效果
 
