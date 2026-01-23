@@ -1,64 +1,48 @@
 # Claude Code Skills Collection
 
-本项目是个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
+个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
-分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.11-green.svg)
+![Skills](https://img.shields.io/badge/skills-10-orange.svg)
 
-## 📖 什么是 Claude Skills
+> 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
+
+## 项目介绍
+
+本项目是个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
 Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill.md），可以让 Claude 在特定场景下自动激活相应的专业知识和能力。
 
-## 使用说明
+### 核心功能
 
-### 1. 安装 Skills
+- **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
+- **内容生成**: 技术文章、公众号封面、README 文档生成
+- **AI 多模态**: 即梦 AI 图像和视频生成
+- **工作流工具**: Dify DSL/YML 文件生成器
+- **API 文档**: 硅基流动云服务平台完整文档
 
-将 Skill 文件夹复制到你的 Claude Code Skills 目录：
+### 适用场景
 
-```bash
-# Linux/Mac
-cp -r skill-name ~/.claude/skills/
-
-# Windows
-xcopy /E /I skill-name %USERPROFILE%\.claude\skills\skill-name
-```
-
-如果是windows平台可以手工复制到 C:\Users\xxx\.claude\skills
-
-![image-20251110164730420](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251110164730420.png)
-
-![image-20251110165041134](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251110165041134.png)
-
-  我们检查一下这个skills是否可以使用。
-
-### 2. 验证安装
-
-在 Claude Code 中输入相关关键词，Claude 会自动激活对应的 Skill。
-
-![image-20251112173259755](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251112173259755.png)
-
-### 3. 开始使用
-
-直接与 Claude 对话，提出相关需求即可：
-
-```
-"请基于上面的数据帮我生成图表统计，比如饼状图、柱状图、条形图等。请在原来生成的2025年101中学其中考试统计表20251112.xlsx表中生成"
-```
-
-![image-20251112171230648](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251112171230648.png)
+- Claude Code 用户扩展能力
+- 自动化办公和内容创作
+- 开源项目文档规范化
+- 技术学习和实践
 
 ## Skills 清单
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
-| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 2.1.12 |
-| excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 2.0.0 |
+| github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
+| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
 | jimeng_mcp_skill        | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年12月14日 | wwwzhouhui | 2.0.0 |
-| mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
-| siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
+| ppt-generator-skill     | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx                 | 2025年12月4日  | o3sky      | 1.0.0 |
 | dify-dsl-generator      | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
-| ppt-generator-skill     | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx                 | 2025年12月4日  | o3sky      | 1.0.0 |
+| siliconflow-api-skills  | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM               | 2025年11月19日 | wwwzhouhui | 1.0.0 |
+| mp-cover-generator      | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
+| excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 1.0.0 |
 
 ## Skill 功能详解
 
@@ -224,7 +208,7 @@ generator.save("output.pptx")
 这个skill生成科技风格的日报信息，并输出html当前文件夹下
 ```
 
- 企业微信收到的消息
+企业微信收到的消息
 
 ![image-20260122235533966](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235533966.png)
 
@@ -287,7 +271,7 @@ generator.save("output.pptx")
 
 ![image-20251110175146630](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251110175146630.png)
 
-​     ![image-20251110175215254](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251110175215254.png)
+![image-20251110175215254](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251110175215254.png)
 
 ---
 
@@ -323,206 +307,6 @@ generator.save("output.pptx")
 1. jimeng-free-api-all Docker 容器运行
 2. 配置 JIMENG_API_KEY 环境变量
 3. jimeng-mcp-server 正确安装（支持 jimeng-4.5 模型）
-
-#### 示例 1: 文本生成图像
-
-**用户输入：**
-
-```
-请使用jimeng_mcp_skill帮我生成一张图：小猫和小兔子打架  使用 jimeng-3.1模型生成
-```
-
-**系统行为：**
-
-- 自动识别为文本生成图像任务
-- 调用 `text_to_image` 工具
-- 使用参数：
-  - `prompt`: "樱花树下的柴犬，夕阳余晖，动漫风格"
-  - `width`: 1536
-  - `height`: 864
-  - `sample_strength`: 0.6
-
-**返回结果：**
-
-```
-✅ 成功生成 4 张图像
-
-📷 图像URL列表:
-1. https://example.com/image1.png
-2. https://example.com/image2.png
-3. https://example.com/image3.png
-4. https://example.com/image4.png
-```
-
----
-
-![image-20251115142311334](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115142311334.png.png)
-
-![image-20251115142336204](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115142336204.png.png)
-
-#### 示例 2: 图像合成
-
-**用户输入：**
-
-```
-请使用jimeng_mcp_skill 将这两张图像合成在一起:
-- 图像1: https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07897b16fec~tplv-tb4s082cfz-resize:0:0.image?lk3s=8e790bc3&x-expires=1788961069&x-signature=cbtnyeSIcqWpngHdoYWFkCra3cA%3D
-- 图像2: https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/6acf16d07c47413898aea2bdd1ad339e~tplv-tb4s082cfz-resize:0:0.image?lk3s=8e790bc3&x-expires=1788961069&x-signature=30S2i%2FvCH0eRR32CehcEaK8t5ns%3D
-创建一个艺术风格的无缝融合
-```
-
-**系统行为：**
-
-- 识别为图像合成任务
-- 调用 `image_composition` 工具
-- 使用参数：
-  - `prompt`: "将两张图片无缝融合，保持第一张图片的艺术风格"
-  - `images`: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-  - `sample_strength`: 0.6
-
-**返回结果：**
-
-```
-✅ 合成成功！ 使用 jimeng_mcp_skill 成功将两张图片进行了艺术风格的无缝融合！
-
-  🎨 合成结果
-
-  合成参数：
-  - 📐 输出尺寸：1536x864 (16:9 横向)
-  - 🎭 合成强度：0.6（中等，保持原图特征的同时进行融合）
-  - 🖼️ 输入图片：2 张
-  - ✨ 生成结果：4 个不同的合成版本
-
-  生成的 4 张合成图片：
-
-  1. https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/681e949c9c184045b17e334f2b51eae4~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1763193600
-  &x-signature=04Us2jkxE%2By28%2FiVzSgVbKT%2FeIo%3D&format=.png
-  2. https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/9bf159ff3c2445ffb10204a25dce480c~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1763193600&
-  x-signature=6heDK7SHkjpAnMmVYW2p2XukAs4%3D&format=.png
-  3. https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/5cc0dbbeb78a41aca6620beed302cffb~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1763193600&
-  x-signature=U90xgPtFij2ltsGvA2cf69AwwIQ%3D&format=.png
-  4. https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/6462f90eb51c484da6d67eb745c5af4d~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=43402efa&x-expires=1763193600
-  &x-signature=X%2BYZ5%2FrRXDBN%2Fofov%2BkLounfluU%3D&format=.png
-
-  即梦 AI 为你生成了 4 个不同风格的合成版本，每个都以不同的方式融合了两张原始图片，创造出和谐统一的艺术效果。点击链接查看哪个版本最符合你的期望！
-```
-
----
-
-![image-20251115142702314](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115142702314.png.png)
-
-![image-20251115142736917](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115142736917.png.png)
-
-#### 示例 3: 文本生成视频
-
-**用户输入：**
-
-```
-请使用jimeng_mcp_skill 生成一个视频：小猫在钓鱼，阳光明媚的午后
-```
-
-**系统行为：**
-
-- 识别为文本生成视频任务
-- 调用 `text_to_video` 工具
-- 使用参数：
-  - `prompt`: "一只橘色小猫坐在河边，手持鱼竿专注地钓鱼，阳光明媚的午后"
-  - `resolution`: "720p"
-
-**返回结果：**
-
-```
-jimeng-mcp-server - text_to_video (MCP)(prompt: "一只可爱的橘色小猫坐在河边，手持鱼竿专注地钓鱼，阳光明媚的午后，温暖的阳光洒在水面上，微风轻拂，画面温馨惬意", resolution:
-                                         "720p")
-  ⎿  ✅ 成功生成 1 个视频                                                                                                                                                 
-
-     🎬 视频URL列表:
-     … +12 lines (ctrl+o to expand)
-
-● ✅ 视频生成成功！ 使用 jimeng_mcp_skill 为你创建了"小猫在钓鱼"的视频！
-
-  🎬 视频信息
-
-  视频参数：
-  - 📐 分辨率：720p (1280x720)
-  - 🎨 场景：小猫在河边钓鱼
-  - 🌤️ 氛围：阳光明媚的午后
-  - ⏱️ 时长：约 3-5 秒
-  - 📦 格式：MP4
-
-  视频描述：
-  一只可爱的橘色小猫坐在河边，手持鱼竿专注地钓鱼，阳光明媚的午后，温暖的阳光洒在水面上，微风轻拂，画面温馨惬意。
-
-  观看视频：
-  https://v6-artist.vlabvod.com/8c0b6d0cef156188f2421ba30e048279/69215838/video/tos/cn/tos-cn-v-148450/o80OeeDwJAeDGoIIgR1IkDCEOBMLQAHaSgtTUo/?a=4066&ch=0&cr=0&dr=0&er=0&l
-  r=display_watermark_aigc&cd=0%7C0%7C0%7C0&br=6796&bt=6796&cs=0&ds=12&ft=5QYTUxhhe6BMyqlgLwVJD12Nzj&mime_type=video_mp4&qs=0&rc=ODZoNDQ0Zmk7ZGg8PDM7NEBpanJrZ3c5cjs0NzczND
-  M7M0A2Yi1iNDZhNV4xNGE2LS0wYSM0MWheMmRjb2BhLS1kNC9zcw%3D%3D&btag=c0000e00008000&dy_q=1763188147&feature_id=7bed9f9dfbb915a044e5d473759ce9df&l=20251115142907E08B3618064D3A
-  8100D9
-
-  点击链接即可在浏览器中播放视频！视频展现了一个温馨惬意的场景，非常适合用于社交媒体分享或内容创作。
-```
-
----
-
-![image-20251115143025496](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115143025496.png.png)
-
-![image-20251115143113549](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115143113549.png.png)
-
-#### 示例 4: 图像生成视频
-
-**用户输入：**
-
-```
-请使用jimeng_mcp_skill 为这张照片添加动画效果，让它有电影感
-https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07897b16fec~tplv-tb4s082cfz-resize:0:0.image?lk3s=8e790bc3&x-expires=1788961069&x-signature=cbtnyeSIcqWpngHdoYWFkCra3cA%3D
-添加轻柔的运动和自然的镜头缩放
-```
-
-**系统行为：**
-
-- 识别为图像生成视频任务
-- 调用 `image_to_video` 工具
-- 使用参数：
-  - `prompt`: "添加轻柔的运动效果和自然的镜头缩放，营造电影感"
-  - `file_paths`: ["https://example.com/photo.jpg"]
-  - `resolution`: "720p"
-
-**返回结果：**
-
-```
-✅ 成功从 1 张图像生成 1 个视频                                                                                                                                      
-
-     🎬 视频URL列表:
-     … +12 lines (ctrl+o to expand)
-
-● ✅ 动画视频生成成功！ 使用 jimeng_mcp_skill 成功为你的照片添加了电影感的动画效果！
-
-  🎬 视频信息
-
-  动画参数：
-  - 📐 分辨率：720p (1280x720)
-  - 🎥 效果：轻柔的运动 + 自然的镜头缩放
-  - 🎭 风格：电影感，流畅优雅
-  - ⏱️ 时长：约 3-5 秒
-  - 📦 格式：MP4
-
-  动画描述：
-  为静态照片添加了专业的运动效果和镜头缩放，营造出电影般的视觉体验，画面流畅优雅。
-
-  观看动画视频：
-  https://v9-artist.vlabvod.com/de4b56757300cd0f8cc1a9ad504004e7/6921598c/video/tos/cn/tos-cn-v-148450/oIA5ahNODinkfEp8bjAA8EMS2eRWQBvDCAE3eM/?a=4066&ch=0&cr=0&dr=0&er=0&l
-  r=display_watermark_aigc&cd=0%7C0%7C0%7C0&br=6909&bt=6909&cs=0&ds=12&ft=5QYTUxhhe6BMyqXJLwVJD12Nzj&mime_type=video_mp4&qs=0&rc=OWY8N2ZnM2g3Njg2OGU4NEBpM2U1aW05cnc0NzczND
-  M7M0BiMTEvYC0zX18xMi9jMTFgYSM2YnBiMmRzcWBhLS1kNC9zcw%3D%3D&btag=c0000e00008000&dy_q=1763188487&feature_id=7bed9f9dfbb915a044e5d473759ce9df&l=202511151434466D5091F99E5924
-  7F9CB3
-
-  点击链接即可在浏览器中播放动画视频！静态照片现在变得生动起来了，带有专业的电影感效果。
-```
-
----
-
-![image-20251115143553127](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115143553127.png.png)
-
-![image-20251115143620819](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115143620819.png.png)
 
 **技术特点:**
 
@@ -561,14 +345,6 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 4. Node.js 16+ 环境（图片输出功能）
 5. Playwright 已安装（自动安装）
 
-**生成流程:**
-
-1. **收集信息**：主题关键词、标题文字
-2. **生成底图**：调用 jimeng-mcp-server text_to_image 工具
-3. **构建 HTML**：叠加文字层、响应式样式、描边效果
-4. **输出文件**：保存为独立 HTML 文件
-5. **转换图片**：使用 Playwright 自动转换为 PNG/JPG
-
 **使用示例:**
 
 ```
@@ -577,68 +353,7 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 
 ![image-20251115183718247](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115183718247.png.png)
 
-![image-20251115183746503](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251115183746503.png.png)
-
-**生成参数:**
-
-- 日期：自动获取当前星期和日期（格式：Fri. 11.15）
-- 作者：固定为"O3sky"
-- 模型：推荐使用 jimeng-3.1
-- 尺寸：1536x864（16:9 比例）
-- 采样强度：0.6（平衡创意性和真实性）
-- 字号：5vw（大字体，响应式）
-- 位置：垂直居中（`top: 50%; transform: translateY(-50%);`）
-
-**视觉风格:**
-
-- 主题风格：可爱、圆润、简洁的 3D 插画
-- 质感：类似皮克斯动画或黏土定格动画
-- 色彩：和谐明快，低饱和度渐变背景
-- 构图：右图左文，主体位于右侧 30-40% 区域
-- 留白：左侧 60-70% 干净留白供文字显示
-- 文字样式：
-  - **主标题**：红色（#FF3333）+ 白色描边，8 方向文字阴影
-  - **副标题**：橙黄色（#FFB84D）+ 深棕色描边，单行不折行
-  - **立体感**：多层阴影模拟描边 + 额外立体阴影
-
-**禁止元素:**
-
-- ❌ 任何形式的文字、数字、符号
-- ❌ 霓虹/赛博朋克风格
-- ❌ 暗黑深沉风格
-- ❌ 抽象科技线条
-- ❌ 玻璃质感或写实渲染
-
-**技术特点:**
-
-- 基于 jimeng-mcp-server MCP 协议
-- 返回 4 张可选图片，提供更多选择
-- Playwright 驱动，高性能截图
-- 自动检测内容高度并调整视口
-- 完整页面截图，无截断
-- 响应式设计，支持多设备显示
-- 完全本地化处理，无需上传
-
-**输出对比:**
-
-| 格式 | 文件大小 | 分辨率 | 质量 | 用途 |
-|------|---------|--------|------|------|
-| HTML | 4.5 KB | 响应式 | 最佳 | 网页预览、编辑 |
-| PNG | 4.10 MB | 5120x2916 | 无损 | 高质量发布、打印 |
-| JPEG | 1.44 MB | 5120x2916 | 优秀 | 一般发布、节省空间 |
-
-**版本历史:**
-
-- v3.1.1（2025-11-15）：新增描边卡通字体、垂直居中布局、完整页面截图
-- v3.1.0（2025-11-15）：新增 HTML 转图片功能，集成 Playwright
-- v3.0.0（2025-11-15）：从 jimeng-image-generator 迁移到 jimeng-mcp-server
-- v2.0.0：初始版本，使用 jimeng-image-generator
-
-**技术升级（v2.0.0）：**
-
-- 模型升级：jimeng-4.0 → jimeng-4.5
-- 参数简化：width/height + sample_strength → ratio + resolution
-- 更好的生成效果和稳定性
+![image-20251115183746503](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251115183746503.png.png
 
 ---
 
@@ -684,7 +399,7 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 
 生成的dsl导入dify 平台
 
-![image-20251122214446776](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20251122214446776.png)
+![image-20251122214446776](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251122214446776.png)
 
 **技术特点：**
 
@@ -794,407 +509,6 @@ https://p3-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/bab623359bd9410da0c1f07
 
 ![image-20251119171818824](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119171818824.png)
 
-接下来AI 获取这个技能包api_reference.md 生成接口代码
-
-![image-20251119165401648](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119165401648.png)
-
-我们查看生成的接口代码
-
-```python
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-硅基流动（SiliconFlow）API 文本生成接口
-使用 DeepSeek-V3.2-Exp 模型
-
-基于 SiliconFlow 技能包文档生成
-API 文档: https://docs.siliconflow.cn/cn/api-reference/chat-completions/chat-completions
-"""
-
-import os
-from openai import OpenAI
-
-# ============================================================
-# 配置部分
-# ============================================================
-
-# API 配置
-API_KEY = os.getenv("SILICONFLOW_API_KEY", "YOUR_API_KEY")  # 从环境变量获取或直接填写
-BASE_URL = "https://api.siliconflow.cn/v1"
-MODEL = "deepseek-ai/DeepSeek-V3.2-Exp"  # 使用 DeepSeek-V3.2-Exp 模型
-
-# 初始化客户端
-client = OpenAI(
-    api_key=API_KEY,
-    base_url=BASE_URL
-)
-
-
-# ============================================================
-# 方式一：普通请求（非流式）
-# ============================================================
-
-def chat_completion(
-    messages: list,
-    model: str = MODEL,
-    temperature: float = 0.7,
-    max_tokens: int = 2048,
-    top_p: float = 0.7
-) -> str:
-    """
-    普通对话请求（非流式）
-
-    Args:
-        messages: 对话消息列表
-        model: 模型名称
-        temperature: 温度参数，控制随机性 (0-1)
-        max_tokens: 最大生成 token 数
-        top_p: 核采样参数
-
-    Returns:
-        生成的文本内容
-    """
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            top_p=top_p,
-            stream=False
-        )
-
-        return response.choices[0].message.content
-
-    except Exception as e:
-        print(f"请求错误: {e}")
-        raise
-
-
-# ============================================================
-# 方式二：流式请求（实时输出）
-# ============================================================
-
-def chat_completion_stream(
-    messages: list,
-    model: str = MODEL,
-    temperature: float = 0.7,
-    max_tokens: int = 2048,
-    top_p: float = 0.7
-):
-    """
-    流式对话请求
-
-    Args:
-        messages: 对话消息列表
-        model: 模型名称
-        temperature: 温度参数
-        max_tokens: 最大生成 token 数
-        top_p: 核采样参数
-
-    Yields:
-        生成的文本片段
-    """
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            top_p=top_p,
-            stream=True
-        )
-
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-
-    except Exception as e:
-        print(f"请求错误: {e}")
-        raise
-
-
-# ============================================================
-# 方式三：使用 requests 库直接调用 API
-# ============================================================
-
-def chat_completion_requests(
-    messages: list,
-    model: str = MODEL,
-    stream: bool = False,
-    temperature: float = 0.7,
-    max_tokens: int = 2048
-):
-    """
-    使用 requests 库直接调用 API
-
-    Args:
-        messages: 对话消息列表
-        model: 模型名称
-        stream: 是否启用流式输出
-        temperature: 温度参数
-        max_tokens: 最大生成 token 数
-
-    Returns:
-        生成的文本内容或流式响应
-    """
-    import requests
-
-    url = f"{BASE_URL}/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": model,
-        "messages": messages,
-        "temperature": temperature,
-        "max_tokens": max_tokens,
-        "stream": stream
-    }
-
-    try:
-        if stream:
-            # 流式请求：payload 和 request 都需要设置 stream
-            response = requests.post(url, headers=headers, json=payload, stream=True)
-            response.raise_for_status()
-
-            for line in response.iter_lines():
-                if line:
-                    line = line.decode('utf-8')
-                    if line.startswith('data: '):
-                        data = line[6:]
-                        if data != '[DONE]':
-                            import json
-                            chunk = json.loads(data)
-                            if chunk['choices'][0]['delta'].get('content'):
-                                yield chunk['choices'][0]['delta']['content']
-        else:
-            # 非流式请求
-            response = requests.post(url, headers=headers, json=payload)
-            response.raise_for_status()
-
-            result = response.json()
-            return result['choices'][0]['message']['content']
-
-    except requests.exceptions.RequestException as e:
-        print(f"请求错误: {e}")
-        raise
-
-
-# ============================================================
-# 高级功能：多轮对话
-# ============================================================
-
-class ChatSession:
-    """多轮对话会话管理"""
-
-    def __init__(self, system_prompt: str = None, model: str = MODEL):
-        """
-        初始化对话会话
-
-        Args:
-            system_prompt: 系统提示词
-            model: 模型名称
-        """
-        self.model = model
-        self.messages = []
-
-        if system_prompt:
-            self.messages.append({
-                "role": "system",
-                "content": system_prompt
-            })
-
-    def chat(self, user_input: str, stream: bool = False, **kwargs):
-        """
-        发送消息并获取回复
-
-        Args:
-            user_input: 用户输入
-            stream: 是否使用流式输出
-            **kwargs: 其他参数
-
-        Returns:
-            助手的回复
-        """
-        # 添加用户消息
-        self.messages.append({
-            "role": "user",
-            "content": user_input
-        })
-
-        if stream:
-            # 流式输出
-            full_response = ""
-            for chunk in chat_completion_stream(self.messages, model=self.model, **kwargs):
-                print(chunk, end="", flush=True)
-                full_response += chunk
-            print()  # 换行
-
-            # 保存助手回复
-            self.messages.append({
-                "role": "assistant",
-                "content": full_response
-            })
-
-            return full_response
-        else:
-            # 普通输出
-            response = chat_completion(self.messages, model=self.model, **kwargs)
-
-            # 保存助手回复
-            self.messages.append({
-                "role": "assistant",
-                "content": response
-            })
-
-            return response
-
-    def clear(self):
-        """清空对话历史（保留系统提示词）"""
-        if self.messages and self.messages[0]["role"] == "system":
-            self.messages = [self.messages[0]]
-        else:
-            self.messages = []
-
-    def get_history(self):
-        """获取对话历史"""
-        return self.messages.copy()
-
-
-# ============================================================
-# 使用示例
-# ============================================================
-
-def main():
-    """主函数 - 演示各种使用方式"""
-
-    print("=" * 60)
-    print("硅基流动 API 文本生成示例")
-    print(f"模型: {MODEL}")
-    print("=" * 60)
-
-    # 示例消息
-    messages = [
-        {
-            "role": "system",
-            "content": "你是一个有帮助的 AI 助手。"
-        },
-        {
-            "role": "user",
-            "content": "请用简洁的语言解释什么是机器学习？"
-        }
-    ]
-
-    # --------------------------------------------------------
-    # 示例 1: 普通请求
-    # --------------------------------------------------------
-    print("\n【示例 1】普通请求（非流式）:")
-    print("-" * 40)
-
-    try:
-        response = chat_completion(messages)
-        print(response)
-    except Exception as e:
-        print(f"错误: {e}")
-
-    # --------------------------------------------------------
-    # 示例 2: 流式请求
-    # --------------------------------------------------------
-    print("\n【示例 2】流式请求:")
-    print("-" * 40)
-
-    try:
-        for chunk in chat_completion_stream(messages):
-            print(chunk, end="", flush=True)
-        print()  # 换行
-    except Exception as e:
-        print(f"错误: {e}")
-
-    # --------------------------------------------------------
-    # 示例 3: 多轮对话
-    # --------------------------------------------------------
-    print("\n【示例 3】多轮对话:")
-    print("-" * 40)
-
-    try:
-        # 创建对话会话
-        session = ChatSession(
-            system_prompt="你是一个专业的 Python 编程助手。",
-            model=MODEL
-        )
-
-        # 第一轮对话
-        print("用户: 什么是列表推导式？")
-        print("助手: ", end="")
-        session.chat("什么是列表推导式？", stream=True)
-
-        # 第二轮对话（上下文相关）
-        print("\n用户: 能给我一个例子吗？")
-        print("助手: ", end="")
-        session.chat("能给我一个例子吗？", stream=True)
-
-    except Exception as e:
-        print(f"错误: {e}")
-
-    print("\n" + "=" * 60)
-    print("示例完成")
-    print("=" * 60)
-
-
-# ============================================================
-# 快速使用函数
-# ============================================================
-
-def quick_chat(prompt: str, stream: bool = True) -> str:
-    """
-    快速对话函数
-
-    Args:
-        prompt: 用户输入
-        stream: 是否使用流式输出
-
-    Returns:
-        助手的回复
-    """
-    messages = [
-        {"role": "user", "content": prompt}
-    ]
-
-    if stream:
-        response = ""
-        for chunk in chat_completion_stream(messages):
-            print(chunk, end="", flush=True)
-            response += chunk
-        print()
-        return response
-    else:
-        return chat_completion(messages)
-
-
-if __name__ == "__main__":
-    # 检查 API Key
-    if API_KEY == "YOUR_API_KEY":
-        print("⚠️  请先设置 API Key!")
-        print("")
-        print("方式 1: 设置环境变量")
-        print("  export SILICONFLOW_API_KEY='your-api-key'")
-        print("")
-        print("方式 2: 直接修改代码中的 API_KEY 变量")
-        print("")
-        print("获取 API Key: https://cloud.siliconflow.cn/account/ak")
-        exit(1)
-
-    main()
-```
-
-我们填入API key让它测试一下 
-
-![image-20251119165745083](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251119165745083.png)
-
 **技术特点：**
 
 - 基于官方文档自动生成
@@ -1202,7 +516,490 @@ if __name__ == "__main__":
 - 支持多种编程语言
 - 涵盖从入门到高级的所有内容
 
+---
+
+### 📖 GitHub README Generator
+
+**核心功能：**
+
+- ✅ 自动生成标准的 GitHub README.md 文档
+- ✅ 支持 6 种项目模板（basic/full/library/webapp/cli/api）
+- ✅ 交互式生成和基于现有项目自动生成
+- ✅ 自动识别项目类型和技术栈
+- ✅ 生成 Badge 和 Star History
+- ✅ 包含作者联系和打赏信息
+- ✅ 生成常见问题 FAQ
+- ✅ 支持中英文双语
+
+**适用场景：**
+
+- 新项目快速创建 README
+- 现有项目文档规范化
+- 开源项目文档优化
+- 学习标准文档结构
+
+**使用示例：**
+
+```
+请使用 full 模板为我的 Vue 项目生成 README
+
+项目信息：
+- 名称：vue-admin
+- 简介：一个现代化的 Vue 后台管理系统
+- 技术栈：Vue 3, Vite, Element Plus, Pinia
+- 功能：权限管理、动态路由、图表统计
+```
+
+**可用模板：**
+
+| 模板 | 说明 | 适用场景 |
+|------|------|----------|
+| basic | 基础模板 | 所有项目 |
+| full | 完整模板（包含所有章节） | 中大型项目 |
+| minimal | 极简模板 | 小型工具 |
+| library | 库/SDK 专用模板 | npm 包、Go 库等 |
+| webapp | Web 应用模板 | 前后端项目 |
+| cli | CLI 工具模板 | 命令行工具 |
+| api | API 服务模板 | REST API 服务 |
+
+**技术特点：**
+
+- 支持交互式引导生成
+- 自动分析项目结构和技术栈
+- 根据项目类型调整文档结构
+- 包含完整的最佳实践指南
+- 提供多种模板示例参考
+
+**版本历史：**
+
+- v1.0.0（2026-01-23）：初始版本，支持 6 种项目模板
+
+---
+
+## 技术栈
+
+| 技术 | 版本 | 用途 | 官网 |
+|------|------|------|------|
+| Python | 3.7+ | 主要开发语言 | https://www.python.org |
+| Node.js | 16+ | 前端工具和脚本 | https://nodejs.org |
+| Markdown | - | 文档编写 | https://www.markdownguide.org |
+| MCP | 1.0 | 模型上下文协议 | https://modelcontextprotocol.io |
+| pandas | Latest | Excel 数据处理 | https://pandas.pydata.org |
+| openpyxl | Latest | Excel 文件操作 | https://openpyxl.readthedocs.io |
+| python-pptx | Latest | PPT 生成 | https://python-pptx.readthedocs.io |
+| Playwright | Latest | 浏览器自动化 | https://playwright.dev |
+
+### 技术架构
+
+本项目采用模块化架构，每个 Skill 独立运作，通过 Claude Code 的技能激活机制自动加载：
+
+```
+skills_collection/
+├── skills/           # 各个独立技能模块
+│   ├── excel-report-generator/
+│   ├── ppt-generator-skill/
+│   ├── github-trending/
+│   ├── xiaohuihui-tech-article/
+│   ├── jimeng_mcp_skill/
+│   ├── mp-cover-generator/
+│   ├── dify-dsl-generator/
+│   ├── xiaohuihui-dify-tech-article/
+│   ├── siliconflow-api-skills/
+│   └── github-readme-generator/
+└── README.md         # 项目总文档
+```
+
+---
+
+## 项目结构
+
+```
+skills_collection/
+├── github-trending/              # GitHub Trending 追踪技能
+│   ├── Skill.md
+│   └── fetch_trending.py
+├── excel-report-generator/       # Excel 报表生成技能
+│   ├── Skill.md
+│   └── excel_generator.py
+├── xiaohuihui-tech-article/      # 技术文章生成技能
+│   ├── Skill.md
+│   ├── cos_utils.py
+│   └── templates/
+├── jimeng_mcp_skill/             # 即梦 AI 图像视频生成技能
+│   ├── Skill.md
+│   └── jimeng_curl.txt
+├── mp-cover-generator/           # 公众号封面生成技能
+│   ├── Skill.md
+│   ├── generate_cover.py
+│   └── node_modules/
+├── dify-dsl-generator/           # Dify DSL 生成技能
+│   ├── Skill.md
+│   ├── references/
+│   └── examples/
+├── xiaohuihui-dify-tech-article/ # Dify 案例文章生成技能
+│   ├── Skill.md
+│   └── templates/
+├── siliconflow-api-skills/       # 硅基流动 API 文档技能
+│   ├── Skill.md
+│   └── references/
+├── ppt-generator-skill/          # PPT 生成技能
+│   ├── Skill.md
+│   └── ppt_generator.py
+├── github-readme-generator/      # GitHub README 生成技能
+│   ├── Skill.md
+│   ├── templates/               # 各种项目模板
+│   │   ├── basic.md
+│   │   ├── full.md
+│   │   ├── library.md
+│   │   ├── webapp.md
+│   │   ├── cli.md
+│   │   └── api.md
+│   ├── examples/                # 示例 README
+│   └── README.md
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 安装说明
+
+### 环境要求
+
+- Claude Code v2.0 及以上版本
+- Python 3.7+（部分技能需要）
+- Node.js 16+（部分技能需要）
+
+### 安装步骤
+
+```bash
+# 方式一：安装单个 Skill
+# Linux/Mac
+cp -r skill-name ~/.claude/skills/
+
+# Windows 手动复制
+C:\Users\xxx\.claude\skills\skill-name
+
+# 方式二：克隆整个项目
+git clone https://github.com/wwwzhouhui/skills_collection.git
+cd skills_collection
+
+# 批量安装所有 Skills
+cp -r */ ~/.claude/skills/
+```
+
+### 配置说明
+
+部分技能需要配置环境变量：
+
+```bash
+# 腾讯云 COS（xiaohuihui-tech-article 需要）
+export SECRET_ID="your-secret-id"
+export SECRET_KEY="your-secret-key"
+export COS_BUCKET="your-bucket"
+export COS_REGION="your-region"
+
+# 即梦 API（jimeng_mcp_skill、mp-cover-generator 需要）
+export JIMENG_API_KEY="your-api-key"
+
+# GitHub Token（github-trending 可选）
+export GITHUB_TOKEN="your-github-token"
+
+# 企业微信 Webhook（github-trending 可选）
+export WEIXIN_WEBHOOK="your-webhook-url"
+```
+
+---
+
+## 使用说明
+
+### 快速开始
+
+1. 将 Skill 文件夹复制到 `~/.claude/skills/` 目录
+2. 在 Claude Code 中输入相关关键词
+3. Claude 会自动激活对应的 Skill
+
+### 使用示例
+
+```
+# Excel 报表生成
+"请基于上面的数据帮我生成图表统计，比如饼状图、柱状图、条形图等"
+
+# PPT 生成
+"请使用 ppt-generator-skill 生成一个年度总结 PPT"
+
+# GitHub Trending
+"请帮我使用 github-trending 获取今天最热门的 github 开源项目"
+
+# 技术文章生成
+"请使用 xiaohuihui-tech-article skill 为这个项目生成公众号文章"
+
+# README 生成
+"请使用 github-readme-generator full 模板为我的项目生成 README"
+```
+
+### 高级用法
+
+- **组合使用**: 多个 Skill 可以组合使用，如先用 github-trending 获取项目，再用 xiaohuihui-tech-article 生成文章
+- **自定义模板**: 每个 Skill 的模板都可以根据需求自定义修改
+- **批量处理**: 部分技能支持批量处理多个文件或项目
+
+---
+
+## 文档地址
+
+- [飞书文档](https://aqma351r01f.feishu.cn/wiki/HF5FwMDQkiHoCokvbQAcZLu3nAg?table=tbleOWb4WgXcxiHK&view=vewGwwbpzl)
+- [GitHub 仓库](https://github.com/wwwzhouhui/skills_collection)
+
+![image-20241115093319205](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20241115093319205.png)
+
+---
+
+## 开发指南
+
+### 本地开发
+
+```bash
+# 克隆项目
+git clone https://github.com/wwwzhouhui/skills_collection.git
+cd skills_collection
+
+# 创建新的 Skill 文件夹
+mkdir my-new-skill
+cd my-new-skill
+
+# 创建 Skill.md 文件
+touch Skill.md
+```
+
+**Skill.md 基本结构：**
+
+```markdown
+---
+name: your-skill-name
+description: Skill 的简短描述
+version: 1.0.0
+author: your-name
+---
+
+# Your Skill Name
+
+详细的功能说明和使用文档...
+```
+
+### 构建部署
+
+Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Code 的 skills 目录即可使用。
+
+### 贡献指南
+
+欢迎提交你的 Claude Code Skills：
+
+1. Fork 本项目
+2. 创建你的 Skill 分支 (`git checkout -b feature/new-skill`)
+3. 提交你的更改 (`git commit -am 'Add new skill'`)
+4. 推送到分支 (`git push origin feature/new-skill`)
+5. 创建 Pull Request
+
+---
+
+## 常见问题
+
+<details>
+<summary>如何知道 Skill 是否已激活？</summary>
+
+当 Claude 识别到相关关键词时，会自动激活对应的 Skill。你可以通过 Claude 的回复内容判断，如果回复包含 Skill 中定义的特定结构或风格，说明已成功激活。
+
+</details>
+
+<details>
+<summary>Skill 不生效怎么办？</summary>
+
+1. 确认 Skill 文件夹位置正确（~/.claude/skills/）
+2. 检查 Skill.md 文件格式是否正确
+3. 尝试重启 Claude Code
+4. 使用更明确的触发关键词
+
+</details>
+
+<details>
+<summary>如何自定义 Skill？</summary>
+
+你可以直接编辑 Skill.md 文件，修改功能说明、触发关键词、输出格式等。修改后 Claude 会在下次激活时使用新的配置。
+
+</details>
+
+<details>
+<summary>Skill 冲突怎么办？</summary>
+
+如果多个 Skill 的触发关键词重叠，可以：
+1. 使用更具体的关键词
+2. 在对话中明确指定要使用的 Skill 名称
+3. 调整 Skill.md 中的描述和触发条件
+
+</details>
+
+<details>
+<summary>Excel 生成的文件打不开？</summary>
+
+1. 确认安装了正确版本的依赖（pandas、openpyxl）
+2. 检查文件扩展名是否为 .xlsx
+3. 验证数据格式是否正确
+4. 查看错误日志排查具体问题
+
+</details>
+
+<details>
+<summary>技术文章风格不符合预期？</summary>
+
+1. 在提示中明确指定"使用小灰灰公众号风格"
+2. 提供更详细的项目信息和技术栈
+3. 可以要求 Claude 调整特定段落的风格
+4. 参考 Skill.md 中的标准模板
+
+</details>
+
+<details>
+<summary>jimeng 图像/视频生成失败？</summary>
+
+1. 确认 jimeng-free-api-all Docker 容器正在运行
+2. 检查 JIMENG_API_KEY 是否正确配置
+3. 验证后端服务可访问：curl http://localhost:8001
+4. 确保有足够的 API 积分（免费层每天 66 积分）
+5. 图像生成需要 10-20 秒，视频生成需要 30-60 秒，请耐心等待
+
+</details>
+
+<details>
+<summary>公众号封面生成器无法生成图片？</summary>
+
+1. 确认 jimeng-free-api-all Docker 容器正在运行
+2. 检查 JIMENG_API_KEY 是否正确配置
+3. 确保使用 jimeng-3.1 模型（在生成时指定）
+4. 图像生成需要 10-20 秒，请耐心等待
+5. 检查后端服务可访问：curl http://localhost:8001
+6. 验证有足够的 API 积分（免费层每天 66 积分）
+7. 如果 HTML 转图片失败，确认已安装 Node.js 16+ 和 Playwright
+
+</details>
+
+<details>
+<summary>Dify DSL 生成的工作流无法导入?</summary>
+
+1. 检查 YAML 格式是否正确（使用在线 YAML 验证器）
+2. 确认 Dify 版本是否兼容（推荐 0.3.0+）
+3. 检查节点 ID 是否唯一
+4. 验证变量引用格式是否正确（{{#节点ID.变量#}}）
+5. 确保所有必填字段完整
+6. 查看 Dify 导入错误提示并修复对应问题
+
+</details>
+
+<details>
+<summary>PPT 生成器生成的文件打不开?</summary>
+
+1. 确认安装了 python-pptx 库：pip install python-pptx
+2. 检查 Python 版本是否为 3.7+
+3. 确认文件扩展名为 .pptx
+4. 验证 JSON 配置文件格式是否正确
+5. 使用 PowerPoint 或 WPS 打开文件查看具体错误
+
+</details>
+
+---
+
+## 技术交流群
+
+欢迎加入技术交流群，分享你的 Skills 和使用心得：
+
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235736120.png)
+
+---
+
+## 作者联系
+
+- **作者**: wwwzhouhui
+- **微信**: laohaibao2025
+- **邮箱**: 75271002@qq.com
+
+![微信二维码](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260123_095617_com.tencent.mm.jpg)
+
+---
+
+## 打赏
+
+如果这个项目对你有帮助，欢迎请我喝杯咖啡 ☕
+
+**微信支付**
+
+![微信支付](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20250914152855543-17691448865182.png)
+
+---
+
+## 项目统计
+
+### 技能统计
+
+- **总技能数**: 10
+- **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
+- **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
+- **AI 多模态**: 1 (jimeng_mcp_skill)
+- **API 文档**: 1 (siliconflow-api-skills)
+- **工作流工具**: 1 (dify-dsl-generator)
+
+### 最新版本动态
+
+- **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
+- **github-trending**: v1.0.0 (2026-01-22) - 初始版本
+- **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
+- **jimeng_mcp_skill**: v2.0.0 (2025-12-14) - 升级至 jimeng-4.5 模型，参数系统重构
+
+### 开发语言
+
+- Python: 4
+- Markdown: 3
+- MCP: 1
+- YAML/DSL: 1
+
+### 维护状态
+
+- ✅ 活跃维护中
+- 🔄 持续更新
+- 📚 文档完善
+
+---
+
+## 路线图
+
+### 计划中的 Skills
+
+- [ ] **code-reviewer**: 代码审查助手
+- [ ] **api-doc-generator**: API 文档生成器
+- [ ] **test-case-generator**: 测试用例生成器
+- [ ] **database-designer**: 数据库设计助手
+- [ ] **deployment-helper**: 部署配置助手
+
+### 优化计划
+
+- [ ] 添加更多 Excel 报表模板
+- [ ] 扩展技术文章支持的平台风格
+- [ ] 提供交互式配置工具
+- [ ] 增加中英文双语支持
+- [ ] 扩展 Dify DSL 生成器支持更多节点类型
+- [ ] 优化 Dify 案例文章的图片自动生成功能
+- [ ] 添加 Dify 工作流 DSL 校验工具
+
+---
+
 ## 更新说明
+
+### 2026年1月23日 - version 0.0.11
+
+- ✅ 新增 github-readme-generator Skill
+- ✅ 专业的 GitHub 项目 README.md 生成器
+- ✅ 支持 6 种项目模板（basic/full/library/webapp/cli/api）
+- ✅ 交互式生成和基于现有项目自动生成
+- ✅ 自动识别项目类型和技术栈
 
 ### 2026年1月22日 - version 0.0.10
 
@@ -1291,44 +1088,7 @@ if __name__ == "__main__":
 - ✅ 实现标准四段式结构
 - ✅ 支持口语化技术写作
 
-## 技术文档地址（飞书）
-
-https://aqma351r01f.feishu.cn/wiki/HF5FwMDQkiHoCokvbQAcZLu3nAg?table=tbleOWb4WgXcxiHK&view=vewGwwbpzl
-
-![image-20241115093319205](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20241115093319205.png)
-
-## 开发指南
-
-### 创建新的 Skill
-
-1. 在项目根目录创建新的 Skill 文件夹
-2. 创建 `Skill.md` 文件，定义 Skill 的元数据和功能
-3. 添加示例代码和文档
-4. 测试 Skill 在 Claude Code 中的表现
-
-**Skill.md 基本结构：**
-
-```markdown
 ---
-name: your-skill-name
-description: Skill 的简短描述
-version: 1.0.0
----
-
-# Your Skill Name
-
-详细的功能说明和使用文档...
-```
-
-### 贡献 Skills
-
-欢迎提交你的 Claude Code Skills：
-
-1. Fork 本项目
-2. 创建你的 Skill 分支 (`git checkout -b feature/new-skill`)
-3. 提交你的更改 (`git commit -am 'Add new skill'`)
-4. 推送到分支 (`git push origin feature/new-skill`)
-5. 创建 Pull Request
 
 ## 🎉 致谢
 
@@ -1354,296 +1114,28 @@ version: 1.0.0
 
    字节跳动旗下的多模态 AI 生成平台，提供图像和视频生成能力。
 
+---
+
 ## 问题反馈
 
 如有问题，请在 GitHub Issue 中提交，在提交问题之前，请先查阅以往的 issue 是否能解决你的问题。
 
-## 常见问题汇总
-
-<details>
-<summary>如何知道 Skill 是否已激活？</summary>
-当 Claude 识别到相关关键词时，会自动激活对应的 Skill。你可以通过 Claude 的回复内容判断，如果回复包含 Skill 中定义的特定结构或风格，说明已成功激活。
-</details>
-
-
-<details>
-<summary>Skill 不生效怎么办？</summary>
-1. 确认 Skill 文件夹位置正确（~/.claude/skills/）<br>
-2. 检查 Skill.md 文件格式是否正确<br>
-3. 尝试重启 Claude Code<br>
-4. 使用更明确的触发关键词
-</details>
-
-
-<details>
-<summary>如何自定义 Skill？</summary>
-你可以直接编辑 Skill.md 文件，修改功能说明、触发关键词、输出格式等。修改后 Claude 会在下次激活时使用新的配置。
-</details>
-
-
-<details>
-<summary>Skill 冲突怎么办？</summary>
-如果多个 Skill 的触发关键词重叠，可以：<br>
-1. 使用更具体的关键词<br>
-2. 在对话中明确指定要使用的 Skill 名称<br>
-3. 调整 Skill.md 中的描述和触发条件
-</details>
-
-
-<details>
-<summary>Excel 生成的文件打不开？</summary>
-1. 确认安装了正确版本的依赖（pandas、openpyxl）<br>
-2. 检查文件扩展名是否为 .xlsx<br>
-3. 验证数据格式是否正确<br>
-4. 查看错误日志排查具体问题
-</details>
-
-
-<details>
-<summary>技术文章风格不符合预期？</summary>
-1. 在提示中明确指定"使用小灰灰公众号风格"<br>
-2. 提供更详细的项目信息和技术栈<br>
-3. 可以要求 Claude 调整特定段落的风格<br>
-4. 参考 Skill.md 中的标准模板
-</details>
-
-<details>
-<summary>技术文章自动配图功能如何使用（v2.1.0）？</summary>
-1. 确保已配置腾讯云COS环境变量（SECRET_ID、SECRET_KEY、COS_BUCKET、COS_REGION）<br>
-2. 在文章中插入图片占位符，如：`[配图1：工作流全局图]`、`[配图2：节点配置]`等<br>
-3. 生成文章时，Skill会自动调用即梦AI生成配图并上传至COS<br>
-4. 自动将文章中的占位符替换为真实的图片URL<br>
-5. 支持的图片类型：工作流截图、效果演示图、代码配置图等
-</details>
-
-<details>
-<summary>自动配图上传COS失败怎么办？</summary>
-1. 检查腾讯云COS环境变量是否正确配置<br>
-2. 验证COS存储桶权限是否开放<br>
-3. 确认网络连接正常，能够访问腾讯云COS服务<br>
-4. 检查COS存储桶所在地域是否配置正确<br>
-5. 查看生成日志中的具体错误信息
-</details>
-
-<details>
-<summary>jimeng 图像/视频生成失败？</summary>
-1. 确认 jimeng-free-api-all Docker 容器正在运行<br>
-2. 检查 JIMENG_API_KEY 是否正确配置<br>
-3. 验证后端服务可访问：curl http://localhost:8001<br>
-4. 确保有足够的 API 积分（免费层每天 66 积分）<br>
-5. 图像生成需要 10-20 秒，视频生成需要 30-60 秒，请耐心等待
-</details>
-
-<details>
-<summary>jimeng-4.5 模型的新参数如何使用（v2.0.0）？</summary>
-1. **新参数系统**：ratio（宽高比）+ resolution（分辨率）<br>
-2. **旧参数**：width/height + sample_strength 已废弃<br>
-3. **ratio 示例**：16:9、4:3、1:1、3:4、9:16<br>
-4. **resolution 示例**：360p、480p、720p、1080p<br>
-5. **参数简化**：无需手动计算宽高，更直观易用<br>
-6. **生成效果**：jimeng-4.5 模型相比 4.0 有显著提升
-</details>
-
-<details>
-<summary>如何获取即梦 API 密钥？</summary>
-1. 访问 https://jimeng.jianying.com/ 并登录<br>
-2. 按 F12 打开浏览器开发者工具<br>
-3. 前往 Application > Cookies<br>
-4. 找到并复制 sessionid 值<br>
-5. 将此值配置为 JIMENG_API_KEY 环境变量
-</details>
-
-<details>
-<summary>公众号封面生成器无法生成图片？</summary>
-1. 确认 jimeng-free-api-all Docker 容器正在运行<br>
-2. 检查 JIMENG_API_KEY 是否正确配置<br>
-3. 确保使用 jimeng-3.1 模型（在生成时指定）<br>
-4. 图像生成需要 10-20 秒，请耐心等待<br>
-5. 检查后端服务可访问：curl http://localhost:8001<br>
-6. 验证有足够的 API 积分（免费层每天 66 积分）<br>
-7. 如果 HTML 转图片失败，确认已安装 Node.js 16+ 和 Playwright
-</details>
-
-<details>
-<summary>生成的封面风格不符合预期怎么办？</summary>
-1. 在主题关键词中更明确地描述期望的元素<br>
-2. 尝试调整 sample_strength 参数（0.3-0.7 之间）<br>
-3. jimeng-mcp-server 返回 4 张图片，可以选择最合适的一张<br>
-4. 确认提示词中包含了风格要求（可爱、圆润、3D 插画）<br>
-5. 避免使用会触发禁止风格的词汇（霓虹、赛博朋克、暗黑等）
-</details>
-
-<details>
-<summary>如何自定义封面的文字内容？</summary>
-1. 标题：在请求时指定，会自动智能换行<br>
-2. 日期：自动获取当前日期，格式为英文星期缩写（如 Fri. 11.15）<br>
-3. 作者：目前固定为"O3sky"，如需修改需编辑 SKILL.md 中的规范<br>
-4. 文字样式：描边卡通字体，主标题红色 + 白色描边，副标题橙黄色 + 深棕色描边<br>
-5. 字体位置：垂直居中（`top: 50%; transform: translateY(-50%);`）
-</details>
-
-<details>
-<summary>HTML 转图片失败怎么办？</summary>
-1. 确认 Node.js 版本：node --version（需要 16+）<br>
-2. 安装依赖：cd skill目录 && npm install<br>
-3. 安装 Chromium：npx playwright install chromium<br>
-4. 检查 HTML 文件路径是否正确<br>
-5. 增加等待时间：--wait 3000<br>
-6. 查看详细错误信息并根据提示修复
-</details>
-
-<details>
-<summary>Dify DSL 生成的工作流无法导入?</summary>
-1. 检查 YAML 格式是否正确（使用在线 YAML 验证器）<br>
-2. 确认 Dify 版本是否兼容（推荐 0.3.0+）<br>
-3. 检查节点 ID 是否唯一<br>
-4. 验证变量引用格式是否正确（{{#节点ID.变量#}}）<br>
-5. 确保所有必填字段完整<br>
-6. 查看 Dify 导入错误提示并修复对应问题
-</details>
-
-<details>
-<summary>生成的 Dify DSL 节点连接有问题?</summary>
-1. 检查 edges 数组中的连接关系是否完整<br>
-2. 验证 sourceType 和 targetType 是否与节点实际类型匹配<br>
-3. 确认每个节点（除 start）都有入边<br>
-4. 检查是否有孤立节点未连接<br>
-5. 验证最终是否连接到 answer 或其他输出节点
-</details>
-
-<details>
-<summary>Dify 案例文章图片如何上传到 COS?</summary>
-1. 在项目根目录创建 .env 文件<br>
-2. 配置腾讯云 COS 信息（SECRET_ID、SECRET_KEY、BUCKET、REGION）<br>
-3. 安装依赖：pip install -r scripts/requirements.txt<br>
-4. 使用命令上传：python scripts/upload_to_cos.py /path/to/image.png<br>
-5. 复制返回的 URL 用于文章中
-</details>
-
-<details>
-<summary>Dify 案例文章质量不达标怎么办?</summary>
-1. 检查总字数是否 > 1800字<br>
-2. 确认工作流截图 >= 10个<br>
-3. 验证节点配置说明 >= 5个<br>
-4. 检查是否包含代码块 >= 3个<br>
-5. 确认总结是否单段 300-400字且未分段<br>
-6. 检查是否包含固定结束语
-</details>
-
-<details>
-<summary>如何自定义 Dify DSL 生成模板?</summary>
-编辑 dify-dsl-generator/SKILL.md 文件，修改节点模板、提示词模板等。可以参考 references/dsl-structure.md 了解完整的 DSL 结构规范。
-</details>
-
-<details>
-<summary>PPT 生成器生成的文件打不开?</summary>
-1. 确认安装了 python-pptx 库：pip install python-pptx<br>
-2. 检查 Python 版本是否为 3.7+<br>
-3. 确认文件扩展名为 .pptx<br>
-4. 验证 JSON 配置文件格式是否正确<br>
-5. 使用 PowerPoint 或 WPS 打开文件查看具体错误
-</details>
-
-<details>
-<summary>PPT 生成的样式与预期不符?</summary>
-1. 确认使用了正确的主题参数（暖色调、商务简约、莫兰迪色系）<br>
-2. 检查配置文件中的 4 个章节是否完整<br>
-3. 验证每页内容要点是否不超过 4 个<br>
-4. 确保文本描述控制在 50-100 字以内<br>
-5. 可在生成后使用 PowerPoint 进行微调
-</details>
-
-<details>
-<summary>PPT 字体显示不正确?</summary>
-1. 推荐安装字体：阿里巴巴普惠体 2.0、HarmonyOS Sans SC、MiSans Heavy、思源宋体 CN<br>
-2. 如果没有这些字体，系统会使用默认字体替代<br>
-3. 可在 PowerPoint 中手动替换为已安装的字体<br>
-4. 编辑 ppt_generator.py 中的字体配置自定义使用的字体
-</details>
-
-<details>
-<summary>如何自定义 PPT 主题颜色?</summary>
-编辑 ppt_generator.py 中的 COLOR_SCHEMES 字典，添加或修改主题颜色配置。每个主题包含 primary、secondary、accent、text、background 五种颜色。
-</details>
-
-
-## 技术交流群
-
-欢迎加入技术交流群，分享你的 Skills 和使用心得：
-
-![image-20260122235736120](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260122235736120.png)
-
-## 打赏
-
-如果这个项目对你有帮助，欢迎请我喝杯咖啡 ☕
-
-支付宝
-
-![image-20250914152823776](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20250914152823776.png)
-
-微信
-
-![image-20250914152855543](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20250914152855543.png)
-
-## 📊 项目统计
-
-### 技能统计
-
-- **总技能数**: 9
-- **自动化工具**: 3 (excel-report-generator, ppt-generator-skill, github-trending)
-- **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
-- **AI 多模态**: 1 (jimeng_mcp_skill)
-- **API 文档**: 1 (siliconflow-api-skills)
-- **工作流工具**: 1 (dify-dsl-generator)
-
-### 最新版本动态
-
-- **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
-- **jimeng_mcp_skill**: v2.0.0 (2025-12-14) - 升级至 jimeng-4.5 模型，参数系统重构
-
-### 开发语言
-
-- Python: 4
-- Markdown: 3
-- MCP: 1
-- YAML/DSL: 1
-
-### 维护状态
-
-- ✅ 活跃维护中
-- 🔄 持续更新
-- 📚 文档完善
-
-## 路线图
-
-### 计划中的 Skills
-
-- [ ] **code-reviewer**: 代码审查助手
-- [ ] **api-doc-generator**: API 文档生成器
-- [ ] **test-case-generator**: 测试用例生成器
-- [ ] **database-designer**: 数据库设计助手
-- [ ] **deployment-helper**: 部署配置助手
-
-### 优化计划
-
-- [ ] 添加更多 Excel 报表模板
-- [ ] 扩展技术文章支持的平台风格
-- [ ] 提供交互式配置工具
-- [ ] 增加中英文双语支持
-- [ ] 扩展 Dify DSL 生成器支持更多节点类型
-- [ ] 优化 Dify 案例文章的图片自动生成功能
-- [ ] 添加 Dify 工作流 DSL 校验工具
+---
 
 ## License
 
 MIT License
 
+---
+
 ## Star History
 
 如果觉得项目不错，欢迎点个 Star ⭐
 
-![claude-skills](https://api.star-history.com/svg?repos=yourusername/claude-skills&type=Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wwwzhouhui/skills_collection&type=Date)](https://star-history.com/#wwwzhouhui/skills_collection&Date)
 
 ---
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
+
+**文档生成时间**: 2026年1月23日
