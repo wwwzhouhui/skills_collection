@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.11-green.svg)
-![Skills](https://img.shields.io/badge/skills-10-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.12-green.svg)
+![Skills](https://img.shields.io/badge/skills-11-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -18,7 +18,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
-- **AI 多模态**: 即梦 AI 图像和视频生成
+- **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
 
@@ -33,6 +33,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| seedance-video-creator | Seedance 2.0 分镜视频创作工具，融合专业分镜提示词生成与即梦 API 视频生成，支持多图参考、5 步引导、6 套分镜模板，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月10日 | wwwzhouhui | 1.0.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
@@ -45,6 +46,64 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator  | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年1月12日  | wwwzhouhui | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎬 Seedance Video Creator (Seedance 2.0 分镜视频创作)
+
+**核心功能：**
+
+- ✅ 5 步分镜引导流程（理解想法→挖掘细节→构建分镜→生成提示词→优化确认）
+- ✅ 6 套分镜模板（叙事/产品/角色/风景/延长/编辑）
+- ✅ 多模态支持：多图参考（最多9张）、角色一致性、运镜复刻
+- ✅ 一键调用即梦 Seedance 2.0 API 生成视频
+- ✅ 自动下载生成的视频到本地
+- ✅ 三种工作模式：完整引导/快速生成/纯提示词
+- ✅ 支持纯文本和多图参考两种生成方式
+- ✅ 镜头语言/氛围关键词速查表
+
+**适用场景：**
+
+- 短视频创作（抖音/快手/视频号）
+- 产品宣传视频制作
+- 创意分镜脚本编写
+- AI 视频生成效果探索
+
+**前置条件：**
+
+1. jimeng-free-api-all Docker 容器运行（端口 8000）
+2. 即梦平台 SessionID（从网站 Cookies 获取）
+
+**使用示例：**
+
+```
+帮我生成一个女孩在海边跳舞的视频
+→ 自动引导分镜 → 生成提示词 → 调用 API → 下载视频
+```
+
+```bash
+# 独立脚本使用
+./scripts/generate_video.sh \
+  --session-id "your_sessionid" \
+  --prompt "@1 和 @2 两人跳舞" \
+  --files dancer1.jpg dancer2.jpg \
+  --ratio 4:3 --duration 10
+```
+
+**视频参数：**
+
+| 参数 | 可选值 | 默认值 |
+|------|--------|--------|
+| model | seedance-2.0, seedance-2.0-pro | seedance-2.0 |
+| ratio | 1:1, 4:3, 3:4, 16:9, 9:16 | 16:9 |
+| resolution | 480p, 720p, 1080p | 720p |
+| duration | 4, 5, 10 秒 | 10 |
+
+**技术特点：**
+
+- 融合 [elementsix-skills](https://github.com/elementsix/elementsix-skills) 分镜引导 + [jimeng-free-api-all](https://github.com/wwwzhouhui/jimeng-free-api-all) 视频生成
+- API 同步阻塞调用，自动轮询等待生成完成
+- 提供独立 Bash 脚本，支持 CI/CD 集成
+
+---
 
 ### 📊 PPT Generator (PPT 生成器)
 
@@ -605,7 +664,8 @@ skills_collection/
 │   ├── dify-dsl-generator/
 │   ├── xiaohuihui-dify-tech-article/
 │   ├── siliconflow-api-skills/
-│   └── github-readme-generator/
+│   ├── github-readme-generator/
+│   └── seedance-video-creator/
 └── README.md         # 项目总文档
 ```
 
@@ -656,6 +716,15 @@ skills_collection/
 │   │   └── api.md
 │   ├── examples/                # 示例 README
 │   └── README.md
+├── seedance-video-creator/      # Seedance 2.0 分镜视频创作技能
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── templates/               # 分镜模板
+│   │   └── storyboard-template.md
+│   ├── examples/                # 示例提示词
+│   │   └── example-prompts.md
+│   └── scripts/                 # 视频生成脚本
+│       └── generate_video.sh
 ├── .gitignore
 └── README.md
 ```
@@ -699,8 +768,11 @@ export SECRET_KEY="your-secret-key"
 export COS_BUCKET="your-bucket"
 export COS_REGION="your-region"
 
-# 即梦 API（jimeng_mcp_skill、mp-cover-generator 需要）
+# 即梦 API / Seedance 2.0（jimeng_mcp_skill、mp-cover-generator、seedance-video-creator 需要）
 export JIMENG_API_KEY="your-api-key"
+
+# 即梦 SessionID（seedance-video-creator 需要）
+export JIMENG_SESSION_ID="your-sessionid"
 
 # GitHub Token（github-trending 可选）
 export GITHUB_TOKEN="your-github-token"
@@ -940,15 +1012,16 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 10
+- **总技能数**: 11
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
-- **AI 多模态**: 1 (jimeng_mcp_skill)
+- **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
 
 ### 最新版本动态
 
+- **seedance-video-creator**: v1.0.0 (2026-02-10) - 初始版本，融合分镜提示词生成与 Seedance 2.0 视频生成
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
 - **github-trending**: v1.0.0 (2026-01-22) - 初始版本
 - **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
@@ -960,6 +1033,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
+- Bash/Shell: 1
 
 ### 维护状态
 
@@ -992,6 +1066,16 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月10日 - version 0.0.12
+
+- ✅ 新增 seedance-video-creator Skill
+- ✅ 融合 Seedance 2.0 专业分镜提示词生成 + 即梦 API 视频生成
+- ✅ 5 步分镜引导流程，6 套场景模板
+- ✅ 支持多图参考（最多9张）、角色一致性、运镜复刻
+- ✅ 一键调用 API 生成视频并自动下载
+- ✅ 三种工作模式：完整引导/快速生成/纯提示词
+- ✅ 提供独立 Bash 脚本 generate_video.sh
 
 ### 2026年1月23日 - version 0.0.11
 
@@ -1114,6 +1198,14 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
    字节跳动旗下的多模态 AI 生成平台，提供图像和视频生成能力。
 
+6. [elementsix-skills](https://github.com/elementsix/elementsix-skills)
+
+   Seedance 2.0 分镜提示词 Claude Code Skill，seedance-video-creator 的分镜引导参考。
+
+7. [jimeng-free-api-all](https://github.com/wwwzhouhui/jimeng-free-api-all)
+
+   即梦 AI 逆向 API 接口，seedance-video-creator 的视频生成后端。
+
 ---
 
 ## 问题反馈
@@ -1138,4 +1230,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年1月23日
+**文档生成时间**: 2026年2月10日
