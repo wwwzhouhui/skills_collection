@@ -3,7 +3,7 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.12-green.svg)
+![Version](https://img.shields.io/badge/version-0.0.13-green.svg)
 ![Skills](https://img.shields.io/badge/skills-11-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
@@ -33,7 +33,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
-| seedance-video-creator | Seedance 2.0 分镜视频创作工具，融合专业分镜提示词生成与即梦 API 视频生成，支持多图参考、5 步引导、6 套分镜模板，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月10日 | wwwzhouhui | 1.0.0 |
+| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月11日 | wwwzhouhui | 1.1.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
@@ -51,14 +51,16 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 **核心功能：**
 
-- ✅ 5 步分镜引导流程（理解想法→挖掘细节→构建分镜→生成提示词→优化确认）
+- ✅ **三阶段工作流**：分镜提示词 → 文生图首帧 → 图片+提示词生成视频
+- ✅ **自动首帧生成**：无用户图片时自动调用文生图 API（jimeng-4.5）生成首帧参考图
+- ✅ 分镜引导流程（理解想法→挖掘细节→构建分镜→生成双提示词→优化确认）
 - ✅ 6 套分镜模板（叙事/产品/角色/风景/延长/编辑）
 - ✅ 多模态支持：多图参考（最多9张）、角色一致性、运镜复刻
 - ✅ 一键调用即梦 Seedance 2.0 API 生成视频
 - ✅ 自动下载生成的视频到本地
-- ✅ 三种工作模式：完整引导/快速生成/纯提示词
-- ✅ 支持纯文本和多图参考两种生成方式
 - ✅ 镜头语言/氛围关键词速查表
+
+**重要约束**：Seedance 2.0 **必须至少提供一张参考图片**，不支持纯文本生成视频。当用户没有提供图片时，工具会自动通过文生图 API 生成首帧参考图。
 
 **适用场景：**
 
@@ -76,11 +78,21 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 ```
 帮我生成一个女孩在海边跳舞的视频
-→ 自动引导分镜 → 生成提示词 → 调用 API → 下载视频
+→ 生成首帧图片提示词 + 视频分镜提示词
+→ 文生图生成首帧参考图
+→ 首帧图片 + 提示词 → Seedance 2.0 生成视频
+→ 下载视频
 ```
 
 ```bash
-# 独立脚本使用
+# 独立脚本使用（无图片 → 三阶段工作流）
+./scripts/generate_video.sh \
+  --session-id "your_sessionid" \
+  --image-prompt "海边沙滩，女孩穿白裙站在海边，夕阳逆光" \
+  --prompt "@1 作为首帧参考，女孩开始旋转起舞..." \
+  --ratio 9:16 --duration 4
+
+# 有图片 → 直接生成视频
 ./scripts/generate_video.sh \
   --session-id "your_sessionid" \
   --prompt "@1 和 @2 两人跳舞" \
@@ -92,14 +104,15 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | 参数 | 可选值 | 默认值 |
 |------|--------|--------|
-| model | seedance-2.0, seedance-2.0-pro | seedance-2.0 |
-| ratio | 1:1, 4:3, 3:4, 16:9, 9:16 | 16:9 |
-| resolution | 480p, 720p, 1080p | 720p |
-| duration | 4, 5, 10 秒 | 10 |
+| model | seedance-2.0, jimeng-video-seedance-2.0 | seedance-2.0 |
+| ratio | 1:1, 4:3, 3:4, 16:9, 9:16 | 9:16 |
+| duration | 4 - 15 秒（连续范围） | 4 |
 
 **技术特点：**
 
 - 融合 [elementsix-skills](https://github.com/elementsix/elementsix-skills) 分镜引导 + [jimeng-free-api-all](https://github.com/wwwzhouhui/jimeng-free-api-all) 视频生成
+- 三阶段工作流：文生图（`/v1/images/generations`）→ 下载首帧 → Seedance 视频生成（`/v1/videos/generations`）
+- Authorization 头不需要 Bearer 前缀，直接传 SessionID
 - API 同步阻塞调用，自动轮询等待生成完成
 - 提供独立 Bash 脚本，支持 CI/CD 集成
 
@@ -771,6 +784,9 @@ export COS_REGION="your-region"
 # 即梦 API / Seedance 2.0（jimeng_mcp_skill、mp-cover-generator、seedance-video-creator 需要）
 export JIMENG_API_KEY="your-api-key"
 
+# 即梦 API 地址（seedance-video-creator 需要，只填基础地址，不要包含路径）
+export JIMENG_API_URL="http://127.0.0.1:8000"
+
 # 即梦 SessionID（seedance-video-creator 需要）
 export JIMENG_SESSION_ID="your-sessionid"
 
@@ -1021,7 +1037,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
-- **seedance-video-creator**: v1.0.0 (2026-02-10) - 初始版本，融合分镜提示词生成与 Seedance 2.0 视频生成
+- **seedance-video-creator**: v1.1.0 (2026-02-11) - 三阶段工作流：文生图首帧 + Seedance 视频生成
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
 - **github-trending**: v1.0.0 (2026-01-22) - 初始版本
 - **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
@@ -1066,6 +1082,19 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月11日 - version 0.0.13
+
+- ✅ **重大更新** seedance-video-creator Skill 至 v1.1.0
+- ✅ 实现三阶段工作流：分镜提示词 → 文生图首帧 → 图片+提示词生成视频
+- ✅ 修复 Seedance 2.0 纯文本生成报错（`code: -2001`，必须至少一张图片）
+- ✅ 新增自动调用文生图 API（jimeng-4.5）生成首帧参考图
+- ✅ 生成双提示词：首帧图片提示词（静态画面）+ 视频分镜提示词（含 @1 引用）
+- ✅ 视频时长扩展为 4-15 秒连续范围
+- ✅ 新增模型名 `jimeng-video-seedance-2.0`（兼容 `seedance-2.0`）
+- ✅ 修复 Authorization 头不需要 Bearer 前缀
+- ✅ 更新 generate_video.sh 脚本支持三阶段工作流（新增 `--image-prompt` 参数）
+- ✅ 更新所有示例、模板、文档匹配新工作流
 
 ### 2026年2月10日 - version 0.0.12
 
@@ -1230,4 +1259,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年2月10日
+**文档生成时间**: 2026年2月11日

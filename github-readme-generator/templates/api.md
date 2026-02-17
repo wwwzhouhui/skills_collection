@@ -119,7 +119,7 @@ curl -H "Authorization: Bearer {{API_KEY}}" {{BASE_URL}}/endpoint
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![Screenshot_20260210_085255_com.tencent.mm](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260210_085255_com.tencent.mm.jpg)
+![image-20260217095105519](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260217095105519.png)
 
 ## 作者联系
 
