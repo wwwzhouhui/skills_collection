@@ -12,7 +12,7 @@ set -euo pipefail
 # 默认参数
 API_URL="${JIMENG_API_URL:-http://127.0.0.1:8000}"
 SESSION_ID="${JIMENG_SESSION_ID:-}"
-MODEL="seedance-2.0"
+MODEL="seedance-2.0-fast"
 RATIO="9:16"
 DURATION=4
 PROMPT=""
@@ -22,6 +22,7 @@ FILES=()
 TIMEOUT=300
 IMAGE_MODEL="jimeng-4.5"
 IMAGE_RESOLUTION="2k"
+RESOLUTION="720p"
 
 # 颜色输出
 RED='\033[0;31m'
@@ -48,8 +49,9 @@ Seedance 2.0 视频生成脚本（三阶段工作流）
   --image-prompt TEXT    首帧图片描述提示词（用于文生图生成首帧）
 
 可选参数:
-  --model MODEL          视频模型名称 (默认: seedance-2.0)
-  --ratio RATIO          画面比例 (默认: 9:16，可选: 1:1/4:3/3:4/16:9/9:16)
+  --model MODEL          视频模型名称 (默认: seedance-2.0-fast，可选: jimeng-video-seedance-2.0-fast/jimeng-video-seedance-2.0/seedance-2.0-pro)
+  --ratio RATIO          画面比例 (默认: 9:16，可选: 1:1/4:3/3:4/16:9/9:16/3:2/2:3/21:9)
+  --resolution RES       视频分辨率 (默认: 720p，可选: 480p/720p/1080p)
   --duration SEC         时长秒数 (默认: 4，范围: 4-15)
   --files FILE...        参考图片路径（可多个，有图片时跳过文生图阶段）
   --image-model MODEL    文生图模型 (默认: jimeng-4.5)
@@ -70,6 +72,13 @@ Seedance 2.0 视频生成脚本（三阶段工作流）
     --prompt "@1 和 @2 两人跳舞" \
     --files dancer1.jpg dancer2.jpg \
     --ratio 4:3 --duration 10
+
+  # 使用快速模型
+  generate_video.sh --session-id "xxx" \
+    --prompt "@1 和 @2 两人跳舞" \
+    --files dancer1.jpg dancer2.jpg \
+    --model jimeng-video-seedance-2.0-fast \
+    --ratio 4:3 --duration 10 --resolution 1080p
 EOF
   exit 0
 }
@@ -115,6 +124,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --duration)
       DURATION="$2"
+      shift 2
+      ;;
+    --resolution)
+      RESOLUTION="$2"
       shift 2
       ;;
     --files)
@@ -197,7 +210,7 @@ if [[ ${#FILES[@]} -eq 0 ]]; then
   log_info "首帧提示词: ${IMAGE_PROMPT:0:80}..."
 
   IMAGE_RESPONSE=$(curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-    -H "Authorization: ${SESSION_ID}" \
+    -H "Authorization: Bearer ${SESSION_ID}" \
     -H "Content-Type: application/json" \
     -d "{
       \"model\": \"${IMAGE_MODEL}\",
@@ -240,14 +253,16 @@ fi
 log_phase "=== 第三阶段：Seedance 2.0 视频生成 ==="
 log_info "模型: ${MODEL}"
 log_info "比例: ${RATIO}"
+log_info "分辨率: ${RESOLUTION}"
 log_info "时长: ${DURATION}秒"
 log_info "参考图片: ${#FILES[@]}张"
 
 CURL_ARGS=(-s --max-time "${TIMEOUT}" -X POST "${API_URL}/v1/videos/generations")
-CURL_ARGS+=(-H "Authorization: ${SESSION_ID}")
+CURL_ARGS+=(-H "Authorization: Bearer ${SESSION_ID}")
 CURL_ARGS+=(-F "model=${MODEL}")
 CURL_ARGS+=(-F "prompt=${PROMPT}")
 CURL_ARGS+=(-F "ratio=${RATIO}")
+CURL_ARGS+=(-F "resolution=${RESOLUTION}")
 CURL_ARGS+=(-F "duration=${DURATION}")
 
 for f in "${FILES[@]}"; do

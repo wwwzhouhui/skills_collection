@@ -39,7 +39,10 @@ seedance-video-creator/
 
 ## 前置条件
 
-### 1. 部署 jimeng-free-api-all
+### 1. 部署 jimeng-free-api-all（必须）
+
+> **重要**：Seedance 2.0 系列模型**必须**使用 `jimeng-free-api-all` 镜像（非 `jimeng-free-api`）。
+> 旧版 `jimeng-free-api` 不包含 Seedance 路由和浏览器代理（Playwright + bdms 签名），传入 `seedance-2.0-fast` 会被静默回退为 `jimeng-video-3.0`。
 
 ```bash
 docker pull wwwzhouhui569/jimeng-free-api-all:latest
@@ -47,6 +50,14 @@ docker run -it -d --init --name jimeng-free-api-all \
   -p 8000:8000 -e TZ=Asia/Shanghai \
   wwwzhouhui569/jimeng-free-api-all:latest
 ```
+
+验证 Seedance 模型可用：
+
+```bash
+curl -s http://127.0.0.1:8000/v1/models -H "Authorization: Bearer ${SESSION_ID}" | jq '.data[] | select(.id | contains("seedance"))'
+```
+
+如果返回结果包含 `seedance-2.0-fast`，说明部署正确。
 
 ### 2. 获取 SessionID
 
@@ -91,14 +102,23 @@ export JIMENG_SESSION_ID="your_sessionid_here"
   --prompt "@1 和 @2 两人开始跳舞" \
   --files dancer1.jpg dancer2.jpg \
   --ratio 4:3 --duration 10
+
+# 使用 Pro 模型 + 高分辨率
+./scripts/generate_video.sh \
+  --session-id "your_sessionid" \
+  --prompt "@1 和 @2 两人开始跳舞" \
+  --files dancer1.jpg dancer2.jpg \
+  --model jimeng-video-seedance-2.0 \
+  --ratio 4:3 --duration 10 --resolution 1080p
 ```
 
 ## Seedance 2.0 参数说明
 
 | 参数 | 可选值 | 默认值 |
 |------|--------|--------|
-| model | `seedance-2.0`, `jimeng-video-seedance-2.0` | `seedance-2.0` |
-| ratio | `1:1`, `4:3`, `3:4`, `16:9`, `9:16` | `9:16` |
+| model | `seedance-2.0-fast`（推荐）, `jimeng-video-seedance-2.0-fast`, `jimeng-video-seedance-2.0`（Pro版）, `seedance-2.0`, `seedance-2.0-pro` | `seedance-2.0-fast` |
+| ratio | `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9` | `9:16` |
+| resolution | `480p`, `720p`, `1080p` | `720p` |
 | duration | `4` - `15` 秒（连续范围） | `4` |
 
 ## API 调用格式
@@ -107,7 +127,7 @@ export JIMENG_SESSION_ID="your_sessionid_here"
 
 ```bash
 curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "jimeng-4.5",
@@ -121,18 +141,20 @@ curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
 
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=视频分镜描述，@1 作为首帧参考..." \
   -F "ratio=9:16" \
+  -F "resolution=720p" \
   -F "duration=4" \
   -F "files=@/tmp/first_frame.png"
 ```
 
 **注意**：
-- Authorization 头**不需要** `Bearer` 前缀，直接传 SessionID
+- Authorization 头**需要** `Bearer` 前缀，格式为 `Bearer your_sessionid`
 - Seedance 2.0 **必须**至少上传一张图片
 - 提示词中的 `@1`、`@2` 对应 `files` 参数中图片的上传顺序
+- **必须使用 `jimeng-free-api-all` 镜像**，旧版 `jimeng-free-api` 不支持 Seedance 模型
 
 ## 多图引用语法
 

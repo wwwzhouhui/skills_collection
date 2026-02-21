@@ -45,8 +45,9 @@ disable-model-invocation: false
 - 文本：自然语言描述
 
 **视频参数**：
-- 模型：`seedance-2.0`（推荐）
-- 比例：`1:1` / `4:3` / `3:4` / `16:9` / `9:16`
+- 模型：`seedance-2.0-fast`（推荐，快速版）/ `jimeng-video-seedance-2.0-fast`（等价别名）/ `jimeng-video-seedance-2.0`（Pro版）/ `seedance-2.0` / `seedance-2.0-pro`（Pro等价别名）
+- 比例：`1:1` / `4:3` / `3:4` / `16:9` / `9:16` / `3:2` / `2:3` / `21:9`
+- 分辨率：`480p` / `720p`（默认）/ `1080p`
 - 时长：`4` - `15` 秒
 
 **交互方式**：使用 `@1`、`@2`（或 `@图1`、`@image1`）指定素材用途
@@ -175,7 +176,7 @@ X-Y秒：[镜头运动]，[画面内容]，[主体动作]，[光影/特效]
 
 ```bash
 curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d "{
     \"model\": \"jimeng-4.5\",
@@ -225,8 +226,9 @@ curl -sL -o "${IMAGE_FILE}" "${IMAGE_URL}"
 |------|------|--------|
 | API 地址 | jimeng-free-api-all 服务地址 | `http://127.0.0.1:8000` |
 | SessionID | 即梦平台的 sessionid | 环境变量或用户提供 |
-| 模型 | seedance-2.0 | `seedance-2.0` |
+| 模型 | seedance-2.0-fast | `seedance-2.0-fast` |
 | 比例 | 视频画面比例 | 与首帧图片一致 |
+| 分辨率 | 视频分辨率 | `720p` |
 | 时长 | 4-15 秒 | `4` |
 | 参考图片 | 首帧图片路径（第二阶段生成或用户提供） | 必需 |
 
@@ -236,10 +238,11 @@ curl -sL -o "${IMAGE_FILE}" "${IMAGE_URL}"
 
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=${VIDEO_PROMPT}" \
   -F "ratio=${RATIO}" \
+  -F "resolution=${RESOLUTION}" \
   -F "duration=${DURATION}" \
   -F "files=@${IMAGE_FILE}"
 ```
@@ -248,10 +251,11 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=${VIDEO_PROMPT}" \
   -F "ratio=${RATIO}" \
+  -F "resolution=${RESOLUTION}" \
   -F "duration=${DURATION}" \
   -F "files=@/path/to/image1.jpg" \
   -F "files=@/path/to/image2.jpg"
@@ -262,7 +266,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 - API 是同步阻塞的，会自动轮询直到视频生成完成（通常 60-120 秒）
 - curl 超时建议设置为 300 秒：`--max-time 300`
 - 提示词中的 `@1`、`@2` 对应 `files` 参数中图片的上传顺序
-- Authorization 头**不需要** `Bearer` 前缀，直接传 SessionID
+- Authorization 头**需要** `Bearer` 前缀，格式为 `Bearer your_sessionid`
 
 ### 步骤三：解析结果
 
@@ -354,7 +358,7 @@ echo "视频已下载到: $(pwd)/${OUTPUT_FILE}"
 ```bash
 # 1. 调用文生图 API 生成首帧
 curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "jimeng-4.5",
@@ -371,8 +375,8 @@ curl -sL -o /tmp/seedance_frame.png "${IMAGE_URL}"
 **第三阶段 - 生成视频**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=可爱3D动画风格，4秒，9:16竖屏，阳光明媚的海边
 
 @1 作为画面首帧参考
@@ -383,6 +387,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 背景音效：欢快俏皮卡通配乐 + 海浪声" \
   -F "ratio=9:16" \
+  -F "resolution=720p" \
   -F "duration=4" \
   -F "files=@/tmp/seedance_frame.png"
 ```
@@ -396,12 +401,13 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **跳过第二阶段**，直接进入第三阶段：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=电影级写实风格，10秒，4:3画幅，舞台灯光氛围
 
 @1 和 @2 面对面站立，两人开始双人舞，镜头缓慢环绕，动作优雅协调，光影交错" \
   -F "ratio=4:3" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/home/user/dancer1.jpg" \
   -F "files=@/home/user/dancer2.jpg"
@@ -507,7 +513,7 @@ Y-Z秒：回到大景别或意境落版
 - API 调用是同步阻塞的，生成视频通常需要 60-120 秒
 - 视频下载 URL 有时效性，生成后应立即下载
 - 每日免费积分有限（约66积分），文生图和视频生成都消耗积分，合理规划
-- Authorization 头**不需要** `Bearer` 前缀，直接传 SessionID
+- Authorization 头**需要** `Bearer` 前缀，格式为 `Bearer your_sessionid`
 
 ---
 

@@ -3,7 +3,7 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.13-green.svg)
+![Version](https://img.shields.io/badge/version-0.0.14-green.svg)
 ![Skills](https://img.shields.io/badge/skills-11-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
@@ -33,7 +33,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
-| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月11日 | wwwzhouhui | 1.1.0 |
+| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
@@ -71,7 +71,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 **前置条件：**
 
-1. jimeng-free-api-all Docker 容器运行（端口 8000）
+1. **jimeng-free-api-all** Docker 容器运行（端口 8000）— 必须是 `jimeng-free-api-all` 镜像，旧版 `jimeng-free-api` 不支持 Seedance
 2. 即梦平台 SessionID（从网站 Cookies 获取）
 
 **使用示例：**
@@ -104,16 +104,18 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | 参数 | 可选值 | 默认值 |
 |------|--------|--------|
-| model | seedance-2.0, jimeng-video-seedance-2.0 | seedance-2.0 |
+| model | seedance-2.0-fast, jimeng-video-seedance-2.0-fast, jimeng-video-seedance-2.0(Pro) | seedance-2.0-fast |
 | ratio | 1:1, 4:3, 3:4, 16:9, 9:16 | 9:16 |
+| resolution | 480p, 720p, 1080p | 720p |
 | duration | 4 - 15 秒（连续范围） | 4 |
 
 **技术特点：**
 
 - 融合 [elementsix-skills](https://github.com/elementsix/elementsix-skills) 分镜引导 + [jimeng-free-api-all](https://github.com/wwwzhouhui/jimeng-free-api-all) 视频生成
 - 三阶段工作流：文生图（`/v1/images/generations`）→ 下载首帧 → Seedance 视频生成（`/v1/videos/generations`）
-- Authorization 头不需要 Bearer 前缀，直接传 SessionID
+- Authorization 头需要 Bearer 前缀，格式为 `Bearer your_sessionid`
 - API 同步阻塞调用，自动轮询等待生成完成
+- **必须使用 `jimeng-free-api-all` 镜像**（旧版 `jimeng-free-api` 不含 Seedance 路由，会静默回退到 jimeng-video-3.0）
 - 提供独立 Bash 脚本，支持 CI/CD 集成
 
 ---
@@ -1000,7 +1002,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260210_085255_com.tencent.mm.jpg)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260217095105519.png)
 
 ---
 
@@ -1037,7 +1039,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
-- **seedance-video-creator**: v1.1.0 (2026-02-11) - 三阶段工作流：文生图首帧 + Seedance 视频生成
+- **seedance-video-creator**: v1.2.0 (2026-02-22) - 默认模型切换为 seedance-2.0-fast，修复 API 版本兼容问题
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
 - **github-trending**: v1.0.0 (2026-01-22) - 初始版本
 - **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
@@ -1082,6 +1084,18 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月22日 - version 0.0.14
+
+- ✅ **重要更新** seedance-video-creator Skill 至 v1.2.0
+- ✅ 默认模型从 `jimeng-video-seedance-2.0` 切换为 `seedance-2.0-fast`（快速版）
+- ✅ 所有 curl 示例添加 `resolution` 参数（默认 `720p`）
+- ✅ 修复 Authorization 头说明：需要 `Bearer` 前缀
+- ✅ 新增重要说明：**必须使用 `jimeng-free-api-all` 镜像**
+- ✅ 旧版 `jimeng-free-api` 不含 Seedance 路由和浏览器代理，会静默回退到 `jimeng-video-3.0`
+- ✅ README 新增 Seedance 模型可用性验证命令
+- ✅ 更新 `generate_video.sh` 脚本默认模型和帮助文本
+- ✅ 同步更新所有示例文件的模型名和参数
 
 ### 2026年2月11日 - version 0.0.13
 
@@ -1259,4 +1273,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年2月11日
+**文档生成时间**: 2026年2月22日

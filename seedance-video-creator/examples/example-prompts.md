@@ -26,8 +26,8 @@
 **API 调用**（直接使用用户图片，跳过文生图）：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=电影级写实风格，10秒，16:9宽屏，温馨家庭氛围
 
 @1 作为画面首帧参考
@@ -39,6 +39,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 背景音效：轻缓的钢琴配乐，脚步声、开门声、孩子的笑声" \
   -F "ratio=16:9" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/path/to/father.jpg" \
   -F "files=@/path/to/daughter.jpg"
@@ -67,8 +68,8 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **API 调用**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=中国水墨武侠风格，10秒，16:9，枫叶飘落的秋季场景
 
 @1 和 @2 作为角色参考
@@ -80,6 +81,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 金属碰撞音效 + 古风激昂配乐" \
   -F "ratio=16:9" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/path/to/warrior1.jpg" \
   -F "files=@/path/to/warrior2.jpg"
@@ -114,7 +116,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 ```bash
 # 1. 调用文生图 API 生成首帧
 RESPONSE=$(curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "jimeng-4.5",
@@ -131,8 +133,8 @@ curl -sL -o /tmp/seedance_coffee_frame.png "${IMAGE_URL}"
 **第三阶段 - Seedance 视频生成**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=高端商业广告风格，10秒，16:9，暖色调晨光氛围
 
 @1 作为画面首帧参考
@@ -144,6 +146,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 咖啡倒入声 + 轻松的爵士乐" \
   -F "ratio=16:9" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/tmp/seedance_coffee_frame.png"
 ```
@@ -172,8 +175,8 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **API 调用**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=赛博朋克科幻风格，10秒，16:9，霓虹光效
 
 @1 作为角色参考，@2-@4 作为场景参考
@@ -186,6 +189,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 电子音效 + 科幻氛围配乐" \
   -F "ratio=16:9" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/path/to/character.jpg" \
   -F "files=@/path/to/universe.jpg" \
@@ -220,7 +224,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **第二阶段 - 文生图生成首帧**：
 ```bash
 RESPONSE=$(curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "jimeng-4.5",
@@ -236,8 +240,8 @@ curl -sL -o /tmp/seedance_cat_frame.png "${IMAGE_URL}"
 **第三阶段 - Seedance 视频生成**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=可爱3D动画风格，4秒，9:16竖屏，阳光明媚的海边
 
 @1 作为画面首帧参考
@@ -248,6 +252,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 背景音效：欢快俏皮卡通配乐 + 海浪声" \
   -F "ratio=9:16" \
+  -F "resolution=720p" \
   -F "duration=4" \
   -F "files=@/tmp/seedance_cat_frame.png"
 ```
@@ -276,8 +281,8 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **API 调用**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=戏剧化写实风格，10秒，16:9，压抑到爆发
 
 @1 作为角色参考
@@ -289,6 +294,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 从安静到突然爆发的音效，情绪配乐" \
   -F "ratio=16:9" \
+  -F "resolution=720p" \
   -F "duration=10" \
   -F "files=@/path/to/character.jpg"
 ```
@@ -320,7 +326,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 **第二阶段 - 文生图生成首帧**：
 ```bash
 RESPONSE=$(curl -s --max-time 120 -X POST "${API_URL}/v1/images/generations" \
-  -H "Authorization: ${SESSION_ID}" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "jimeng-4.5",
@@ -336,8 +342,8 @@ curl -sL -o /tmp/seedance_beach_frame.png "${IMAGE_URL}"
 **第三阶段 - Seedance 视频生成**：
 ```bash
 curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
-  -H "Authorization: ${SESSION_ID}" \
-  -F "model=seedance-2.0" \
+  -H "Authorization: Bearer ${SESSION_ID}" \
+  -F "model=seedance-2.0-fast" \
   -F "prompt=电影级写实风格，4秒，9:16竖屏，日落黄金时刻
 
 @1 作为画面首帧参考
@@ -348,6 +354,7 @@ curl -s --max-time 300 -X POST "${API_URL}/v1/videos/generations" \
 
 背景音效：海浪声 + 轻柔钢琴配乐" \
   -F "ratio=9:16" \
+  -F "resolution=720p" \
   -F "duration=4" \
   -F "files=@/tmp/seedance_beach_frame.png"
 ```
@@ -375,7 +382,7 @@ fi
 
 ## 注意事项
 
-- **Authorization 头不需要 `Bearer` 前缀**，直接传 SessionID
+- **Authorization 头需要 `Bearer` 前缀**，格式为 `Bearer your_sessionid`
 - **Seedance 2.0 必须至少一张图片**，纯文本会返回 `{"code":-2001,"message":"Seedance 2.0 需要至少一张图片"}`
 - 没有用户图片时，先调用文生图 API（`/v1/images/generations`）生成首帧，再用图片调 Seedance
 - 视频时长支持 4-15 秒连续范围

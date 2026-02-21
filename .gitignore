@@ -24,3 +24,5 @@ seedance-video-creator/SKILL.md
 seedance-video-creator/examples/example-prompts.md
 seedance-video-creator/scripts/generate_video.sh
 seedance-video-creator/templates/storyboard-template.md
+seedance-video-creator/.serena/.gitignore
+seedance-video-creator/.serena/project.yml

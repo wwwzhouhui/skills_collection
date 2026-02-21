@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__list_dir",
+      "Bash(head:*)",
+      "Bash(chmod:*)",
+      "Bash(openclaw gateway status:*)",
+      "Bash(systemctl status:*)",
+      "Bash(journalctl:*)",
+      "Bash(cat:*)",
+      "Bash(systemctl:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(python3:*)",
+      "Bash(kill:*)",
+      "Bash(ss:*)",
+      "Bash(openclaw gateway restart)",
+      "Bash(IMAGE_FILE=\"/tmp/seedance_frame_20260221_223656.png\")",
+      "Bash(__NEW_LINE_5e803451839b9670__ curl -s --max-time 300 -X POST \"https://jimeng.duckcloud.fun/v1/videos/generations\" -H \"Authorization: Bearer 284a87a1fb9b589bf7927a9b2cd50321\" -F \"model=jimeng-video-seedance-2.0-fast\" -F \"prompt=可爱3D动画风格，4秒，9:16竖屏，阳光明媚的海边\n\n@1 作为画面首帧参考\n\n0-1秒：中景，橘猫和胖虎蹲在沙滩上好奇地盯着面前的小螃蟹，海浪轻拍岸边\n1-3秒：近景跟随，橘猫伸出爪子试探去抓螃蟹，胖虎也凑上去帮忙，螃蟹举起钳子反击，两只被吓得往后一跳，表情夸张可爱\n3-4秒：中景微拉远，橘猫和胖虎与螃蟹对峙，背景碧蓝大海和白色浪花，欢乐定格\n\n背景音效：欢快俏皮卡通配乐 + 海浪声\" -F \"ratio=9:16\" -F \"duration=4\" -F \"files=@$IMAGE_FILE\")",
+      "mcp__serena__activate_project",
+      "Bash(IMAGE_FILE=\"/tmp/seedance_frame_20260221_232009.png\")",
+      "Bash(__NEW_LINE_5255e3df1db26379__ curl -s --max-time 300 -X POST \"https://jimeng.duckcloud.fun/v1/videos/generations\" -H \"Authorization: Bearer 284a87a1fb9b589bf7927a9b2cd50321\" -F \"model=seedance-2.0-fast\" -F \"prompt=可爱3D动画风格，4秒，9:16竖屏，阳光明媚的海边沙滩\n\n@1 作为画面首帧参考\n\n0-1秒：中景，橘猫和胖虎并排蹲在沙滩上，好奇地盯着面前的小螃蟹，海浪轻轻拍打岸边\n1-3秒：近景跟随，橘猫伸出爪子试探去抓螃蟹，胖虎也凑上前帮忙，螃蟹突然举起钳子反击，两只猫被吓得同时往后一跳，表情夸张可爱\n3-4秒：中景微拉远，橘猫和胖虎与螃蟹对峙，背景碧蓝大海白色浪花，欢乐定格\n\n背景音效：欢快俏皮卡通配乐 + 海浪声\" -F \"ratio=9:16\" -F \"resolution=720p\" -F \"duration=4\" -F \"files=@$IMAGE_FILE\")",
+      "Bash(# 检查 duckcloud 服务版本和支持的模型 curl -s --max-time 10 \"\"https://jimeng.duckcloud.fun/\"\")",
+      "Bash(# 确认 duckcloud 的服务版本 - 检查是否是 jimeng-free-api-all curl -s --max-time 10 \"\"https://jimeng.duckcloud.fun/v1/models\"\" -H \"\"Authorization: Bearer 284a87a1fb9b589bf7927a9b2cd50321\"\")",
+      "Bash(docker start:*)",
+      "Bash(docker ps:*)",
+      "Bash(__NEW_LINE_11c7ec979e319881__ echo \"重试：使用更简洁的英文提示词...\")",
+      "Bash(__NEW_LINE_11c7ec979e319881__ curl -s --max-time 300 -X POST \"http://127.0.0.1:8000/v1/videos/generations\" -H \"Authorization: Bearer 284a87a1fb9b589bf7927a9b2cd50321\" -F \"model=seedance-2.0-fast\" -F \"prompt=Cute 3D cartoon style, 4 seconds, 9:16 vertical\n\n@1 as first frame reference\n\n0-1s: Medium shot, an orange cat and a chubby tiger cat sitting on the beach, curiously watching small crabs on the sand, gentle ocean waves\n1-3s: Close-up follow, the orange cat reaches out its paw to catch a crab, the crab raises its claws to fight back, both cats jump back in surprise with funny expressions\n3-4s: Medium shot pulling back slightly, the two cats face off with the crabs, blue ocean and white waves in the background, cheerful freeze frame\" -F \"ratio=9:16\" -F \"resolution=720p\" -F \"duration=4\" -F \"files=@$IMAGE_FILE\")",
+      "Bash(NEW_IMAGE=\"/tmp/seedance_frame_v2_20260221_234955.png\")",
+      "Bash(__NEW_LINE_d00fcbf65391f7d9__ echo \"=== Seedance 2.0-fast 视频生成（极简提示词）===\")",
+      "Bash(echo:*)"
+    ]
+  }
+}
