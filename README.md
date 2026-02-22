@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.14-green.svg)
-![Skills](https://img.shields.io/badge/skills-11-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.15-green.svg)
+![Skills](https://img.shields.io/badge/skills-12-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -19,6 +19,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
 - **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作
+- **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
 
@@ -34,6 +35,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
+| wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | wwwzhouhui | 1.0.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
@@ -117,6 +119,83 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - API 同步阻塞调用，自动轮询等待生成完成
 - **必须使用 `jimeng-free-api-all` 镜像**（旧版 `jimeng-free-api` 不含 Seedance 路由，会静默回退到 jimeng-video-3.0）
 - 提供独立 Bash 脚本，支持 CI/CD 集成
+
+---
+
+### 📰 WeChat Article Fetcher (微信公众号文章获取器)
+
+**核心功能：**
+
+- ✅ 获取微信公众号文章完整内容
+- ✅ 支持单篇和批量下载（空格或逗号分隔多个链接）
+- ✅ 自动提取元数据（标题、作者、公众号名称、发布时间、摘要、封面图）
+- ✅ 自动下载文章内所有图片到本地
+- ✅ HTML 转 Markdown 格式
+- ✅ 生成格式化的独立 HTML 文件
+- ✅ 导出文章元数据 JSON
+- ✅ 支持短链接和长链接两种格式
+- ✅ 批量下载间隔控制，避免触发反爬
+
+**适用场景：**
+
+- 公众号文章离线保存和归档
+- 文章内容素材提取
+- 批量采集公众号文章
+- 文章格式转换（HTML → Markdown）
+
+**使用方式：**
+
+```bash
+# 单篇下载
+python scripts/fetch_wechat_article.py "https://mp.weixin.qq.com/s/xxxxx"
+
+# 批量下载（空格分隔）
+python scripts/fetch_wechat_article.py "url1" "url2" "url3" --output-dir ./output
+
+# 批量下载（逗号分隔）
+python scripts/fetch_wechat_article.py "url1,url2,url3" --output-dir ./output
+
+# 仅输出元数据 JSON
+python scripts/fetch_wechat_article.py "url" --json
+
+# 自定义下载间隔（默认3秒）
+python scripts/fetch_wechat_article.py "url1" "url2" --interval 5
+```
+
+**输出结构：**
+
+```
+output/<公众号名称>/<日期>_<标题>/
+├── index.html    # 格式化的独立HTML文件
+├── article.md    # Markdown版本
+├── meta.json     # 文章元数据
+└── images/       # 下载的图片
+```
+
+**Python 库调用：**
+
+```python
+from scripts.fetch_wechat_article import fetch_article, batch_fetch
+
+# 单篇获取
+result = fetch_article("https://mp.weixin.qq.com/s/xxxxx", output_dir="./output")
+
+# 批量获取
+urls = ["url1", "url2", "url3"]
+stats = batch_fetch(urls, output_dir="./output", interval=3.0)
+print(f"成功{stats['success']}篇, 失败{stats['fail']}篇")
+```
+
+**技术要求：**
+
+- Python 3.7+
+- 依赖库：`pip install beautifulsoup4 html2text requests`
+
+**注意事项：**
+
+- 优先使用短链接（`/s/xxxxx`），长链接可能触发验证码
+- 批量下载时默认间隔3秒，可通过 `--interval` 调整
+- 自动使用微信移动端 User-Agent 绕过访问限制
 
 ---
 
@@ -680,7 +759,8 @@ skills_collection/
 │   ├── xiaohuihui-dify-tech-article/
 │   ├── siliconflow-api-skills/
 │   ├── github-readme-generator/
-│   └── seedance-video-creator/
+│   ├── seedance-video-creator/
+│   └── wechat-article-fetcher/
 └── README.md         # 项目总文档
 ```
 
@@ -740,6 +820,12 @@ skills_collection/
 │   │   └── example-prompts.md
 │   └── scripts/                 # 视频生成脚本
 │       └── generate_video.sh
+├── wechat-article-fetcher/      # 微信公众号文章获取技能
+│   ├── SKILL.md
+│   ├── scripts/                 # 文章获取脚本
+│   │   └── fetch_wechat_article.py
+│   └── references/              # 参考文档
+│       └── wechat_html_structure.md
 ├── .gitignore
 └── README.md
 ```
@@ -826,6 +912,9 @@ export WEIXIN_WEBHOOK="your-webhook-url"
 
 # README 生成
 "请使用 github-readme-generator full 模板为我的项目生成 README"
+
+# 微信公众号文章获取
+"请帮我获取这篇微信公众号文章 https://mp.weixin.qq.com/s/xxxxx"
 ```
 
 ### 高级用法
@@ -986,6 +1075,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 </details>
 
 <details>
+<summary>微信公众号文章获取失败？</summary>
+
+1. 优先使用短链接格式（`https://mp.weixin.qq.com/s/xxxxx`），长链接可能触发验证码
+2. 批量下载时增大间隔时间：`--interval 5`
+3. 确认已安装依赖：`pip install beautifulsoup4 html2text requests`
+4. 短时间内频繁请求可能被限流，稍后重试即可
+5. 如遇到"环境异常"页面，可尝试配置 Cookie 参数
+
+</details>
+
+<details>
 <summary>PPT 生成器生成的文件打不开?</summary>
 
 1. 确认安装了 python-pptx 库：pip install python-pptx
@@ -1030,15 +1130,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 11
+- **总技能数**: 12
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
+- **数据采集**: 1 (wechat-article-fetcher)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
 
 ### 最新版本动态
 
+- **wechat-article-fetcher**: v1.0.0 (2026-02-22) - 初始版本，支持单篇和批量下载
 - **seedance-video-creator**: v1.2.0 (2026-02-22) - 默认模型切换为 seedance-2.0-fast，修复 API 版本兼容问题
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
 - **github-trending**: v1.0.0 (2026-01-22) - 初始版本
@@ -1047,7 +1149,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 开发语言
 
-- Python: 4
+- Python: 3
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
@@ -1084,6 +1186,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月22日 - version 0.0.15
+
+- ✅ 新增 wechat-article-fetcher Skill v1.0.0
+- ✅ 支持微信公众号文章获取，自动提取标题、作者、公众号名称、正文、图片等元数据
+- ✅ 支持单篇和批量下载（空格或逗号分隔多个链接）
+- ✅ 自动下载文章内所有图片到本地
+- ✅ HTML 转 Markdown 格式，生成格式化独立 HTML 文件
+- ✅ 批量下载间隔控制（`--interval`），避免触发微信反爬机制
+- ✅ 支持仅输出元数据 JSON（`--json`）模式
+- ✅ 提供 Python 库调用接口（`fetch_article` 和 `batch_fetch`）
 
 ### 2026年2月22日 - version 0.0.14
 
