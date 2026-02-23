@@ -1,12 +1,12 @@
 ---
 name: xiaohuihui-tech-article
-description: 专为技术实战教程设计的公众号文章生成器,遵循小灰灰公众号写作规范,自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章,配有详细操作步骤、代码示例,并通过 Gemini-3-Pro-Image-Preview 模型生成配图上传至腾讯云COS图床
-version: 2.3.0
+description: 专为技术实战教程设计的公众号文章生成器,遵循小灰灰公众号写作规范,自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章,配有详细操作步骤、代码示例,并通过 Gemini-3-Pro-Image-Preview 模型(支持自建API和Gemai公益站双通道)生成配图上传至腾讯云COS图床
+version: 2.4.0
 ---
 
 # 小灰灰技术文章生成器
 
-专业的技术实战教程创作助手,完全遵循小灰灰公众号的写作风格 and 结构规范。**新增 Gemini-3-Pro-Image-Preview 自动配图功能,一键生成并上传至腾讯云COS图床。** **v2.3.0 新增公众号卡片和往期推荐功能。**
+专业的技术实战教程创作助手,完全遵循小灰灰公众号的写作风格 and 结构规范。**支持 Gemini-3-Pro-Image-Preview 双通道自动配图(自建API + Gemai公益站),一键生成并上传至腾讯云COS图床。** **v2.4.0 新增 Gemai 公益站文生图通道。**
 
 ## 核心功能
 
@@ -17,7 +17,8 @@ version: 2.3.0
 - ✅ **单段长句总结**: 300-500字深度总结(必须单段不分段)
 - ✅ **往期推荐**: 文章结尾自动附加最新5篇公众号文章链接
 - ✅ **口语化技术文**: "呵呵"、"好家伙"、"手把手教"等亲和表达
-- ✅ **智能配图生成**: 调用 Gemini-3-Pro-Image-Preview 自动生成配图
+- ✅ **智能配图生成**: 调用 Gemini-3-Pro-Image-Preview 自动生成配图(双通道)
+- ✅ **Gemai 公益站**: 支持 Gemai 公益站 API(api.gemai.cc)作为备用文生图通道
 - ✅ **图床自动上传**: 生成的图片自动上传至腾讯云COS图床
 
 ## 使用方法
@@ -53,10 +54,19 @@ version: 2.3.0
 
 使用图片自动生成功能前,请确保以下服务已正确配置:
 
-1. **Gemini API 配置**
+1. **Gemini API 配置（双通道,任选其一）**
+
+   **通道一: 自建API（默认）**
    - 访问地址: `http://115.190.165.156:3000/v1/chat/completions`
    - API Key: `sk-LYGZYPL2zZhGcRizHRiZv2nEXsuVHeof7LtTsT4OWwkWCFT0`
    - 模型名称: `gemini-3-pro-image-preview`
+
+   **通道二: Gemai 公益站（备用）**
+   - 访问地址: `https://api.gemai.cc/v1/chat/completions`
+   - API Key: 通过环境变量 `GEMAI_API_KEY` 或命令行 `--api-key` 参数提供
+   - 模型名称: `gemini-3-pro-image-preview`
+   - 特点: 公网可达,无需自建服务,支持 OpenAI 标准格式
+   - 工具类: `gemai_image_generator.py` (GemaiImageGenerator)
 
 2. **腾讯云COS配置**
    - 已创建存储桶
@@ -92,7 +102,9 @@ version: 2.3.0
 
 #### 2. Gemini API 调用
 
-使用 `gemini-3-pro-image-preview` 模型生成图片:
+使用 `gemini-3-pro-image-preview` 模型生成图片,支持两种调用方式:
+
+**方式一: 自建API调用**
 
 ```json
 {
@@ -111,11 +123,39 @@ version: 2.3.0
 }
 ```
 
+**方式二: Gemai 公益站调用（OpenAI 标准格式）**
+
+```json
+{
+  "model": "gemini-3-pro-image-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": "技术架构图,DeepSeek-OCR光学压缩技术,Python FastAPI VLLM推理引擎,3D等距视角,蓝色科技风格,简洁专业,高清"
+    }
+  ],
+  "temperature": 0.7,
+  "max_tokens": 4096
+}
+```
+
+**Gemai API 请求头:**
+```
+Content-Type: application/json
+Authorization: Bearer <你的GEMAI_API_KEY>
+```
+
 **参数说明:**
 - `model`: 必须为 `gemini-3-pro-image-preview`
-- `content`: 包含图片描述的文本内容
+- `content`: 图片描述文本(自建API为数组格式,Gemai为字符串格式均可)
+- `temperature`: 创造性程度 0.0-1.0（Gemai通道可选,默认0.7）
+- `max_tokens`: 最大令牌数（Gemai通道可选,默认4096）
 
 #### 3. 图片生成与处理
+
+支持两种生成器,根据网络环境选择:
+
+**方式一: 使用 GeminiImageGenerator（自建API）**
 
 使用 `gemini_image_generator.py` 中的 `GeminiImageGenerator` 类进行生成与上传:
 
@@ -137,6 +177,111 @@ def generate_and_get_url(prompt: str) -> str:
 # 使用示例
 # cos_url = generate_and_get_url("技术架构图,DeepSeek-OCR,3D等距视角,蓝色科技风格")
 # 返回: https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251214-143703.png
+```
+
+**方式二: 使用 GemaiImageGenerator（Gemai公益站）**
+
+使用 `gemai_image_generator.py` 中的 `GemaiImageGenerator` 类,通过 Gemai 公益站 API 生成图片:
+
+```python
+from gemai_image_generator import GemaiImageGenerator
+from cos_utils import TencentCOSUploader
+import base64
+import re
+import os
+from datetime import datetime
+
+# 初始化 Gemai 生成器（API Key 从环境变量或参数传入）
+gemai_generator = GemaiImageGenerator(
+    api_key=os.getenv("GEMAI_API_KEY"),
+    base_url="https://api.gemai.cc"
+)
+
+# 初始化 COS 上传器
+cos_uploader = TencentCOSUploader(
+    region=os.getenv("COS_REGION", "ap-nanjing"),
+    secret_id=os.getenv("COS_SECRET_ID"),
+    secret_key=os.getenv("COS_SECRET_KEY"),
+    bucket=os.getenv("COS_BUCKET", "mypicture-1258720957")
+)
+
+def gemai_generate_and_upload(prompt: str, style: str = None, aspect_ratio: str = None) -> str:
+    """
+    使用 Gemai 公益站生成图片并上传到 COS
+    :param prompt: 图片描述
+    :param style: 图片风格(realistic/anime/oil-painting/watercolor/sketch)
+    :param aspect_ratio: 宽高比(1:1/16:9/9:16/4:3/3:4)
+    :return: COS永久访问URL 或 None
+    """
+    kwargs = {}
+    if style:
+        kwargs["style"] = style
+    if aspect_ratio:
+        kwargs["aspect_ratio"] = aspect_ratio
+
+    # 1. 调用 Gemai API 生成图片
+    result = gemai_generator.generate_image(prompt=prompt, **kwargs)
+
+    # 2. 从响应中提取 base64 图片数据
+    image_data = _extract_base64_from_response(result)
+    if not image_data:
+        return None
+
+    # 3. 解码并上传到 COS
+    image_bytes = base64.b64decode(image_data)
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    file_name = f"image-{timestamp}.png"
+
+    upload_result = cos_uploader.upload_from_memory(image_bytes, file_name)
+    if upload_result.get("success"):
+        return upload_result["url"]
+    return None
+
+def _extract_base64_from_response(result: dict) -> str:
+    """从 Gemai API 响应中提取 base64 图片数据"""
+    if "choices" not in result:
+        return None
+
+    for choice in result["choices"]:
+        content = choice.get("message", {}).get("content", "")
+        if isinstance(content, str):
+            # 尝试 Markdown 格式: ![image](data:image/png;base64,...)
+            pattern = r'data:image/[^;]+;base64,([A-Za-z0-9+/=\n\r]+)'
+            match = re.search(pattern, content, re.DOTALL)
+            if match:
+                return match.group(1).replace('\n', '').replace('\r', '').strip()
+    return None
+
+# 使用示例
+# cos_url = gemai_generate_and_upload("技术架构图,DeepSeek-OCR,3D等距视角,蓝色科技风格")
+# cos_url = gemai_generate_and_upload("软件界面展示", style="realistic", aspect_ratio="16:9")
+```
+
+**双通道自动切换策略:**
+
+```python
+def generate_image_with_fallback(prompt: str, **kwargs) -> str:
+    """
+    双通道自动切换: 优先自建API,失败时回退到 Gemai 公益站
+    :return: COS永久访问URL
+    """
+    # 通道一: 自建API
+    try:
+        url = generate_and_get_url(prompt)
+        if url:
+            return url
+    except Exception as e:
+        print(f"自建API失败: {e}, 切换到 Gemai 公益站...")
+
+    # 通道二: Gemai 公益站
+    try:
+        url = gemai_generate_and_upload(prompt, **kwargs)
+        if url:
+            return url
+    except Exception as e:
+        print(f"Gemai 公益站也失败: {e}")
+
+    return None
 ```
 
 ### 完整图片生成流程
@@ -174,23 +319,35 @@ def extract_image_placeholders(article_content: str) -> list:
 ```python
 from gemini_image_generator import GeminiImageGenerator
 
-# 初始化生成器
+# 初始化生成器(方式一: 自建API)
 generator = GeminiImageGenerator()
 
-def process_article_images(article_content: str) -> str:
+# 或使用方式二: Gemai 公益站
+# from gemai_image_generator import GemaiImageGenerator
+# gemai_gen = GemaiImageGenerator(
+#     api_key="sk-5Tgi5fdeaCfonclflYenie6XHaoXwNdrRoFal5bqWlCXe7ST",
+#     base_url="https://api.gemai.cc"
+# )
+
+def process_article_images(article_content: str, use_gemai: bool = False) -> str:
     """
     处理文章中的所有图片占位符
     :param article_content: 原始文章内容
+    :param use_gemai: 是否使用 Gemai 公益站(默认False使用自建API)
     :return: 替换后的文章内容
     """
     placeholders = extract_image_placeholders(article_content)
 
     for alt_text, prompt in placeholders:
-        # 1. 调用 Gemini 生成图片并上传到 COS
-        cos_url = generator.generate_and_upload(prompt)
+        if use_gemai:
+            # 使用 Gemai 公益站生成
+            cos_url = gemai_generate_and_upload(prompt)
+        else:
+            # 使用自建API生成
+            cos_url = generator.generate_and_upload(prompt)
 
         if cos_url:
-            # 2. 替换占位符
+            # 替换占位符
             old_placeholder = f"![{alt_text}]({{{{IMAGE:{prompt}}}}})"
             new_image_tag = f"![{alt_text}]({cos_url})"
             article_content = article_content.replace(old_placeholder, new_image_tag)
@@ -224,41 +381,49 @@ https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251214-143703.p
 
 ### 公众号卡片 (文章最顶部,前言之前)
 
-在文章正文最开头、前言之前,**必须**插入作者公众号名片卡片。该卡片在微信公众号编辑器中通过"插入公众号名片"功能实现,在 Markdown 稿件中使用以下格式标记:
+在文章正文最开头、前言之前,**必须**插入作者公众号名片卡片。直接在 Markdown 文件中输出以下 HTML 代码,渲染出可视化的公众号名片效果:
 
-**Markdown 标记格式:**
-```markdown
-{{ACCOUNT_CARD}}
-```
+**HTML 卡片代码（每篇文章必须在最顶部原样输出）:**
 
-**对应的微信公众号 HTML 结构:**
 ```html
-<mp-common-profile
-  class="js_uneditable custom_select_card mp_profile_iframe"
-  data-alias="duckcode"
-  data-nickname="海老豹666"
-  data-headimg="公众号头像URL"
-  data-signature="科技、管理、经济、学习、成长等文章"
-></mp-common-profile>
+<section style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin: 16px 0; display: flex; align-items: center; background: #fff;">
+  <img src="{{AVATAR_URL}}" style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; object-fit: cover;" />
+  <div style="flex: 1;">
+    <div style="font-size: 16px; font-weight: bold; color: #333;">海老豹666</div>
+    <div style="font-size: 13px; color: #888; margin-top: 4px;">科技、管理、经济、学习、成长等文章</div>
+    <div style="font-size: 12px; color: #aaa; margin-top: 2px;">207篇原创内容</div>
+  </div>
+  <span style="font-size: 12px; color: #576b95; white-space: nowrap;">公众号</span>
+</section>
 ```
 
 **公众号卡片固定参数:**
 
 | 参数 | 值 | 说明 |
 |------|------|------|
-| data-alias | duckcode | 公众号微信号 |
-| data-nickname | 海老豹666 | 公众号名称 |
-| data-signature | 科技、管理、经济、学习、成长等文章 | 公众号简介 |
+| 头像 | {{AVATAR_URL}} | 公众号头像图片地址(用户提供后替换) |
+| 名称 | 海老豹666 | 公众号名称 |
+| 简介 | 科技、管理、经济、学习、成长等文章 | 公众号简介 |
+| 原创数 | 207篇原创内容 | 原创文章数量 |
 
 **使用规则:**
 1. 卡片必须放在文章正文最顶部,前言标题之前
 2. 卡片与前言标题之间空一行
 3. 每篇文章只需一个公众号卡片
-4. 在 Markdown 稿件中使用 `{{ACCOUNT_CARD}}` 占位符,编辑时在微信公众号后台手动插入名片替换
+4. 直接输出上述 HTML 代码,**不要**使用 `{{ACCOUNT_CARD}}` 之类的占位符
+5. HTML 代码必须原样输出,不要修改样式或结构
 
 **文章开头示例:**
 ```markdown
-{{ACCOUNT_CARD}}
+<section style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin: 16px 0; display: flex; align-items: center; background: #fff;">
+  <img src="{{AVATAR_URL}}" style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; object-fit: cover;" />
+  <div style="flex: 1;">
+    <div style="font-size: 16px; font-weight: bold; color: #333;">海老豹666</div>
+    <div style="font-size: 13px; color: #888; margin-top: 4px;">科技、管理、经济、学习、成长等文章</div>
+    <div style="font-size: 12px; color: #aaa; margin-top: 2px;">207篇原创内容</div>
+  </div>
+  <span style="font-size: 12px; color: #576b95; white-space: nowrap;">公众号</span>
+</section>
 
 # 1.前言
 
@@ -708,7 +873,7 @@ app:
 ## 质量标准
 
 ### 合格标准 (必达)
-- ✅ 文章顶部有公众号卡片 `{{ACCOUNT_CARD}}`
+- ✅ 文章顶部有公众号名片卡片（HTML 格式）
 - ✅ 总字数 > 2000字
 - ✅ 代码块 >= 5个
 - ✅ 截图占位符 >= 8个
@@ -771,7 +936,7 @@ app:
 
 **模型名称:** `gemini-3-pro-image-preview`
 
-**基础参数:**
+**通道一: 自建API 基础参数:**
 ```json
 {
   "model": "gemini-3-pro-image-preview",
@@ -789,13 +954,64 @@ app:
 }
 ```
 
-**参数说明:**
+**通道二: Gemai 公益站基础参数:**
+```json
+{
+  "model": "gemini-3-pro-image-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": "图片描述内容"
+    }
+  ],
+  "temperature": 0.7,
+  "max_tokens": 4096
+}
+```
+
+**Gemai 公益站命令行调用:**
+```shell
+# 方式一: 通过环境变量设置 API Key（推荐）
+export GEMAI_API_KEY="你的API密钥"
+python gemai_image_generator.py --prompt "技术架构图,DeepSeek-OCR,3D等距视角,蓝色科技风格"
+
+# 方式二: 通过命令行参数传入 API Key
+python gemai_image_generator.py --api-key "你的API密钥" --prompt "技术架构图"
+
+# 指定输出文件
+python gemai_image_generator.py --prompt "软件界面展示,OCR识别,现代UI" -o demo.png
+
+# 指定风格和宽高比
+python gemai_image_generator.py --prompt "技术架构图" --style realistic --aspect-ratio 16:9
+
+# 生成多张图片
+python gemai_image_generator.py --prompt "代码编辑器界面" --num-images 3 -o code.png
+
+# 使用负向提示词
+python gemai_image_generator.py --prompt "服务器配置界面" --negative "blurry, low quality"
+```
+
+**参数说明（双通道通用）:**
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | model | string | 是 | 必须为 `gemini-3-pro-image-preview` |
 | text | string | 是 | 图片描述,越详细效果越好 |
 | ratio | string | 否 | "1:1" | 宽高比: 1:1/4:3/3:4/16:9/9:16/3:2/2:3/21:9 |
 | resolution | string | 否 | "2k" | 分辨率: 1k/2k/4k |
+| temperature | float | 否 | Gemai通道专属,创造性程度 0.0-1.0(默认0.7) |
+| max_tokens | int | 否 | Gemai通道专属,最大令牌数(默认4096) |
+| n | int | 否 | Gemai通道专属,生成图片数量 1-4(默认1) |
+| style | string | 否 | Gemai通道专属,风格: realistic/anime/oil-painting/watercolor/sketch |
+
+#### Gemai 公益站额外功能
+
+| 功能 | 说明 |
+|------|------|
+| 批量生成 | 支持一次生成1-4张图片(`--num-images`) |
+| 负向提示词 | 排除不想要的内容(`--negative`) |
+| 风格控制 | 5种预设风格(realistic/anime/oil-painting/watercolor/sketch) |
+| 宽高比 | 5种常用比例(1:1/16:9/9:16/4:3/3:4) |
+| 创造力调节 | temperature参数控制生成多样性 |
 
 #### 2. 常用比例与分辨率配置
 
@@ -821,6 +1037,19 @@ app:
 ---
 
 ## 更新日志
+
+### v2.4.0 (2026-02-23)
+- ✅ 新增 Gemai 公益站(api.gemai.cc)作为备用文生图通道
+- ✅ 新增 `gemai_image_generator.py` 工具类,支持 OpenAI 标准格式调用
+- ✅ 支持双通道自动切换策略(自建API优先,失败回退Gemai公益站)
+- ✅ Gemai通道支持批量生成(1-4张)、负向提示词、风格控制、宽高比
+- ✅ 新增命令行调用方式,支持 `python gemai_image_generator.py` 直接生成图片
+- ✅ 更新图片生成文档,补充双通道调用示例和参数说明
+
+### v2.3.1 (2026-02-23)
+- ✅ 公众号卡片从 `{{ACCOUNT_CARD}}` 占位符升级为 HTML 可视化名片卡片
+- ✅ 卡片在 Markdown 文件中直接渲染，无需手动替换
+- ✅ 样式参考微信公众号原生名片效果（圆形头像、名称、简介、原创数、公众号标签）
 
 ### v2.3.0 (2026-02-23)
 - ✅ 新增公众号卡片功能：文章前言上方自动插入作者公众号名片（`{{ACCOUNT_CARD}}` 占位符）
@@ -851,9 +1080,11 @@ app:
 - skill创建帮助文档.md
 
 图片生成相关:
-- gemini_image_generator.py - Gemini 图片生成与上传工具类
+- gemini_image_generator.py - Gemini 图片生成与上传工具类(自建API通道)
+- gemai_image_generator.py - Gemai 公益站图片生成工具类(备用通道,api.gemai.cc)
 - cos_utils.py - 腾讯云COS上传工具类
 
 项目链接:
-- **Gemini API**: http://115.190.165.156:3000/
+- **Gemini API(自建)**: http://115.190.165.156:3000/
+- **Gemai 公益站**: https://api.gemai.cc/
 - **腾讯云COS**: https://cloud.tencent.com/product/cos

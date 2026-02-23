@@ -3,7 +3,7 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.16-green.svg)
+![Version](https://img.shields.io/badge/version-0.0.17-green.svg)
 ![Skills](https://img.shields.io/badge/skills-13-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
@@ -39,7 +39,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | wwwzhouhui | 1.0.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
-| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
+| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成Gemini-3-Pro-Image-Preview双通道(自建API+Gemai公益站)自动配图与腾讯云COS上传功能，自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章 | Markdown、模板生成、Gemini API、Gemai API、腾讯云COS | 2026年2月23日 | wwwzhouhui | 2.4.0 |
 | jimeng_mcp_skill        | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI         | 2025年12月14日 | wwwzhouhui | 2.0.0 |
 | ppt-generator-skill     | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx                 | 2025年12月4日  | o3sky      | 1.0.0 |
 | dify-dsl-generator      | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计           | 2025年11月22日 | wwwzhouhui | 1.0.0 |
@@ -443,41 +443,62 @@ generator.save("output.pptx")
 
 **核心功能：**
 
-- ✅ 标准四段式结构（前言→项目介绍→部署实战→总结）
+- ✅ 公众号卡片：文章前言上方自动插入作者公众号名片卡片
+- ✅ 标准四段式结构（公众号卡片→前言→项目介绍→部署实战→总结→往期推荐）
 - ✅ 三段式开头（问题引入+解决方案+实战预告）
 - ✅ 详细部署步骤（环境→安装→配置→实现→测试）
 - ✅ 单段长句总结（300-500字）
+- ✅ 往期推荐：文章结尾自动附加最新5篇公众号文章链接
 - ✅ 口语化技术表达
 - ✅ 完整资源附加（GitHub+体验地址+网盘）
-- ✅ **新增** 即梦AI自动配图与腾讯云COS上传功能
-- ✅ **新增** 图片占位符自动替换为真实URL
-- ✅ **新增** 内存直接上传避免本地缓存
+- ✅ **Gemini-3-Pro-Image-Preview 双通道自动配图**（自建API + Gemai公益站）
+- ✅ 图片占位符自动替换为真实URL
+- ✅ 腾讯云COS图床自动上传
 
 **文章结构：**
 
+- **公众号卡片**：HTML格式名片卡片
 - **第1章**：前言（三段式，约300字）
 - **第2章**：项目介绍（约500字）
 - **第3章**：部署实战（约1500-2000字）
 - **第4章**：总结（单段300-500字）
-- **第5章**：附加资源
+- **第5章**：往期推荐（最新5篇文章链接）
 
-**配图系统（v2.1.0新增）：**
+**配图系统（v2.4.0 双通道）：**
 
-- 🤖 自动调用即梦AI生成技术配图
+- 🤖 **通道一（自建API）**：调用自建 Gemini API 生成技术配图
+- 🌐 **通道二（Gemai公益站）**：调用 api.gemai.cc 生成配图（备用通道）
 - ☁️ 自动上传至腾讯云COS图床
 - 🔗 自动替换文章中的图片占位符
-- 📸 支持多种图片类型：工作流截图、效果演示图、代码配置图
+- 📸 支持多种图片类型：架构图、界面图、终端图、代码图、结果图
 - 💾 内存上传，无需本地缓存文件
+- 🔄 双通道自动切换：自建API优先，失败回退Gemai公益站
 
-**配置要求（v2.1.0）：**
+**Gemai公益站命令行工具：**
+
+```bash
+# 通过环境变量设置 API Key
+export GEMAI_API_KEY="你的API密钥"
+python3 gemai_image_generator.py --prompt "技术架构图,3D等距视角,蓝色科技风格"
+
+# 或通过命令行参数传入
+python3 gemai_image_generator.py --api-key "你的密钥" --prompt "描述内容" -o output.png
+
+# 支持风格、宽高比、批量生成
+python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect-ratio 16:9 --num-images 2
+```
+
+**配置要求：**
 
 1. 配置腾讯云COS环境变量：
-   - `SECRET_ID`：腾讯云访问密钥ID
-   - `SECRET_KEY`：腾讯云访问密钥Key
+   - `COS_SECRET_ID`：腾讯云访问密钥ID
+   - `COS_SECRET_KEY`：腾讯云访问密钥Key
    - `COS_BUCKET`：COS存储桶名称
    - `COS_REGION`：COS存储桶所在地域
 
-2. 确保 jimeng-mcp-server 正常运行
+2. 配置图片生成API（二选一）：
+   - **自建API**：配置 Gemini API 地址和 Key
+   - **Gemai公益站**：设置 `GEMAI_API_KEY` 环境变量
 
 **示例用法：**
 
@@ -843,6 +864,7 @@ skills_collection/
 ├── xiaohuihui-tech-article/      # 技术文章生成技能
 │   ├── Skill.md
 │   ├── cos_utils.py
+│   ├── gemai_image_generator.py
 │   └── templates/
 ├── jimeng_mcp_skill/             # 即梦 AI 图像视频生成技能
 │   ├── Skill.md
@@ -939,6 +961,9 @@ export SECRET_ID="your-secret-id"
 export SECRET_KEY="your-secret-key"
 export COS_BUCKET="your-bucket"
 export COS_REGION="your-region"
+
+# Gemai 公益站 API Key（xiaohuihui-tech-article 配图备用通道）
+export GEMAI_API_KEY="your-gemai-api-key"
 
 # 即梦 API / Seedance 2.0（jimeng_mcp_skill、mp-cover-generator、seedance-video-creator 需要）
 export JIMENG_API_KEY="your-api-key"
@@ -1174,6 +1199,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 </details>
 
 <details>
+<summary>Gemai 公益站文生图失败？</summary>
+
+1. 确认已设置 API Key：`export GEMAI_API_KEY="你的密钥"` 或使用 `--api-key` 参数
+2. 检查网络是否能访问 `https://api.gemai.cc`
+3. 公益站密钥可能有调用限额，建议申请自己的 Key
+4. 图片生成需要较长时间（30-120秒），请耐心等待
+5. 如遇到频率限制，稍后重试即可
+
+</details>
+
+<details>
 <summary>PPT 生成器生成的文件打不开?</summary>
 
 1. 确认安装了 python-pptx 库：pip install python-pptx
@@ -1233,7 +1269,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - **seedance-video-creator**: v1.2.0 (2026-02-22) - 默认模型切换为 seedance-2.0-fast，修复 API 版本兼容问题
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
 - **github-trending**: v1.0.0 (2026-01-22) - 初始版本
-- **xiaohuihui-tech-article**: v2.1.0 (2025-12-14) - 新增即梦AI自动配图与腾讯云COS上传
+- **xiaohuihui-tech-article**: v2.4.0 (2026-02-23) - 新增Gemai公益站双通道文生图,移除硬编码API Key,支持环境变量配置
 - **jimeng_mcp_skill**: v2.0.0 (2025-12-14) - 升级至 jimeng-4.5 模型，参数系统重构
 
 ### 开发语言
@@ -1275,6 +1311,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月23日 - version 0.0.17
+
+- ✅ **重要更新** xiaohuihui-tech-article Skill 至 v2.4.0
+- ✅ 新增 Gemai 公益站（api.gemai.cc）作为备用文生图通道
+- ✅ 新增 `gemai_image_generator.py` 工具类，支持 OpenAI 标准格式调用 Gemini-3-Pro-Image-Preview 模型
+- ✅ 支持双通道自动切换策略（自建API优先，失败回退Gemai公益站）
+- ✅ Gemai通道支持批量生成（1-4张）、负向提示词、风格控制、宽高比
+- ✅ 移除硬编码 API Key，改为环境变量 `GEMAI_API_KEY` 或命令行 `--api-key` 参数传入
+- ✅ 新增命令行调用方式，支持 `python3 gemai_image_generator.py` 直接生成图片
+- ✅ 更新图片生成文档，补充双通道调用示例和参数说明
 
 ### 2026年2月23日 - version 0.0.16
 
@@ -1486,4 +1533,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年2月23日
+**文档生成时间**: 2026年2月23日 (v0.0.17)
