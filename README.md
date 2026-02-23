@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.15-green.svg)
-![Skills](https://img.shields.io/badge/skills-12-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.16-green.svg)
+![Skills](https://img.shields.io/badge/skills-13-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -19,7 +19,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
 - **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作
-- **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）
+- **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
 
@@ -36,6 +36,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
 | wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | wwwzhouhui | 1.0.0 |
+| wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | wwwzhouhui | 1.0.0 |
 | github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
 | github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
 | xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成即梦AI自动配图与腾讯云COS上传功能，自动生成包含前言、项目介绍、部署实战、总结的完整技术文章 | Markdown、模板生成、即梦AI、腾讯云COS | 2025年12月14日 | wwwzhouhui | 2.1.0 |
@@ -196,6 +197,68 @@ print(f"成功{stats['success']}篇, 失败{stats['fail']}篇")
 - 优先使用短链接（`/s/xxxxx`），长链接可能触发验证码
 - 批量下载时默认间隔3秒，可通过 `--interval` 调整
 - 自动使用微信移动端 User-Agent 绕过访问限制
+
+---
+
+### 📰 WeChat Article Aggregator (微信公众号文章聚合器)
+
+**核心功能：**
+
+- ✅ 通过 mptext.top API 批量获取指定公众号博主的最新文章列表
+- ✅ 自动下载文章内容并解析为 Markdown/HTML/纯文本/JSON 格式
+- ✅ 支持按公众号名称或 fakeid 获取，预置 8 个热门 AI 技术公众号
+- ✅ 智能 HTML 正文解析，提取 `#js_content` 区块内容
+- ✅ 生成结构化的 summary.json 元数据汇总文件
+- ✅ 可选依赖，自动降级：无 beautifulsoup4 时使用内置解析器
+
+**预置公众号：**
+
+| 公众号 | 分类 | fakeid |
+|--------|------|--------|
+| 饼干哥哥AGI | AI编程 | MjM5NDI4MTY3NA== |
+| 赛博禅心 | AI前沿 | MzkzNDQxOTU2MQ== |
+| 可怜的小互 | AI技术 | MzkzMTcyMTgxNg== |
+| 宝玉的工程技术分享 | 技术翻译 | Mzk1NzgxMjQ0OA== |
+| 苍何 | AI实战 | Mzg3MTk3NzYzNw== |
+| 老金开源 | Claude Code | MzI0NzU2MDgyNA== |
+| 玩转AI工具 | AI工具 | MzU4NTE1Mjg4MA== |
+| 袋鼠帝AI客栈 | AI实战 | MzkwMzE4NjU5NA== |
+
+**使用方式：**
+
+```bash
+# 命令行方式：按 fakeid 获取
+python3 scripts/fetch_articles.py --api-key YOUR_KEY --fakeids "MzkzNDQxOTU2MQ==" --limit 2
+
+# 按公众号名称获取
+python3 scripts/fetch_articles.py --api-key YOUR_KEY --fakeids "赛博禅心,老金开源" --limit 3
+
+# 获取所有预置公众号的最新文章
+python3 scripts/fetch_articles.py --api-key YOUR_KEY --fakeids all --limit 1
+
+# 查看预置公众号列表
+python3 scripts/fetch_articles.py --list-accounts
+```
+
+**Claude Code 中使用：**
+
+```
+"请使用 wechat-article-aggregator 获取赛博禅心最新2篇公众号文章"
+"请帮我获取所有预置公众号的最新文章"
+```
+
+**技术要求：**
+
+- Python 3.7+
+- 必需依赖：`pip install requests`
+- 可选依赖：`pip install beautifulsoup4 html2text`（增强 HTML 解析效果）
+- mptext.top API Key
+
+**注意事项：**
+
+- API Key 通过 `--api-key` 参数或 `MPTEXT_API_KEY` 环境变量配置
+- 默认每次请求间隔 2 秒，可通过 `--interval` 调整
+- 部分图片密集型或付费文章可能无法提取文本内容
 
 ---
 
@@ -760,7 +823,8 @@ skills_collection/
 │   ├── siliconflow-api-skills/
 │   ├── github-readme-generator/
 │   ├── seedance-video-creator/
-│   └── wechat-article-fetcher/
+│   ├── wechat-article-fetcher/
+│   └── wechat-article-aggregator/
 └── README.md         # 项目总文档
 ```
 
@@ -826,6 +890,13 @@ skills_collection/
 │   │   └── fetch_wechat_article.py
 │   └── references/              # 参考文档
 │       └── wechat_html_structure.md
+├── wechat-article-aggregator/   # 微信公众号文章聚合技能
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── scripts/                 # 文章聚合脚本
+│   │   └── fetch_articles.py
+│   └── references/              # 预置公众号列表
+│       └── accounts.json
 ├── .gitignore
 └── README.md
 ```
@@ -878,6 +949,9 @@ export JIMENG_API_URL="http://127.0.0.1:8000"
 # 即梦 SessionID（seedance-video-creator 需要）
 export JIMENG_SESSION_ID="your-sessionid"
 
+# mptext.top API Key（wechat-article-aggregator 需要）
+export MPTEXT_API_KEY="your-mptext-api-key"
+
 # GitHub Token（github-trending 可选）
 export GITHUB_TOKEN="your-github-token"
 
@@ -915,6 +989,9 @@ export WEIXIN_WEBHOOK="your-webhook-url"
 
 # 微信公众号文章获取
 "请帮我获取这篇微信公众号文章 https://mp.weixin.qq.com/s/xxxxx"
+
+# 微信公众号文章聚合
+"请使用 wechat-article-aggregator 获取赛博禅心和老金开源最新2篇公众号文章"
 ```
 
 ### 高级用法
@@ -1086,6 +1163,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 </details>
 
 <details>
+<summary>公众号文章聚合器获取文章内容为空？</summary>
+
+1. 部分图片密集型文章（如纯图片推文）无法提取文本内容，属于正常现象
+2. 付费阅读或已被删除的文章无法获取完整内容
+3. 确认 API Key 有效：检查 mptext.top 账户状态
+4. 如遇 API 限流，增大请求间隔：`--interval 5`
+5. 确认已安装可选依赖以获得更好的解析效果：`pip install beautifulsoup4 html2text`
+
+</details>
+
+<details>
 <summary>PPT 生成器生成的文件打不开?</summary>
 
 1. 确认安装了 python-pptx 库：pip install python-pptx
@@ -1130,16 +1218,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 12
+- **总技能数**: 13
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
-- **数据采集**: 1 (wechat-article-fetcher)
+- **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
 
 ### 最新版本动态
 
+- **wechat-article-aggregator**: v1.0.0 (2026-02-23) - 初始版本，支持批量获取公众号文章，预置8个AI技术公众号
 - **wechat-article-fetcher**: v1.0.0 (2026-02-22) - 初始版本，支持单篇和批量下载
 - **seedance-video-creator**: v1.2.0 (2026-02-22) - 默认模型切换为 seedance-2.0-fast，修复 API 版本兼容问题
 - **github-readme-generator**: v1.0.0 (2026-01-23) - 初始版本
@@ -1149,7 +1238,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 开发语言
 
-- Python: 3
+- Python: 4
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
@@ -1186,6 +1275,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026年2月23日 - version 0.0.16
+
+- ✅ 新增 wechat-article-aggregator Skill v1.0.0
+- ✅ 通过 mptext.top API 批量获取指定公众号博主的最新文章列表
+- ✅ 支持按公众号名称或 fakeid 获取，预置 8 个热门 AI 技术公众号
+- ✅ 自动下载文章 HTML 并解析为 Markdown/HTML/纯文本/JSON 格式
+- ✅ 智能 HTML 正文解析，提取 `#js_content` 区块内容
+- ✅ 可选依赖自动降级，无 beautifulsoup4 时使用内置解析器
+- ✅ 生成 summary.json 元数据汇总文件
+- ✅ 支持 `--list-accounts` 查看预置公众号列表
 
 ### 2026年2月22日 - version 0.0.15
 
@@ -1386,4 +1486,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年2月22日
+**文档生成时间**: 2026年2月23日
