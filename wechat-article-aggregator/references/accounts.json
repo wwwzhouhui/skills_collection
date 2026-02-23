@@ -1,0 +1,50 @@
+[
+  {
+    "fakeid": "MjM5NDI4MTY3NA==",
+    "name": "饼干哥哥AGI",
+    "category": "AI编程",
+    "description": "AI编程实战与AGI前沿探索"
+  },
+  {
+    "fakeid": "MzkzNDQxOTU2MQ==",
+    "name": "赛博禅心",
+    "category": "AI前沿",
+    "description": "AI前沿技术深度解读"
+  },
+  {
+    "fakeid": "MzkzMTcyMTgxNg==",
+    "name": "可怜的小互",
+    "category": "AI技术",
+    "description": "AI技术科普与实战分享"
+  },
+  {
+    "fakeid": "Mzk1NzgxMjQ0OA==",
+    "name": "宝玉的工程技术分享",
+    "category": "技术翻译",
+    "description": "海外AI技术文章翻译与工程实践"
+  },
+  {
+    "fakeid": "Mzg3MTk3NzYzNw==",
+    "name": "苍何",
+    "category": "AI实战",
+    "description": "AI工具实战教程与效率提升"
+  },
+  {
+    "fakeid": "MzI0NzU2MDgyNA==",
+    "name": "老金开源",
+    "category": "Claude Code",
+    "description": "Claude Code深度使用与开源项目"
+  },
+  {
+    "fakeid": "MzU4NTE1Mjg4MA==",
+    "name": "玩转AI工具",
+    "category": "AI工具",
+    "description": "AI工具评测与使用技巧"
+  },
+  {
+    "fakeid": "MzkwMzE4NjU5NA==",
+    "name": "袋鼠帝AI客栈",
+    "category": "AI实战",
+    "description": "AI应用实战与案例分享"
+  }
+]
