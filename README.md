@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.17-green.svg)
-![Skills](https://img.shields.io/badge/skills-13-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.18-green.svg)
+![Skills](https://img.shields.io/badge/skills-14-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -34,6 +34,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026 年 3 月 13 日 | guanyugang | 1.0.0 |
 | seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
 | wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | wwwzhouhui | 1.0.0 |
 | wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | wwwzhouhui | 1.0.0 |
@@ -707,6 +708,87 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 
 ---
 
+### 🔍 Obsidian Search (Obsidian CLI 查询助手)
+
+**核心功能：**
+
+- ✅ 将自然语言检索需求转换为 Obsidian CLI 查询命令
+- ✅ 支持搜索笔记、查找上下文、筛选任务、标签、属性
+- ✅ 查询反向链接、文件列表、文档大纲
+- ✅ 自动选择最合适的 CLI 命令模式
+- ✅ 结果聚类和简洁总结
+
+**核心命令：**
+
+| 命令 | 功能说明 |
+|------|----------|
+| `obsidian search` | 文本搜索，查找包含关键词的笔记 |
+| `obsidian search:context` | 带上下文搜索，显示关键词出现的行 |
+| `obsidian read` | 读取指定笔记的完整内容 |
+| `obsidian files` | 列出指定目录下的文件 |
+| `obsidian tasks` | 查询待办事项 |
+| `obsidian tags` | 查看标签分布统计 |
+| `obsidian backlinks` | 查询反向链接 |
+| `obsidian links` | 查询出链 |
+| `obsidian outline` | 查看笔记大纲/标题层级 |
+
+**适用场景：**
+
+- 快速查找知识库中的笔记
+- 查看关键词出现的上下文
+- 整理待办事项和任务清单
+- 分析标签使用情况和知识分类
+- 查看笔记之间的引用关系
+- 浏览指定目录下的文档列表
+- 总结特定主题在知识库中的分布
+
+**使用示例：**
+
+```
+帮我找一下和 obsidian 相关的笔记
+→ obsidian search query="obsidian" limit=5
+```
+
+```
+看看哪些地方提到了 obsidian cli
+→ obsidian search:context query="obsidian cli" limit=10
+```
+
+```
+我的知识库里常用标签有哪些
+→ obsidian tags counts format=json
+```
+
+```
+谁引用了这篇笔记
+→ obsidian backlinks file="Obsidian CLI 命令行接口" counts format=json
+```
+
+```
+列出 work 目录下的文档
+→ obsidian files folder="work"
+```
+
+**查询策略：**
+
+- **先搜再读**：先用 `search` 缩小范围，再用 `read` 读取内容
+- **先列再筛**：先用 `files folder` 枚举目录，再筛选目标文件
+- **先看关系再读正文**：先用 `backlinks`/`links` 查看引用关系，再深入阅读
+
+**技术要求：**
+
+- 桌面版 Obsidian 正在运行
+- Obsidian CLI 已安装并配置
+
+**注意事项：**
+
+- 搜索命令默认只返回路径，不返回正文
+- 要看命中内容使用 `search:context`
+- `search` 的 `path=` 接收文件夹路径，不是文件路径
+- 若结果为空，会明确说明并尝试更宽松关键词
+
+---
+
 ### 🌐 SiliconFlow API Skills
 
 **核心功能：**
@@ -919,6 +1001,10 @@ skills_collection/
 │   │   └── fetch_articles.py
 │   └── references/              # 预置公众号列表
 │       └── accounts.json
+├── obsidian-search/             # Obsidian CLI 查询技能
+│   ├── SKILL.md
+│   └── references/
+│       └── cli-query-patterns.md
 ├── .gitignore
 └── README.md
 ```
@@ -1254,16 +1340,18 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 13
+- **总技能数**: 14
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
+- **效率工具**: 1 (obsidian-search)
 
 ### 最新版本动态
 
+- **obsidian-search**: v1.0.0 (2026-03-13) - 初始版本，Obsidian CLI 查询助手，支持自然语言检索、笔记搜索、上下文查找、任务/标签/属性筛选、反链查询等
 - **wechat-article-aggregator**: v1.0.0 (2026-02-23) - 初始版本，支持批量获取公众号文章，预置8个AI技术公众号
 - **wechat-article-fetcher**: v1.0.0 (2026-02-22) - 初始版本，支持单篇和批量下载
 - **seedance-video-creator**: v1.2.0 (2026-02-22) - 默认模型切换为 seedance-2.0-fast，修复 API 版本兼容问题
@@ -1278,7 +1366,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
-- Bash/Shell: 1
+- Bash/Shell: 2
 
 ### 维护状态
 
@@ -1311,6 +1399,25 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+### 2026 年 3 月 13 日 - version 0.0.18
+
+- ✅ 新增 **obsidian-search** Skill v1.0.0
+- ✅ Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令
+- ✅ 支持多种查询模式：
+  - `obsidian search` - 文本搜索，查找包含关键词的笔记
+  - `obsidian search:context` - 带上下文搜索，显示关键词出现的行
+  - `obsidian read` - 读取指定笔记的完整内容
+  - `obsidian files` - 列出指定目录下的文件
+  - `obsidian tasks` - 查询待办事项
+  - `obsidian tags` - 查看标签分布统计
+  - `obsidian backlinks` - 查询反向链接
+  - `obsidian links` - 查询出链
+  - `obsidian outline` - 查看笔记大纲/标题层级
+- ✅ 智能命令选择：根据用户自然语言描述自动匹配最合适的 CLI 命令
+- ✅ 结果聚类总结：不原样倾倒输出，提供简洁的关键发现汇总
+- ✅ 支持组合查询策略：先搜再读、先列再筛、先看关系再读正文
+- ✅ 参考资料：`cli-query-patterns.md` 常用查询命令、参数选择和自然语言到命令的映射
+
 
 ### 2026年2月23日 - version 0.0.17
 
@@ -1533,4 +1640,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026年2月23日 (v0.0.17)
+**文档生成时间**: 2026 年 3 月 13 日 (v0.0.18)
