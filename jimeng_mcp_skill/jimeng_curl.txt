@@ -1,6 +1,6 @@
 --请求文生图
 curl --location --request POST 'https://jimeng1.duckcloud.fun/v1/images/generations' \
---header 'Authorization: Bearer 73795a52a17c7ee7e95c213a22135c96' \
+--header 'Authorization: Bearer aabbddddddddddddddd' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "model": "jimeng-4.5",
