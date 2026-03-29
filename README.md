@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.18-green.svg)
-![Skills](https://img.shields.io/badge/skills-14-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.19-green.svg)
+![Skills](https://img.shields.io/badge/skills-15-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -22,6 +22,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
+- **合规审查**: 微信公众号文章合规审查（违规风险识别、修改建议）
 
 ### 适用场景
 
@@ -35,6 +36,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026 年 3 月 13 日 | guanyugang | 1.0.0 |
+| wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026 年 3 月 29 日 | wwwzhouhui | 1.0.0 |
 | seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
 | wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | wwwzhouhui | 1.0.0 |
 | wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | wwwzhouhui | 1.0.0 |
@@ -789,6 +791,100 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 
 ---
 
+### 🛡️ Wechat Compliance Reviewer (微信公众号文章合规审查专家)
+
+**核心功能：**
+
+- ✅ 根据微信公众平台运营规范审查文章内容
+- ✅ 识别 9 大类违规风险（诱导分享、欺诈信息、营销推广、版权侵权等）
+- ✅ 提供详细修改建议和合规话术替代方案
+- ✅ 支持快速审查清单和深度审查两种模式
+- ✅ 输出结构化审查报告（风险等级 + 违规位置 + 修改建议）
+- ✅ 内置违规话术对照表和合规模板
+
+**审查范围：**
+
+| 风险等级 | 违规类型 | 检测内容 |
+|---------|---------|---------|
+| 🔴 高风险 | 诱导分享/关注 | "白嫖"、"薅羊毛"、"速转"、"分享给朋友"等 |
+| 🔴 高风险 | 营销推广/优惠码 | 优惠码、推荐链接（含 ref 参数）、购买链接 |
+| 🔴 高风险 | 欺诈/虚假信息 | "0 元"实际需绑卡、"免费"实际后续收费 |
+| 🔴 高风险 | 版权/知识产权 | 未授权转载、搬运内容、盗用图片 |
+| 🟡 中风险 | 金融/支付相关 | 指导绑卡、跨境支付、投资建议 |
+| 🟡 中风险 | 技术外挂/绕过付费 | 破解教程、绕过订阅、API 滥用 |
+| 🟡 中风险 | 夸大/虚假宣传 | 虚假参数、夸张用语、未证实数据 |
+| 🟠 低风险 | 外部链接/导流 | 外部网站链接、小程序跳转 |
+| 🟠 低风险 | 敏感话题 | 政治、色情、赌博、暴力 |
+
+**适用场景：**
+
+- 公众号文章发布前合规审查
+- 识别诱导分享、欺诈信息等违规风险
+- 获取合规修改建议和话术替代
+- 学习微信公众平台运营规范
+- 降低账号被封禁风险
+
+**使用方式：**
+
+```
+请帮我审查这篇公众号文章，看看有没有违规风险
+
+[粘贴文章内容]
+```
+
+```
+请使用 wechat-compliance-reviewer 审查这篇文章，检查是否有诱导分享、营销推广等违规行为
+```
+
+**审查报告示例：**
+
+```markdown
+## 审查结果总览
+
+| 风险等级 | 违规项数量 | 建议 |
+|---------|-----------|------|
+| 高风险 | 3 项 | 必须修改 |
+| 中风险 | 2 项 | 强烈建议修改 |
+| 低风险 | 1 项 | 可考虑修改 |
+
+**综合结论**：❌ 不建议按当前版本发布，存在较高封号风险
+
+## 详细问题清单
+
+### 问题 1：诱导分享行为
+- **位置**：第 3 段
+- **原文**："赶紧分享给你的朋友们，一起薅羊毛！"
+- **违规原因**：违反《微信公众平台运营规范》，禁止诱导用户分享行为
+- **风险等级**：⭐⭐⭐⭐⭐
+- **修改建议**：直接删除该句，或改为"如果你觉得有用，欢迎分享给需要的朋友"
+```
+
+**参考资料：**
+
+- `violation-types.md` - 违规类型详解（10 大类违规行为和处罚措施）
+- `case-studies.md` - 处罚案例库（10 个真实封号案例和分析）
+- `compliant-templates.md` - 合规话术模板（违规话术替代方案和场景模板）
+
+**技术特点：**
+
+- 基于《微信公众平台运营规范》官方条款
+- 收录真实处罚案例分析
+- 提供合规话术对照表
+- 支持快速审查清单（8 项检查）
+- 分级处理（高风险必须修改，低风险酌情处理）
+- 考虑文章整体意图和上下文
+
+**处罚措施参考：**
+
+| 违规类型 | 首次处罚 | 多次处罚 | 严重处罚 |
+|---------|---------|---------|---------|
+| 诱导分享 | 删除文章 | 限制功能 7-30 天 | 永久封号 |
+| 营销推广 | 删除文章 | 限制流量 | 封禁广告功能 |
+| 欺诈信息 | 删除文章 | 封号 | 移交司法 |
+| 版权侵权 | 删除文章 | 赔偿 | 账号降权 |
+
+---
+
 ### 🌐 SiliconFlow API Skills
 
 **核心功能：**
@@ -927,7 +1023,9 @@ skills_collection/
 │   ├── github-readme-generator/
 │   ├── seedance-video-creator/
 │   ├── wechat-article-fetcher/
-│   └── wechat-article-aggregator/
+│   ├── wechat-article-aggregator/
+│   ├── wechat-compliance-reviewer/
+│   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
 
@@ -1005,6 +1103,14 @@ skills_collection/
 │   ├── SKILL.md
 │   └── references/
 │       └── cli-query-patterns.md
+├── wechat-compliance-reviewer/  # 微信公众号文章合规审查技能
+│   ├── SKILL.md
+│   ├── .claude-plugin/
+│   │   └── marketplace.json
+│   └── references/              # 合规审查参考资料
+│       ├── violation-types.md   # 违规类型详解
+│       ├── case-studies.md      # 处罚案例库
+│       └── compliant-templates.md # 合规话术模板
 ├── .gitignore
 └── README.md
 ```
@@ -1340,7 +1446,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 14
+- **总技能数**: 15
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
 - **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
@@ -1348,9 +1454,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
 - **效率工具**: 1 (obsidian-search)
+- **合规审查**: 1 (wechat-compliance-reviewer)
 
 ### 最新版本动态
 
+- **wechat-compliance-reviewer**: v1.0.0 (2026-03-29) - 初始版本，微信公众号文章合规审查专家，支持 9 大类违规风险检测（诱导分享/欺诈信息/营销推广/版权侵权等），提供详细修改建议和合规话术替代，内置违规类型详解/处罚案例库/合规话术模板三份参考资料
 - **obsidian-search**: v1.0.0 (2026-03-13) - 初始版本，Obsidian CLI 查询助手，支持自然语言检索、笔记搜索、上下文查找、任务/标签/属性筛选、反链查询等
 - **wechat-article-aggregator**: v1.0.0 (2026-02-23) - 初始版本，支持批量获取公众号文章，预置8个AI技术公众号
 - **wechat-article-fetcher**: v1.0.0 (2026-02-22) - 初始版本，支持单篇和批量下载
@@ -1399,6 +1507,25 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+### 2026 年 3 月 29 日 - version 0.0.19
+
+- ✅ 新增 **wechat-compliance-reviewer** Skill v1.0.0
+- ✅ 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容
+- ✅ 识别违规风险点并给出修改建议，支持发布前合规检查
+- ✅ 支持 9 大类违规检测：
+  - **高风险违规**：诱导分享/诱导关注、营销推广/优惠码、欺诈/虚假信息、版权/知识产权
+  - **中风险违规**：金融/支付相关、技术外挂/绕过付费、夸大/虚假宣传
+  - **低风险违规**：外部链接/导流、敏感话题（政治、色情、赌博、暴力）
+- ✅ 快速审查清单：一键检查诱导分享词汇、优惠码链接、绝对化用语、版权风险等
+- ✅ 分级处理机制：高风险必须修改、中风险强烈建议修改、低风险可考虑修改
+- ✅ 违规话术对照表：提供合规替代方案（如"白嫖"→"免费体验"、"最强"→"优秀"）
+- ✅ 审查报告输出：包含风险等级总览、详细问题清单、修改建议、综合发布结论
+- ✅ 参考资料：
+  - `references/violation-types.md` - 违规类型详解与处罚标准
+  - `references/case-studies.md` - 10 个真实处罚案例分析
+  - `references/compliant-templates.md` - 合规话术模板库
+
+
 ### 2026 年 3 月 13 日 - version 0.0.18
 
 - ✅ 新增 **obsidian-search** Skill v1.0.0

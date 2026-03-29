@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "name": "Wechat Compliance Reviewer",
+    "description": "微信公众号文章合规审查专家，识别违规风险点并给出修改建议",
+    "owner": "hailaobao2025",
+    "version": "1.0.0",
+    "homepage": "https://github.com/wwwzhouhui/skills_collection/wechat-compliance-reviewer"
+  },
+  "plugins": [
+    {
+      "name": "wechat-compliance-reviewer",
+      "description": "审查微信公众号文章内容并识别违规风险点。使用场景：当用户写完公众号文章后请求审查、检查是否违规、发布前合规检查、识别诱导分享/欺诈信息/营销推广/版权侵权等违规内容时触发此技能。",
+      "source": "./",
+      "strict": false,
+      "version": "1.0.0",
+      "category": "Content Review",
+      "keywords": [
+        "wechat",
+        "compliance",
+        "content-review",
+        "公众号",
+        "合规审查"
+      ],
+      "skills": [
+        "./"
+      ]
+    }
+  ]
+}
