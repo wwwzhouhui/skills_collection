@@ -1,0 +1,5 @@
+scene: wechat_cover
+aspect_ratio: "16:9"
+composition: "horizontal, clean left text space, strong right-side visual subject"
+text_layout: "reserve clean space for title and subtitle, avoid clutter"
+style_hint: "professional technology media, restrained, modern, editorial"

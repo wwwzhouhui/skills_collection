@@ -1,0 +1,27 @@
+wan:
+  api_key: "your_wan_api_key"
+  base_url: "https://dashscope.aliyuncs.com/api/v1"
+  image_model: "wan2.7-image"
+  text_to_video_model: "wan2.7-t2v"
+  image_to_video_model: "wan2.7-i2v"
+  reference_to_video_model: "wan2.7-r2v"
+
+defaults:
+  task_type: "image"
+  scene: "wechat_cover"
+  style: "tech_media"
+  variants: 1
+  output_dir: "output"
+  video_duration_seconds: 5
+  video_resolution: "720P"
+  video_aspect_ratio: "16:9"
+  video_shot_type: "single"
+  video_audio: true
+
+postprocess:
+  ffmpeg_bin: "ffmpeg"
+  ffprobe_bin: "ffprobe"
+  tts_voice: "zh-CN-XiaoxiaoNeural"
+  tts_rate: "+0%"
+  tts_volume: "+0%"
+  subtitle_mode: "burned"

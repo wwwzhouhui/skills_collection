@@ -28,3 +28,6 @@ seedance-video-creator/.serena/.gitignore
 seedance-video-creator/.serena/project.yml
 xiaohuihui-tech-article/.ipynb_checkpoints/SKILL-checkpoint.md
 xiaohuihui-tech-article/.ipynb_checkpoints/gemai_image_generator-checkpoint.py
+.omc/sessions/1ab64877-669c-46ba-90a6-66b22fae1caa.json
+.omc/state/idle-notif-cooldown.json
+.omc/project-memory.json

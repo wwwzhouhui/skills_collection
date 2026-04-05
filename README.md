@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.19-green.svg)
-![Skills](https://img.shields.io/badge/skills-15-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.20-green.svg)
+![Skills](https://img.shields.io/badge/skills-16-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -35,6 +35,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称              | 功能说明                                                     | 技术栈                               | 更新时间       | 作者       | 版本  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026 年 4 月 5 日 | wwwzhouhui | 1.0.0 |
 | obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026 年 3 月 13 日 | guanyugang | 1.0.0 |
 | wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026 年 3 月 29 日 | wwwzhouhui | 1.0.0 |
 | seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
@@ -402,6 +403,146 @@ generator.save("output.pptx")
 ```
 
 ![image-20251112171422425](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20251112171422425.png)
+
+---
+
+### 🎬 WanCover+ (Wan2.7 封面图和视频生成)
+
+**核心功能：**
+
+- ✅ **图片生成**：公众号封面图、小红书封面图、种草图、海报重排版
+- ✅ **视频生成**：文生视频、静态图转丝滑动态视频、参考图/参考视频转视频
+- ✅ **视频后处理**：自动 Edge TTS 配音、SRT 字幕生成、字幕烧录
+- ✅ **智能场景识别**：自动判断任务类型（从零出图 vs 改版重排）
+- ✅ **多平台适配**：支持微信横版封面、小红书竖版封面等多种规格
+- ✅ **Wan 2.6 / 2.7 兼容**：视频任务兼容两代模型协议
+
+**图片任务场景：**
+
+| 场景 | scene | 适用场景 |
+|------|-------|----------|
+| 公众号封面图 | `wechat_cover` | 横版文章头图、技术媒体头图 |
+| 小红书封面 | `xiaohongshu_cover` | 竖版信息流封面、种草图 |
+| 海报改版 | `relayout_poster` | 保留原主体/信息层级的改版设计 |
+
+**视频任务类型：**
+
+| 类型 | task_type | 默认模型 | 适用场景 |
+|------|-----------|----------|----------|
+| 文生视频 | `text_to_video` | `wan2.7-t2v` | 纯文字描述生成视频 |
+| 图转视频 | `image_to_video` | `wan2.7-i2v` | 静态图转动态视频 |
+| 参考转视频 | `reference_to_video` | `wan2.7-r2v` | 参考图/参考视频转视频 |
+
+**适用场景：**
+
+- 公众号文章封面图制作
+- 小红书笔记封面图生成
+- 产品种草图快速出图
+- 海报横版改竖版重排版
+- 产品演示短视频生成
+- 静态图片转动态视频
+- 视频自动配音和字幕
+
+**使用示例：**
+
+```
+请使用 wan-cover-plus 生成一个技术文章公众号封面图
+标题：Claude Code Skills 集合
+副标题：15+ 实用技能工具
+风格：tech_media
+```
+
+![6eac583cb3d4458881fcff2f4978138e_2](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/6eac583cb3d4458881fcff2f4978138e_2.png)
+
+**命令行使用：**
+
+```bash
+# 图片任务
+python3 scripts/generate.py --input examples/demo_wechat_cover.json
+python3 scripts/generate.py --input examples/demo_xiaohongshu_cover.json
+python3 scripts/generate.py --input examples/demo_relayout_poster.json
+
+# 视频任务
+python3 scripts/generate.py --input examples/demo_text_to_video.json
+python3 scripts/generate.py --input examples/demo_image_to_video.json
+python3 scripts/generate.py --input examples/demo_reference_to_video.json
+```
+
+**输入格式示例：**
+
+```json
+// 图片任务最小输入
+{
+  "title": "string",
+  "scene": "wechat_cover | xiaohongshu_cover | relayout_poster",
+  "style": "tech_media | warm_lifestyle | premium_brand | cute_note"
+}
+
+// 文生视频最小输入
+{
+  "task_type": "text_to_video",
+  "title": "string"
+}
+
+// 图转视频最小输入
+{
+  "task_type": "image_to_video",
+  "title": "string",
+  "reference_images": ["/absolute/path/or/url"]
+}
+```
+
+**配置说明：**
+
+```yaml
+wan:
+  api_key: "your_wan_api_key"
+  base_url: "https://dashscope.aliyuncs.com/api/v1"
+  image_model: "wan2.7-image"
+  text_to_video_model: "wan2.7-t2v"
+  image_to_video_model: "wan2.7-i2v"
+  reference_to_video_model: "wan2.7-r2v"
+
+defaults:
+  task_type: "image"
+  scene: "wechat_cover"
+  style: "tech_media"
+  variants: 1
+  output_dir: "output"
+  video_duration_seconds: 5
+  video_resolution: "720P"
+  video_aspect_ratio: "16:9"
+
+postprocess:
+  ffmpeg_bin: "ffmpeg"
+  ffprobe_bin: "ffprobe"
+  tts_voice: "zh-CN-XiaoxiaoNeural"
+  tts_rate: "+0%"
+  tts_volume: "+0%"
+  subtitle_mode: "burned"
+```
+
+**技术特点：**
+
+- 基于 Wan 2.7 系列模型的强大生成能力
+- 视频任务兼容 Wan 2.6 / 2.7 两代协议
+- 智能场景判断和任务路由
+- 支持本地路径和 URL 两种参考源
+- 自动生成 prompt sidecar 文件
+- Edge TTS 配音和多语言字幕支持
+- 字幕烧录到视频的完整后处理流程
+
+**前置条件：**
+
+1. 配置 `config.yaml` 文件（复制 `config.example.yaml`）
+2. 填写 `wan.api_key` 和 `wan.base_url`
+3. 视频配音和字幕功能需要安装 `ffmpeg` 和 `ffprobe`
+
+**输出结果：**
+
+- 图片任务：PNG 图片 + `.prompt.txt` sidecar
+- 视频任务：MP4 视频 + `.prompt.txt` sidecar
+- 启用后处理：额外生成 `.narration.mp3`、`.srt`、`.narrated.mp4`、`.final.mp4`
 
 ---
 
@@ -1025,6 +1166,7 @@ skills_collection/
 │   ├── wechat-article-fetcher/
 │   ├── wechat-article-aggregator/
 │   ├── wechat-compliance-reviewer/
+│   ├── wan-cover-plus/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1111,6 +1253,35 @@ skills_collection/
 │       ├── violation-types.md   # 违规类型详解
 │       ├── case-studies.md      # 处罚案例库
 │       └── compliant-templates.md # 合规话术模板
+├── wan-cover-plus/              # Wan2.7 封面图和视频生成技能
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── config.example.yaml      # 配置示例文件
+│   ├── requirements.txt         # Python 依赖
+│   ├── examples/                # 示例输入 JSON
+│   │   ├── demo_wechat_cover.json
+│   │   ├── demo_xiaohongshu_cover.json
+│   │   ├── demo_relayout_poster.json
+│   │   ├── demo_text_to_video.json
+│   │   ├── demo_image_to_video.json
+│   │   └── demo_reference_to_video.json
+│   ├── references/              # 参考文档
+│   │   ├── README.md
+│   │   ├── input-schema.md
+│   │   ├── scenes.md
+│   │   └── api-behavior.md
+│   ├── assets/                  # 资源文件
+│   │   ├── templates/
+│   │   └── prompts/
+│   └── scripts/                 # Python 脚本
+│       ├── generate.py
+│       ├── parser.py
+│       ├── postprocess.py
+│       ├── prompt_builder.py
+│       ├── router.py
+│       ├── schema.py
+│       ├── validator.py
+│       └── wan_client.py
 ├── .gitignore
 └── README.md
 ```
@@ -1446,10 +1617,10 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 15
+- **总技能数**: 16
 - **自动化工具**: 4 (excel-report-generator, ppt-generator-skill, github-trending, github-readme-generator)
 - **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
-- **AI 多模态**: 2 (jimeng_mcp_skill, seedance-video-creator)
+- **AI 多模态**: 3 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -1458,6 +1629,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **wan-cover-plus**: v1.0.0 (2026-04-05) - 初始版本，使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录。视频任务兼容 Wan 2.6 与 Wan 2.7 模型
 - **wechat-compliance-reviewer**: v1.0.0 (2026-03-29) - 初始版本，微信公众号文章合规审查专家，支持 9 大类违规风险检测（诱导分享/欺诈信息/营销推广/版权侵权等），提供详细修改建议和合规话术替代，内置违规类型详解/处罚案例库/合规话术模板三份参考资料
 - **obsidian-search**: v1.0.0 (2026-03-13) - 初始版本，Obsidian CLI 查询助手，支持自然语言检索、笔记搜索、上下文查找、任务/标签/属性筛选、反链查询等
 - **wechat-article-aggregator**: v1.0.0 (2026-02-23) - 初始版本，支持批量获取公众号文章，预置8个AI技术公众号
@@ -1470,7 +1642,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 开发语言
 
-- Python: 4
+- Python: 5
 - Markdown: 3
 - MCP: 1
 - YAML/DSL: 1
@@ -1507,6 +1679,26 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 4 月 5 日 - version 0.0.20
+
+- ✅ 新增 **wan-cover-plus** Skill v1.0.0
+- ✅ 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿
+- ✅ 支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频
+- ✅ 视频后处理：自动 Edge TTS 配音、SRT 字幕生成、字幕烧录
+- ✅ 智能场景识别：自动判断任务类型（从零出图 vs 改版重排）
+- ✅ 多平台适配：支持微信横版封面、小红书竖版封面等多种规格
+- ✅ Wan 2.6 / 2.7 兼容：视频任务兼容两代模型协议
+- ✅ 图片任务场景：
+  - `wechat_cover` - 横版文章头图、技术媒体头图
+  - `xiaohongshu_cover` - 竖版信息流封面、种草图
+  - `relayout_poster` - 保留原主体/信息层级的改版设计
+- ✅ 视频任务类型：
+  - `text_to_video` - 纯文字描述生成视频
+  - `image_to_video` - 静态图转动态视频
+  - `reference_to_video` - 参考图/参考视频转视频
+- ✅ 输出格式：PNG/MP4 + `.prompt.txt` sidecar，支持视频配音和字幕烧录
+
 ### 2026 年 3 月 29 日 - version 0.0.19
 
 - ✅ 新增 **wechat-compliance-reviewer** Skill v1.0.0
@@ -1767,4 +1959,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 3 月 13 日 (v0.0.18)
+**文档生成时间**: 2026 年 4 月 5 日 (v0.0.20)

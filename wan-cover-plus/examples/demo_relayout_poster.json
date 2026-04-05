@@ -1,0 +1,16 @@
+{
+  "title": "AI开发者大会",
+  "subtitle": "2026 新技术分享会",
+  "highlights": [
+    "横版海报改竖版",
+    "保持主体与信息层级",
+    "适配社媒传播"
+  ],
+  "scene": "relayout_poster",
+  "style": "premium_brand",
+  "brand_colors": ["#111827", "#C084FC"],
+  "reference_images": [],
+  "need_variants": 1,
+  "need_text_layout": true,
+  "edit_instruction": "将原本偏横版的会议视觉改成更适合竖版社交媒体传播的构图，保留高级感、科技感与标题留白。"
+}

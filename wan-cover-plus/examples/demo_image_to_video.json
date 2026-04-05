@@ -1,0 +1,16 @@
+{
+  "task_type": "image_to_video",
+  "title": "静态参考图转丝滑动态视频",
+  "prompt": "保留参考图主体和整体色彩氛围，让画面产生自然的镜头运动和细节动感，输出一段适合社媒传播的短视频。",
+  "style": "premium_brand",
+  "reference_images": [
+    "/mnt/f/tmp/wewrite/2985_4733.png"
+  ],
+  "duration_seconds": 5,
+  "resolution": "720P",
+  "aspect_ratio": "9:16",
+  "shot_type": "single",
+  "audio": false,
+  "camera_instruction": "保持构图主体不变，做轻微推进与视差变化。",
+  "motion_instruction": "主体保持稳定，只增加丝滑、克制、自然的动态效果。"
+}

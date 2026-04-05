@@ -1,0 +1,23 @@
+{
+  "task_type": "text_to_video",
+  "title": "AI 写作助手启动演示",
+  "subtitle": "本地生成视频自动补全配音与字幕",
+  "prompt": "一台桌面电脑屏幕上正在打开智能写作助手界面，光标输入文字后界面迅速生成结构化内容，镜头从键盘推向屏幕，科技感办公室环境，整体节奏丝滑，适合产品演示短视频",
+  "style": "tech_media",
+  "highlights": [
+    "产品演示短视频",
+    "科技办公场景",
+    "镜头平滑推进"
+  ],
+  "brand_colors": ["#0F172A", "#10B981"],
+  "duration_seconds": 5,
+  "resolution": "720P",
+  "aspect_ratio": "16:9",
+  "shot_type": "single",
+  "audio": false,
+  "enable_narration": true,
+  "enable_subtitles": true,
+  "subtitle_mode": "burned",
+  "camera_instruction": "镜头从键盘区域缓慢推向屏幕，保持主体稳定。",
+  "motion_instruction": "界面元素轻微流动，光标输入后出现顺滑的内容生成动画。"
+}

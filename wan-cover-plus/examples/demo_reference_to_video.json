@@ -1,0 +1,19 @@
+{
+  "task_type": "reference_to_video",
+  "title": "参考图与参考视频联合驱动视频生成",
+  "prompt": "参考给定图片中的主体外观与整体氛围，同时参考给定视频的镜头节奏与运动方式，生成一段主体稳定、动作自然、适合展示的短视频。",
+  "style": "tech_media",
+  "reference_images": [
+    "/mnt/f/tmp/wewrite/2985_4733.png"
+  ],
+  "reference_videos": [
+    "/mnt/f/tmp/wewrite/WanCoverPlus/output/text_to_video-result.mp4"
+  ],
+  "duration_seconds": 5,
+  "resolution": "720P",
+  "aspect_ratio": "16:9",
+  "shot_type": "single",
+  "audio": false,
+  "camera_instruction": "保持主体一致性，沿用参考视频的镜头推进节奏，并控制整体运动平稳。",
+  "motion_instruction": "主体和背景都保持连贯，优先继承参考视频的运动节奏，避免明显跳变或风格漂移。"
+}

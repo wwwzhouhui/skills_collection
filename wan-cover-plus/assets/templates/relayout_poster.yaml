@@ -1,0 +1,5 @@
+scene: relayout_poster
+aspect_ratio: "3:4"
+composition: "convert existing poster to target ratio while preserving primary subject"
+text_layout: "maintain original information hierarchy, optimize spacing"
+style_hint: "layout transformation, poster redesign, structured composition"

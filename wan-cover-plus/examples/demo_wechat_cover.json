@@ -1,0 +1,16 @@
+{
+  "title": "本地蒸馏模型接入 Claude Code 实测",
+  "subtitle": "Qwen3.5 9B 已可用，但还不够可托付",
+  "highlights": [
+    "LM Studio 本地部署",
+    "Claude Code 接入实测",
+    "9B 与 27B 差异判断"
+  ],
+  "scene": "wechat_cover",
+  "style": "tech_media",
+  "brand_colors": ["#0F172A", "#10B981"],
+  "reference_images": [],
+  "need_variants": 1,
+  "need_text_layout": true,
+  "edit_instruction": null
+}
