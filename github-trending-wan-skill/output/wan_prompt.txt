@@ -1,0 +1,42 @@
+请生成一张中文优先的 GitHub 今日热门开源信息图海报，面向 开发者 / 技术团队。
+
+=== 视觉目标 ===
+- 风格：孟菲斯网格
+- 现代孟菲斯 + 瑞士网格，模块边界清楚
+- 颜色块活泼但克制，优先保证中文信息可读性
+- 整体像高质量科技信息图，而不是插画海报
+- 配色：浅灰网格底、黑色标题块、洋红标题、青绿色副标题、少量蓝黄几何点缀
+- 整体要求：信息适中、可读性优先、结构清楚，不要做成高密度塞满版面的海报
+
+=== 版式要求 ===
+- 画幅比例：3:4
+- 分辨率目标：2K
+- 使用 4 个主模块：标题区、榜单概览、Top 5 项目卡片区、底部总结区
+- 每个项目卡片只保留 5 个信息点：项目名、项目是什么、解决什么问题、技术栈、Star 数量
+- 中文为主，英文仅保留 repo 名、编程语言名、框架名、协议名、产品名等必要术语
+
+=== 禁止事项 ===
+- 不要 7 模块高密度排版
+- 不要大段英文说明
+- 不要空泛文案或营销口号
+- 不要过多装饰图形影响阅读
+- 不要把表格、标签、数字堆满整页
+
+=== 画面文案 ===
+主标题：GitHub 今日热门开源 Top 5
+副标题：2026-04-08｜中文摘要｜可读性优先
+模块1【榜单概览】：日期：2026-04-08；榜单范围：GitHub Trending Top 5；主要语言：TypeScript×2、Kotlin×1、C++×1；热点方向：AI / Agent、前端 / Web、开发工具；目标读者：开发者 / 技术团队
+模块2【Top 5 项目卡片】：
+Top 1｜google-ai-edge/gallery｜是什么：一个展示端侧 ML/GenAI 用例的画廊，允许用户在本地试用和使用模型｜解决：使用 Google AI Edge 探索、体验和评估端侧生成式 AI 的未来｜技术栈：Kotlin、Agent Skills**：将你的 LLM 从对话者转变为……、AI Chat with Thinking Mode**：进行流畅的多轮对话……｜⭐ 19066
+Top 2｜google-ai-edge/LiteRT-LM｜是什么：在 GitHub 上创建账号，为 google-ai-edge/LiteRT-LM…｜解决：LiteRT-LM 是 Google 的生产级高性能开源推理框架，用于在边缘设备上部署大语言模型。｜技术栈：C++、📱 跨平台支持：Android、iOS、Web、桌面端及 I…、树莓派)｜⭐ 2723
+Top 3｜NVIDIA/personaplex｜是什么：PersonaPlex 代码。在 GitHub 上创建账户，为 NVIDIA/pe…｜解决：PersonaPlex 是一个实时、全双工的语音到语音对话模型，通过基于文本的角色提示和基于音频的声音条件…｜技术栈：Python｜⭐ 8135
+Top 4｜abhigyanpatwari/GitNexus｜是什么：GitNexus：零服务器代码智能引擎 - GitNexus 是一个完全在浏览器中…｜解决：⚠️ 重要提示：GitNexus 没有官方加密货币、代币或硬币。在 Pump.fun 或任何其他平台上使用…｜技术栈：TypeScript、层级 | CLI | Web、运行时 | Node.js (原生) | Browser (WASM)｜⭐ 24850
+Top 5｜tobi/qmd｜是什么：面向文档、知识库、会议记录等的小型 CLI 搜索引擎。追踪当前 SOTA 方法，且…｜解决：一款用于记忆所有内容的本地搜索引擎。索引 Markdown 笔记、会议转录、文档和知识库。支持关键词或自然…｜技术栈：TypeScript｜⭐ 19808
+模块3【热点方向】：AI / Agent：代表项目 google-ai-edge/gallery、google-ai-edge/LiteRT-LM | 前端 / Web：代表项目 google-ai-edge/LiteRT-LM、abhigyanpatwari/GitNexus | 开发工具：代表项目 abhigyanpatwari/GitNexus、tobi/qmd
+模块4【一句话结论】：今天榜单重点集中在 AI / Agent、前端 / Web、开发工具，主流语言偏向 TypeScript、Kotlin，适合优先关注能直接提升开发效率或 AI 应用落地的项目。
+
+=== 细节要求 ===
+- Top 5 卡片按排名自上而下或左右排布，层级明确
+- Star 数字要清晰可见，但不是最大视觉主体
+- 用少量标签或色块区分语言 / 技术方向即可
+- 允许使用简洁图标、分隔线、数据卡片，但不要抢文字信息
