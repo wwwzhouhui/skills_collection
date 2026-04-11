@@ -1,0 +1,31 @@
+:root {
+  --bg: #fdfbf7;
+  --card: rgba(253,251,247,0.88);
+  --text: #2c2c2c;
+  --muted: #5b5348;
+  --primary: #b91c1c;
+  --border: rgba(44,44,44,0.14);
+  --warning-bg: #fff1f2;
+  --warning-border: #b91c1c;
+  --toolbar-bg: rgba(253, 251, 247, 0.88);
+  --toolbar-input-bg: rgba(255,255,255,0.92);
+  --toolbar-input-text: var(--text);
+  --mnemonic-bg: #fff7d6;
+  --mnemonic-text: #7c4a03;
+}
+
+[data-theme="dark"] {
+  --bg: #161616;
+  --card: rgba(28,28,30,0.86);
+  --text: #ebe4d8;
+  --muted: #d9d1c2;
+  --primary: #d4af37;
+  --border: rgba(255,255,255,0.12);
+  --warning-bg: rgba(127,29,29,0.28);
+  --warning-border: rgba(212,175,55,0.45);
+  --toolbar-bg: rgba(22,22,22,0.84);
+  --toolbar-input-bg: rgba(40,40,40,0.92);
+  --toolbar-input-text: var(--text);
+  --mnemonic-bg: rgba(212, 175, 55, 0.12);
+  --mnemonic-text: #f5deb3;
+}

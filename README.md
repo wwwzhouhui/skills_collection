@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.21-green.svg)
-![Skills](https://img.shields.io/badge/skills-17-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.22-green.svg)
+![Skills](https://img.shields.io/badge/skills-18-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -35,25 +35,130 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
-| github-trending-wan | GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流 | Python、DashScope API、Wan 2.7、信息图设计 | 2026年4月8日 | wwwzhouhui | 1.0.0 |
-| wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026年4月5日 | wwwzhouhui | 1.0.0 |
-| wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026年3月29日 | wwwzhouhui | 1.0.0 |
+| knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
+| github-trending-wan | GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流 | Python、DashScope API、Wan 2.7、信息图设计 | 2026年4月8日 | tdt | 1.0.0 |
+| wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026年4月5日 | tdt | 1.0.0 |
+| wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026年3月29日 | tdt | 1.0.0 |
 | obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026年3月13日 | guanyugang | 1.0.0 |
-| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成Gemini-3-Pro-Image-Preview双通道(自建API+Gemai公益站)自动配图与腾讯云COS上传功能，自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章 | Markdown、模板生成、Gemini API、Gemai API、腾讯云COS | 2026年2月23日 | wwwzhouhui | 2.4.0 |
-| wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | wwwzhouhui | 1.0.0 |
-| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | wwwzhouhui | 1.2.0 |
-| wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | wwwzhouhui | 1.0.0 |
-| github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | wwwzhouhui | 1.0.0 |
-| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | wwwzhouhui | 1.0.0 |
-| jimeng_mcp_skill | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI | 2025年12月14日 | wwwzhouhui | 2.0.0 |
-| ppt-generator-skill | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx | 2025年12月4日 | o3sky | 1.0.0 |
-| dify-dsl-generator | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计 | 2025年11月22日 | wwwzhouhui | 1.0.0 |
-| xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS | 2025年11月22日 | wwwzhouhui | 1.0.0 |
-| siliconflow-api-skills | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM | 2025年11月19日 | wwwzhouhui | 1.0.0 |
-| mp-cover-generator | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | wwwzhouhui | 3.1.1 |
-| excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | wwwzhouhui | 1.0.0 |
+| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成Gemini-3-Pro-Image-Preview双通道(自建API+Gemai公益站)自动配图与腾讯云COS上传功能，自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章 | Markdown、模板生成、Gemini API、Gemai API、腾讯云COS | 2026年2月23日 | zlu | 2.4.0 |
+| wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | zlu | 1.0.0 |
+| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | zlu | 1.2.0 |
+| wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | zlu | 1.0.0 |
+| github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | zlu | 1.0.0 |
+| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | zlu | 1.0.0 |
+| jimeng_mcp_skill | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI | 2025年12月14日 | zlu | 2.0.0 |
+| xiaoppt-generator-skill | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx | 2025年12月4日 | xiaopp | 1.0.0 |
+| dify-dsl-generator | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计 | 2025年11月22日 | why | 1.0.0 |
+| xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS | 2025年11月22日 | why | 1.0.0 |
+| siliconflow-api-skills | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM | 2025年11月19日 | why | 1.0.0 |
+| mp-cover-generator | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | why | 3.1.1 |
+| excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
 
 ## Skill 功能详解
+
+### 📚 Knowledge Absorber (知识吸收器)
+
+**核心功能：**
+
+- ✅ **深度解析链接/文档/代码**：支持 URL 链接、本地文件（PDF/Word/Markdown/代码/图片）
+- ✅ **导师级教学笔记**：生成结构化知识卡片，包含核心概念、FAQ、认知地图（Mermaid）
+- ✅ **真理锚定验证**：自动联网验证事实性内容（数据、API 签名、版本号、历史事件），标注不确定内容
+- ✅ **Wan 2.7 知识海报**：可选生成信息图海报，11 种视觉风格自动判断
+- ✅ **国学风格自动触发**：检测国学关键词自动使用水墨风格（风格 11）
+- ✅ **交互式 HTML 输出**：生成可交互的知识卡片 HTML，支持折叠/展开、搜索、导航
+
+**11 种海报风格：**
+
+| # | 风格 | 核心特征 | 适用场景 |
+|---|------|----------|----------|
+| 1 | 🧪 坐标蓝图 | 坐标系统 + 技术网格 | 技术参数、专业评测 |
+| 2 | 📐 复古波普 | 瑞士网格 + 粗黑线 | 干货清单、对比表格 |
+| 3 | 📁 文件夹 | 3D 文具 + 剪贴板 | 系统指南、分类清单 |
+| 4 | 🧾 热敏纸 | 票据穿孔 + 3D 图标 | 步骤清单、时间线 |
+| 5 | 📓 复古手帐 | 拼贴证据板 + 图钉 | 案例研究、调查分析 |
+| 6 | ✏️ 陶土手绘 | 涂鸦粗轮廓 + 几何形 | 轻松干货、亲和科普 |
+| 7 | 💾 酸性复古 | Y2K 像素 + 镭射渐变 | 数码评测、极客内容 |
+| 8 | 🎫 剧场票据 | 票根胶片 + 五幕剧 | 故事演进、系列指南 |
+| 9 | 🖼️ 矢量插图 | 黑轮廓线稿 + 几何简化 | PPT 封面、场景插画 |
+| 10 | 🎨 孟菲斯网格 | 可见网格 + 模块色块 | 高密度信息、艺术指南 |
+| 11 | ☯️ 水墨国学 | 水墨背景 + 传统字体 | 国学经典、人文哲学 |
+
+**适用场景：**
+
+- 学习新技术/框架，生成可搜索的知识卡片
+- 分析开源项目代码，提取核心架构和设计模式
+- 整理文档/教程，形成结构化学习笔记
+- 国学经典解读，自动生成水墨风格海报
+- 技术趋势分析，生成信息图海报分享
+
+**工作流程（3 步引导法）：**
+
+```
+步骤 1: 启动询问 → 收集用户偏好（目标读者、海报需求、分辨率）
+步骤 2: 知识摄取与验证 → 摄取内容 → 真理锚定 → 生成知识卡片 → (可选)海报 Prompt
+步骤 3: 确认后生图 → 用户确认后调用 Wan 2.7 → 返回图片 URL
+```
+
+**真理锚定验证规则：**
+
+| 必须验证 | 不需要验证 |
+|---------|-----------|
+| 具体数据（如 "Python 3.12 于 2023 年发布"） | 观点、建议、方法论 |
+| API 签名（如 `fetch(url, options)`） | 个人经验、主观判断 |
+| 版本号（如 "React 19 支持新特性"） | 设计模式、最佳实践 |
+| 历史事件（如 "1991 年 Linux 发布"） | 推理过程、逻辑分析 |
+
+**标注规范：**
+
+| 类型 | 标注 | 示例 |
+|------|------|------|
+| 过时信息 | `[已过时]` | "Python 2 是主流 [已过时]" |
+| 有争议 | `[存在争议]` | "最佳框架是 X [存在争议]" |
+| 无法确认 | `[待确认]` | "该 API 返回 Promise [待确认]" |
+
+**国学触发关键词：**
+
+| 类别 | 关键词示例 |
+|------|----------|
+| 经典文献 | 论语、庄子、道德经、史记、诗经、易经、孟子、荀子、春秋、左传 |
+| 学派思想 | 国学、古文、儒、道、佛、哲学、人文、儒家、道家、禅宗 |
+| 历史人物 | 孔子、老子、孟子、庄子、荀子、墨子、韩非子、朱熹、王阳明 |
+| 文学体裁 | 古诗、词、赋、骈文、散文、文言文 |
+| 其他 | 经史子集、四书五经、诸子百家、传统文化 |
+
+**效果图：**
+
+![比亚迪2025年报水墨海报](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/%E6%AF%94%E4%BA%9A%E8%BF%AA2025%E5%B9%B4%E6%8A%A5%E6%B0%B4%E5%A2%A8%E6%B5%B7%E6%8A%A5.png)
+
+![魔法液体科普海报_陶土手绘](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/%E9%AD%94%E6%B3%95%E6%B6%B2%E4%BD%93%E7%A7%91%E6%99%AE%E6%B5%B7%E6%8A%A5_%E9%99%B6%E5%9C%9F%E6%89%8B%E7%BB%98.png)
+
+![武汉OPC政策海报_复古手帐](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/%E6%AD%A6%E6%B1%89OPC%E6%94%BF%E7%AD%96%E6%B5%B7%E6%8A%A5_%E5%A4%8D%E5%8F%A4%E6%89%8B%E5%B8%90-17758858211784.png)
+
+**输出目录结构：**
+
+```
+outputs/knowledge_YYYYMMDD_HHMMSS/
+├── knowledge_card.md           # 知识卡片 Markdown
+├── knowledge_card.interactive.html  # 交互式 HTML
+├── wan_prompt.txt              # 海报 Prompt（可选）
+└── wan_result.json             # 生图结果（可选）
+```
+
+**环境要求：**
+
+| 变量 | 必需 | 说明 |
+|------|------|------|
+| `DASHSCOPE_API_KEY` | 是 | DashScope API 密钥，用于翻译和 Wan 2.7 生图 |
+
+**技术特点：**
+
+- 智能内容摄取：支持动态页面渲染（DrissionPage）、静态页面解析
+- 真理锚定协议：联网验证事实性内容，标注不确定信息
+- 3 步引导式工作流：用户确认后再执行生图，避免资源浪费
+- 海报风格智能判断：根据内容类型自动选择最合适的视觉风格
+- 国学内容自动触发水墨风格：检测关键词自动切换风格 11
+
+---
 
 ### 🎬 Seedance Video Creator (Seedance 2.0 分镜视频创作)
 
@@ -1359,6 +1464,20 @@ skills_collection/
 │       ├── schema.py
 │       ├── validator.py
 │       └── wan_client.py
+│   ├── knowledge-absorber/       # 知识吸收器技能
+│   │   ├── SKILL.md
+│   │   ├── scripts/              # 处理脚本
+│   │   │   ├── content_ingester.py
+│   │   │   ├── run_full_pipeline.py
+│   │   │   ├── run_wan_generation.py
+│   │   │   └── check_wan_task_status.py
+│   │   ├── assets/               # CSS/JS 资源
+│   │   │   ├── knowledge_card_base.css
+│   │   │   ├── knowledge_card_design.css
+│   │   │   ├── knowledge_card_ink.css
+│   │   │   └── mentor_prompts.json
+│   │   └── references/
+│   │       └── system_prompt.md
 ├── .gitignore
 └── README.md
 ```
@@ -1417,6 +1536,9 @@ export JIMENG_SESSION_ID="your-sessionid"
 # mptext.top API Key（wechat-article-aggregator 需要）
 export MPTEXT_API_KEY="your-mptext-api-key"
 
+# DashScope API Key（knowledge-absorber、github-trending-wan 需要）
+export DASHSCOPE_API_KEY="your-dashscope-api-key"
+
 # GitHub Token（github-trending 可选）
 export GITHUB_TOKEN="your-github-token"
 
@@ -1457,6 +1579,11 @@ export WEIXIN_WEBHOOK="your-webhook-url"
 
 # 微信公众号文章聚合
 "请使用 wechat-article-aggregator 获取赛博禅心和老金开源最新2篇公众号文章"
+
+# 知识吸收器
+"请帮我学习这篇文档 https://example.com/article 并生成知识卡片"
+"请分析这个开源项目的代码架构并生成导师级教学笔记"
+"请帮我整理这份 PDF 文档，生成知识海报（使用孟菲斯网格风格）"
 ```
 
 ### 高级用法
@@ -1660,6 +1787,40 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 </details>
 
+<details>
+<summary>知识吸收器内容摄取失败？</summary>
+
+1. URL 链接摄取失败：检查链接有效性，部分动态页面（知乎/CSDN/微信公众号）需要 DrissionPage 渲染
+2. PDF 摄取失败：检查是否为扫描件（需要 OCR），确认 PDF 未加密
+3. 确认已安装依赖：`pip install requests beautifulsoup4 drissionpage`
+4. 网络问题：检查是否能访问目标 URL，部分网站可能需要代理
+5. 内容为空：确认 URL/文件有实际内容，部分付费文章无法获取
+
+</details>
+
+<details>
+<summary>知识吸收器 Wan 生图失败？</summary>
+
+1. 确认已配置 `DASHSCOPE_API_KEY` 环境变量
+2. 检查 API Key 是否有效：登录 DashScope 控制台验证
+3. 确认在步骤 2 完成后，用户明确回复"确认生图"才执行步骤 3
+4. 生图任务可能需要 10-30 秒，请耐心等待
+5. 如遇 `RUNNING` 状态：使用 `--task-id` 参数查询任务状态
+6. 海报 Prompt 长度应在 800-2000 字符范围内
+
+</details>
+
+<details>
+<summary>真理锚定验证超时？</summary>
+
+1. 真理锚定依赖联网搜索，网络不稳定可能导致超时
+2. 即使验证失败，知识卡片仍会生成，标注"真理锚定未完成"
+3. 部分 API 签名/版本号可能无法实时验证，标注 `[待确认]`
+4. 如频繁超时：检查网络环境，或暂时跳过验证环节
+5. 观点、方法论等主观内容不需要验证，可直接输出
+
+</details>
+
 ---
 
 ## 技术交流群
@@ -1694,9 +1855,9 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 17
+- **总技能数**: 18
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
-- **内容生成**: 3 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article)
+- **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
 - **AI 多模态**: 3 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
@@ -1706,6 +1867,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **knowledge-absorber**: v0.0.1 (2026-04-11) - 初始版本，深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选
 - **github-trending-wan**: v1.0.0 (2026-04-08) - 初始版本，GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流
 - **wan-cover-plus**: v1.0.0 (2026-04-05) - 初始版本，使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录。视频任务兼容 Wan 2.6 与 Wan 2.7 模型
 - **wechat-compliance-reviewer**: v1.0.0 (2026-03-29) - 初始版本，微信公众号文章合规审查专家，支持 9 大类违规风险检测（诱导分享/欺诈信息/营销推广/版权侵权等），提供详细修改建议和合规话术替代，内置违规类型详解/处罚案例库/合规话术模板三份参考资料
@@ -1757,6 +1919,19 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 4 月 11 日 - version 0.0.22
+
+- ✅ 新增 **knowledge-absorber** Skill v0.0.1
+- ✅ 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报
+- ✅ 支持 PDF/Word/Markdown/代码/图片等多种输入格式
+- ✅ 自动真理锚定验证（联网验证数据、API 签名、版本号、历史事件）
+- ✅ 标注不确定内容：[已过时]、[存在争议]、[待确认]
+- ✅ 11 种海报风格自动判断（坐标蓝图/复古波普/文件夹/热敏纸/复古手帐/陶土手绘/酸性复古/剧场票据/矢量插图/孟菲斯网格/水墨国学）
+- ✅ 国学内容自动触发水墨风格（风格 11）
+- ✅ 3 步引导式工作流：启动询问 → 知识摄取与验证 → 确认后生图
+- ✅ 输出知识卡片 Markdown + 交互式 HTML + 海报 Prompt（可选）
+- ✅ 依赖 DashScope API 提供翻译和 Wan 2.7 生图能力
 
 ### 2026 年 4 月 8 日 - version 0.0.21
 
@@ -2047,4 +2222,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 4 月 5 日 (v0.0.20)
+**文档生成时间**: 2026 年 4 月 11 日 (v0.0.22)

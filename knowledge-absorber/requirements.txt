@@ -1,0 +1,13 @@
+requests
+beautifulsoup4
+rapidocr_onnxruntime
+pypdf
+html2text
+DrissionPage
+python-docx
+Pillow
+opencv-python-headless
+pywin32; sys_platform == 'win32'
+tqdm
+rich
+cryptography
