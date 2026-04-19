@@ -98,7 +98,7 @@ cargo install --path .
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![20260412124230_24_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260412124230_24_6.jpg)
+![20260419225804_77_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260419225804_77_6.jpg)
 
 ## 作者联系
 
