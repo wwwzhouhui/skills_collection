@@ -69,13 +69,13 @@ author: wwwzhouhui
 ## 技术交流群
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![20260412124230_24_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260412124230_24_6.jpg)
+![微信图片_20260501235133_120_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260501235133_120_6.jpg)
 
 ## 作者联系
 - **微信**: laohaibao2025
 - **邮箱**: 75271002@qq.com
 
-![微信二维码](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260123_095617_com.tencent.mm.jpg)
+![20260510204801_139_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260510204801_139_6.jpg)
 
 ## 打赏
 如果这个项目对你有帮助，欢迎请我喝杯咖啡 ☕

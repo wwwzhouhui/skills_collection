@@ -135,7 +135,7 @@ docker-compose up -d
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![20260419225804_77_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260419225804_77_6.jpg)
+![微信图片_20260501235133_120_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260501235133_120_6.jpg)
 
 ## 作者联系
 
