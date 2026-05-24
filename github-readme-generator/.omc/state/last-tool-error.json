@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/mnt/d/临时/2026/5月/2026年5月19日\\\" && jq '[.[] | {status}] | group_by(.status) | map({status: .[0].status, count: length}) | sort_by(-.count)' capture-2026-05-19T05-40-28.json 2>/dev/null...",
+  "error": "Exit code 127",
+  "timestamp": "2026-05-19T05:43:23.659Z",
+  "retry_count": 1
+}

@@ -119,7 +119,7 @@ curl -H "Authorization: Bearer {{API_KEY}}" {{BASE_URL}}/endpoint
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![微信图片_20260501235133_120_6](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260501235133_120_6.jpg)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260524104420_218_6.jpg)
 
 ## 作者联系
 
@@ -127,7 +127,7 @@ curl -H "Authorization: Bearer {{API_KEY}}" {{BASE_URL}}/endpoint
 - **微信**: laohaibao2025
 - **邮箱**: 75271002@qq.com
 
-![微信二维码](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260123_095617_com.tencent.mm.jpg)
+![微信二维码](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260519_084320_com.tencent.mm.jpg)
 
 ## 打赏
 
