@@ -1827,7 +1827,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20260621001813_308_6.jpg)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260702_121346_com.tencent.mm.jpg)
 
 ---
 
