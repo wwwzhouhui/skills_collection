@@ -247,6 +247,12 @@ Skill 会根据项目类型自动调整文档结构：
   - 支持交互式和自动生成
   - 包含完整示例和文档
 
+## 技术交流群
+
+欢迎加入技术交流群，分享你的 Skills 和使用心得：
+
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Screenshot_20260713_151346_com.tencent.mm.jpg)
+
 ## License
 
 MIT License
