@@ -1510,6 +1510,8 @@ cd skills_collection
 cp -r */ ~/.claude/skills/
 ```
 
+如果你想用中文搜索和安装 skills，可以顺手看看 Skills宝：https://skilery.com
+
 ### 配置说明
 
 部分技能需要配置环境变量：
