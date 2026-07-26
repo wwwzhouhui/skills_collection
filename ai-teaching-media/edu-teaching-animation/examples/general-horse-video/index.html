@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-composition-variables='[{"id":"mode","type":"enum","label":"输出模式","default":"video","options":[{"value":"video","label":"视频(带配音字幕)"},{"value":"silent","label":"无声MP4(循环)"}]}]' >
+<!--
+  将军饮马 · 教学视频 (由 scaffold_video.py 生成, 模板: assets/video-template/index.html)
+  时间轴已按 audio/durations.json 填好 — 只需填 TODO 的场景内容和 scene2()-scene6() 编排
+  规则: references/video-authoring.md | SVG 零件: references/svg-parts.md
+  渲染: bash scripts/build_video.sh <project_dir>
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style> 顶部 :root 配色块 (按主题替换)
+       b) #chapter 章节文字
+       c) 7 个 .scene 的内容 (对照 storyboard 的 visual 描述画 SVG/HTML)
+       d) 7 个 <audio> 的 data-start (= durations.json 的 audio_start)
+       e) SEGMENTS 数组 (= durations.json 的 segments, 原样抄数字)
+       f) 根 div 的 data-duration (= durations.json 的 total)
+       g) scene1()..scene7() 入场编排 (时间一律写 t + 偏移)
+    3. 检查 + 渲染: bash scripts/build_video.sh <project_dir>
+
+  规则 (违反必坏, 详见 references/video-authoring.md):
+    - 场景入场一律 tl.fromTo(), 不用 tl.from()
+    - 除最后一段外, 场景内容不写退场动画 — 转场就是退场
+    - 环境动效 (呼吸/漂移) 必须挂在 tl 上, 不能裸 gsap.to()
+    - 不用 Math.random()/Date.now(); 循环动效用有限 repeat, 禁 repeat:-1
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* 系统 CJK 字体声明 (渲染器要求显式 @font-face, 系统字体用 local(), 缺了 lint 报 error) */
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Songti SC"; src: local("Songti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+
+    /* ==== 配色 (按主题整块替换, 见 references/color-palettes.md 的 CSS 映射表) ==== */
+    :root {
+      --primary:   #7A6296;
+      --accent:   #B98A5C;
+      --highlight:   #D8D1E6;
+      --ink:   #433D50;
+      --neutral:   #6B7889;
+      --soft:   #FCFAF6;
+      --line:   #B9C2CE;
+      --bg:   #F7F3ED;
+      --series:   #6B7889;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "Heiti SC", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+
+    /* ==== 场景容器: s1 可见, s2+ opacity:0, 由转场揭示 ==== */
+    .scene {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+    }
+    .scene + .scene { opacity: 0; }
+    /* 底纹三层: 冷网格(粗+细) + 暖冷双射光 */
+    .scene::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1100px 700px at 78% 22%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%),
+        radial-gradient(900px 620px at 10% 90%, color-mix(in srgb, var(--series) 9%, transparent), transparent 72%),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px);
+    }
+    /* 纸张颗粒 (确定性噪点, 盖在最上层做胶片质感) */
+    .scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 10;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.16;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+    .ghost {
+      position: absolute; right: 48px; bottom: -60px; z-index: 0;
+      font-family: "Songti SC", serif;
+      font-size: 460px; font-weight: 900; line-height: 1;
+      color: color-mix(in srgb, var(--series) 14%, transparent);
+      letter-spacing: -0.04em; user-select: none;
+    }
+
+    .scene-content {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      padding: 150px 110px 190px;
+      display: flex; gap: 70px; align-items: center;
+    }
+    .diagram-zone { flex: 1.25; height: 100%; position: relative; }
+    .card-zone { flex: 1; display: flex; flex-direction: column; gap: 32px; justify-content: center; }
+
+    /* ==== 组件: 与 Manim helper 一一对应 ==== */
+    /* chapter_corner() */
+    #chapter {
+      position: absolute; top: 42px; right: 56px; z-index: 50;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.12em;
+      color: var(--series);
+      padding-bottom: 6px;
+      border-bottom: 3px solid color-mix(in srgb, var(--series) 45%, transparent);
+    }
+
+    /* section_chip() */
+    .section-chip {
+      position: absolute; top: 42px; left: 56px; z-index: 5;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-chip .num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 30px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-chip .label {
+      background: #fff; border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+      border-radius: 16px; padding: 10px 26px;
+      font-size: 32px; font-weight: 800;
+      box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+
+    /* info_card() v2: 去大色块, 左侧主色细边 + kicker 小标 + 细规则线 */
+    .info-card {
+      border-radius: 18px; overflow: hidden;
+      border: 1.5px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 14px 42px color-mix(in srgb, var(--primary) 9%, transparent);
+      background: color-mix(in srgb, #fff 88%, var(--soft));
+    }
+    .info-card .card-title {
+      color: var(--neutral);
+      font-size: 23px; font-weight: 700; letter-spacing: 0.35em;
+      margin: 24px 32px 0; padding-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+    }
+    .info-card .card-title::before {
+      content: ""; width: 12px; height: 12px; flex: none;
+      background: var(--primary);
+    }
+    .info-card .card-body { padding: 20px 32px 28px; display: flex; flex-direction: column; gap: 14px; }
+    .info-card .card-body p {
+      font-size: 30px; line-height: 1.5;
+      padding-left: 24px; position: relative;
+    }
+    .info-card .card-body p::before {
+      content: ""; position: absolute; left: 0; top: 16px;
+      width: 9px; height: 9px; border-radius: 2px;
+      background: color-mix(in srgb, var(--primary) 70%, #fff);
+    }
+    .info-card .formula {
+      font-family: "Songti SC", serif;
+      font-size: 38px; font-weight: 900; color: var(--primary);
+      padding: 10px 0 0; letter-spacing: 0.04em;
+    }
+
+    .callout-label {
+      position: absolute; font-size: 26px; font-weight: 700;
+      color: var(--primary);
+      background: color-mix(in srgb, #fff 82%, transparent);
+      border: 2px solid var(--primary); border-radius: 12px;
+      padding: 6px 16px;
+    }
+
+    /* summary_bar(): icon_badge 横排 */
+    .summary-bar { display: flex; gap: 56px; justify-content: center; }
+    .badge { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .badge .icon {
+      width: 96px; height: 96px; border-radius: 50%;
+      border: 3px solid var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, #fff);
+      font-size: 44px; display: flex; align-items: center; justify-content: center;
+      color: var(--primary);
+    }
+    .badge .name { font-size: 26px; font-weight: 700; }
+
+    /* 层级文字 (styled_text) */
+    .t-hero  {
+      font-family: "Songti SC", serif;
+      font-size: 150px; font-weight: 900; letter-spacing: 0.01em; color: var(--primary);
+      line-height: 1.08;
+    }
+    .t-title { font-size: 52px; font-weight: 800; }
+    .t-body  { font-size: 32px; line-height: 1.6; }
+    sup { font-size: 0.55em; }   /* HTML 公式上标用 <sup>2</sup>, 不用 ² (宋体缺字形) */
+    .t-label { font-size: 24px; font-weight: 600; letter-spacing: 0.35em; color: var(--neutral); }
+
+    /* ==== 字幕条 (旁白同步显示) ==== */
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 52px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1480px;
+      font-size: 34px; line-height: 1.5; font-weight: 600;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, #fff 88%, transparent);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px; padding: 16px 36px;
+      box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+      opacity: 0;
+    }
+
+    /* SVG 示意图通用 */
+    .diagram-zone svg { width: 100%; height: 100%; overflow: visible; }
+    .diagram-zone text { font-family: inherit; }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="97.63">
+
+    <!-- ============ 场景 1: 引入 (0.00 - 14.93) ============
+         visual: 主标题'将军饮马' + 河流与马的图标 + 六个子概念胶囊(抽象/对称/连线/最短/化折为直/应用) + 副标题 -->
+    <div id="s1" class="scene">
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 40px;">
+        <div id="s1-icon" style="height: 190px;">
+          <svg viewBox="0 0 420 210" style="height: 190px; overflow: visible;">
+            <g stroke="var(--neutral)" stroke-width="5" fill="none" stroke-linecap="round">
+              <path d="M 60 150 Q 110 130 160 150 T 260 150 T 360 150"/>
+              <path d="M 60 178 Q 110 158 160 178 T 260 178 T 360 178" opacity="0.6"/>
+            </g>
+            <g fill="var(--primary)" transform="translate(180,40)">
+              <path d="M 40 30 L 60 30 L 72 18 L 78 26 L 66 40 L 66 92 L 52 92 L 52 58 L 40 58 Z"/>
+              <circle cx="30" cy="46" r="9"/>
+            </g>
+          </svg>
+        </div>
+        <div id="s1-title" class="t-hero">将军饮马</div>
+        <div id="s1-subs" style="display: flex; gap: 22px;"><span class="pill">抽象成数学</span><span class="pill">作对称点</span><span class="pill">连成直线</span><span class="pill">为什么最短</span><span class="pill">方法与应用</span></div>
+        <div id="s1-tagline" class="t-label">—— 最短路径 · 化折为直 ——</div>
+      </div>
+    </div>
+    <!-- ============ 场景 2: 抽象成数学 (14.93 - 28.63) ============
+         visual: 一条水平直线代表河(标'河岸 l'); 直线同侧两点 A(军营) B(帐篷); 河边一个动点 P; 折线 A→P→B 连起来; callout 指 P '在河边找一点 P'; 右侧卡片: 求 PA+PB 最短 -->
+    <div id="s2" class="scene">
+      <div class="ghost" data-layout-ignore>01</div>
+      <div class="section-chip"><span class="num">1</span><span class="label">抽象成数学</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s2-diagram">
+          <svg viewBox="0 0 900 700">
+            <line x1="120" y1="450" x2="820" y2="450" stroke="var(--neutral)" stroke-width="6"/>
+            <text x="748" y="438" font-size="26" font-weight="700" fill="var(--neutral)">河岸 l</text>
+            <path d="M 150 478 Q 185 464 220 478 T 290 478 T 360 478" stroke="var(--neutral)" stroke-width="3" fill="none" opacity="0.4"/>
+            <polyline id="s2-path" points="250,250 517,450 650,350" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="250" cy="250" r="11" fill="var(--primary)"/>
+            <text x="268" y="236" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">A</text>
+            <text x="212" y="238" font-size="22" fill="var(--neutral)">军营</text>
+            <circle cx="650" cy="350" r="11" fill="var(--primary)"/>
+            <text x="668" y="342" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">B</text>
+            <text x="690" y="368" font-size="22" fill="var(--neutral)">帐篷</text>
+            <circle id="s2-P" cx="517" cy="450" r="11" fill="var(--accent)"/>
+            <text x="505" y="492" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">P</text>
+            <g id="s2-cl"><line x1="517" y1="450" x2="600" y2="560" stroke="var(--accent)" stroke-width="3"/></g>
+          </svg>
+          <div id="s2-callout" class="callout-label" style="left: 58%; bottom: 6%; color: var(--accent); border-color: var(--accent);">在河边找一点 P</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s2-card">
+            <div class="card-title">抽象成数学</div>
+            <div class="card-body">
+              <p>军营 A、帐篷 B 在河岸同侧</p>
+              <p>河边找一点 P</p>
+              <div class="formula">求 PA + PB 最短</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 场景 3: 作对称点 (28.63 - 41.68) ============
+         visual: 河岸直线 + 点A(上方) + 从A向直线作垂线虚线 + 对称点A'(下方,与A关于直线对称,等距虚线标注); callout 'A 关于河岸的对称点 A′'; 右侧卡片: 对称性质 PA=PA' -->
+    <div id="s3" class="scene">
+      <div class="ghost" data-layout-ignore>02</div>
+      <div class="section-chip"><span class="num">2</span><span class="label">作对称点</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s3-diagram">
+          <svg viewBox="0 0 900 700">
+            <line x1="120" y1="450" x2="820" y2="450" stroke="var(--neutral)" stroke-width="6"/>
+            <text x="748" y="438" font-size="26" font-weight="700" fill="var(--neutral)">河岸 l</text>
+            <path d="M 150 478 Q 185 464 220 478 T 290 478 T 360 478" stroke="var(--neutral)" stroke-width="3" fill="none" opacity="0.4"/>
+            <circle cx="250" cy="250" r="11" fill="var(--primary)"/>
+            <text x="268" y="236" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">A</text>
+            <line id="s3-perp" x1="250" y1="250" x2="250" y2="650" stroke="var(--neutral)" stroke-width="3" stroke-dasharray="10 8"/>
+            <path d="M 250 430 h 20 v 20" fill="none" stroke="var(--neutral)" stroke-width="2"/>
+            <g id="s3-tick"><line x1="240" y1="350" x2="260" y2="350" stroke="var(--primary)" stroke-width="3"/><line x1="240" y1="550" x2="260" y2="550" stroke="var(--primary)" stroke-width="3"/></g>
+            <circle id="s3-Ap" cx="250" cy="650" r="11" fill="var(--accent)"/>
+            <text x="268" y="662" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">A′</text>
+          </svg>
+          <div id="s3-callout" class="callout-label" style="left: 4%; top: 56%; color: var(--accent); border-color: var(--accent);">A 关于河岸的对称点 A′</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s3-card">
+            <div class="card-title">作对称点</div>
+            <div class="card-body">
+              <p>作 A 关于河岸 l 的对称点 A′</p>
+              <p>河边任一点到 A、到 A′ 距离相等</p>
+              <div class="formula">PA = PA′</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 场景 4: 连成直线 (41.68 - 52.31) ============
+         visual: 河岸 + A + A'(下方) + B(上方同侧); 连 A'B 一条直线, 交河岸于 P(高亮); callout '交点就是最优的 P'; 右侧卡片: 连 A′B 交河岸得 P -->
+    <div id="s4" class="scene">
+      <div class="ghost" data-layout-ignore>03</div>
+      <div class="section-chip"><span class="num">3</span><span class="label">连成直线</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s4-diagram">
+          <svg viewBox="0 0 900 700">
+            <line x1="120" y1="450" x2="820" y2="450" stroke="var(--neutral)" stroke-width="6"/>
+            <text x="748" y="438" font-size="26" font-weight="700" fill="var(--neutral)">河岸 l</text>
+            <path d="M 150 478 Q 185 464 220 478 T 290 478 T 360 478" stroke="var(--neutral)" stroke-width="3" fill="none" opacity="0.4"/>
+            <circle cx="250" cy="250" r="11" fill="var(--primary)"/>
+            <text x="268" y="236" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">A</text>
+            <circle cx="650" cy="350" r="11" fill="var(--primary)"/>
+            <text x="668" y="336" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">B</text>
+            <circle cx="250" cy="650" r="11" fill="var(--accent)"/><text x="268" y="662" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">A′</text>
+            <line id="s4-line" x1="250" y1="650" x2="650" y2="350" stroke="var(--primary)" stroke-width="5"/>
+            <line x1="250" y1="250" x2="250" y2="650" stroke="var(--neutral)" stroke-width="2.5" stroke-dasharray="10 8" opacity="0.5"/>
+            <circle id="s4-P" cx="517" cy="450" r="13" fill="var(--accent)" stroke="#fff" stroke-width="3"/>
+            <text x="505" y="492" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">P</text>
+          </svg>
+          <div id="s4-callout" class="callout-label" style="left: 54%; top: 44%;">交点就是最优的 P</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s4-card">
+            <div class="card-title">连成直线</div>
+            <div class="card-body">
+              <p>连接 A′ 与 B</p>
+              <p>与河岸的交点就是 P</p>
+              <div class="formula">P = A′B ∩ l</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 场景 5: 为什么最短 (52.31 - 69.68) ============
+         visual: 河岸 + A + A' + B + P; 标注 AP=A'P(等长记号); 折线 A'→P→B 拉直成 A'B; 大字 PA+PB = A'P+PB ≥ A'B; callout '三点共线时最短'; 右侧卡片: 化折为直 -->
+    <div id="s5" class="scene">
+      <div class="ghost" data-layout-ignore>04</div>
+      <div class="section-chip"><span class="num">4</span><span class="label">为什么最短</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s5-diagram">
+          <svg viewBox="0 0 900 700">
+            <line x1="120" y1="450" x2="820" y2="450" stroke="var(--neutral)" stroke-width="6"/>
+            <text x="748" y="438" font-size="26" font-weight="700" fill="var(--neutral)">河岸 l</text>
+            <path d="M 150 478 Q 185 464 220 478 T 290 478 T 360 478" stroke="var(--neutral)" stroke-width="3" fill="none" opacity="0.4"/>
+            <circle cx="250" cy="250" r="11" fill="var(--primary)"/>
+            <text x="268" y="236" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">A</text>
+            <circle cx="650" cy="350" r="11" fill="var(--primary)"/>
+            <text x="668" y="336" font-size="30" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">B</text>
+            <circle cx="250" cy="650" r="11" fill="var(--accent)"/><text x="268" y="662" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">A′</text>
+            <line x1="250" y1="250" x2="517" y2="450" stroke="var(--primary)" stroke-width="5"/>
+            <line x1="250" y1="650" x2="517" y2="450" stroke="var(--accent)" stroke-width="5"/>
+            <line x1="517" y1="450" x2="650" y2="350" stroke="var(--primary)" stroke-width="5"/>
+            <g stroke="var(--ink)" stroke-width="3"><line x1="374" y1="342" x2="394" y2="358"/><line x1="374" y1="558" x2="394" y2="542"/></g>
+            <circle cx="517" cy="450" r="11" fill="var(--accent)"/><text x="505" y="492" font-size="30" font-weight="900" fill="var(--accent)" font-family="Songti SC, serif">P</text>
+            <text x="150" y="120" font-size="34" font-weight="900" fill="var(--primary)" font-family="Songti SC, serif">PA + PB = A′P + PB ≥ A′B</text>
+          </svg>
+          <div id="s5-callout" class="callout-label" style="left: 3%; top: 58%;">三点共线时最短</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s5-card">
+            <div class="card-title">化折为直</div>
+            <div class="card-body">
+              <p>PA = PA′，折线拉直</p>
+              <p>A′、P、B 三点共线时</p>
+              <div class="formula">PA + PB 最小 = A′B</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 场景 6: 方法与应用 (69.68 - 82.95) ============
+         visual: 两个小图并排: 左=正方形里的将军饮马(对角线思路), 右=坐标系里两点+x轴对称; 各配一句标签; 右侧卡片: 通法三步(找定直线→作对称→连直线) -->
+    <div id="s6" class="scene">
+      <div class="ghost" data-layout-ignore>05</div>
+      <div class="section-chip"><span class="num">5</span><span class="label">方法与应用</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s6-diagram">
+          <svg viewBox="0 0 900 700">
+            <text x="70" y="90" font-size="28" font-weight="700" fill="var(--neutral)">正方形中</text>
+            <rect x="90" y="150" width="300" height="300" fill="none" stroke="var(--primary)" stroke-width="5"/>
+            <circle cx="90" cy="450" r="9" fill="var(--primary)"/><circle cx="390" cy="150" r="9" fill="var(--primary)"/>
+            <circle cx="240" cy="300" r="8" fill="var(--accent)"/>
+            <line x1="90" y1="450" x2="240" y2="300" stroke="var(--accent)" stroke-width="4"/><line x1="240" y1="300" x2="390" y2="150" stroke="var(--accent)" stroke-width="4"/>
+            <text x="500" y="90" font-size="28" font-weight="700" fill="var(--neutral)">坐标系中</text>
+            <line x1="500" y1="450" x2="840" y2="450" stroke="var(--ink)" stroke-width="4"/><line x1="540" y1="180" x2="540" y2="480" stroke="var(--ink)" stroke-width="4"/>
+            <text x="848" y="462" font-size="24" fill="var(--ink)">x</text>
+            <circle cx="620" cy="250" r="9" fill="var(--primary)"/><text x="600" y="238" font-size="24" fill="var(--primary)">M</text>
+            <circle cx="760" cy="320" r="9" fill="var(--primary)"/><text x="772" y="312" font-size="24" fill="var(--primary)">N</text>
+            <circle cx="620" cy="650" r="9" fill="var(--accent)"/><text x="596" y="672" font-size="24" fill="var(--accent)">M′</text>
+            <line x1="620" y1="650" x2="760" y2="320" stroke="var(--accent)" stroke-width="4" stroke-dasharray="9 7"/>
+            <line x1="620" y1="250" x2="620" y2="650" stroke="var(--neutral)" stroke-width="2" stroke-dasharray="8 6" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s6-card">
+            <div class="card-title">通用方法</div>
+            <div class="card-body">
+              <p>找定直线 → 作对称点 → 连直线</p>
+              <p>正方形、坐标系同理</p>
+              <div class="formula">化折为直</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 场景 7: 总结 (82.95 - 97.63) ============
+         visual: 大字'化折为直' + 注释 + 本章小结卡片(作对称/连直线/线段最短) + summary_bar 四枚徽章(A/对称/直线/最短) -->
+    <div id="s7" class="scene">
+      <div class="ghost" data-layout-ignore>06</div>
+      <div class="section-chip"><span class="num">6</span><span class="label">总结</span></div>
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 30px;">
+        <div id="s7-number" class="t-hero" style="font-size: 150px;"><span id="s7-number-inner" style="display: inline-block;">化折为直</span></div>
+        <div id="s7-note" class="t-label" style="font-size: 30px;">作对称点，把折线拉成直线</div>
+        <div class="info-card" id="s7-card" style="width: 1060px; flex: none;">
+          <div class="card-title">本章小结</div>
+          <div class="card-body">
+            <p>作对称：把一个点翻到定直线另一侧</p>
+            <p>连直线：对称点连另一点，交定直线得最优点</p>
+            <p>两线段和最短 = 对称点到另一点的距离</p>
+          </div>
+        </div>
+        <div class="summary-bar" id="s7-bar">
+          <div class="badge"><div class="icon">A</div><div class="name">定点</div></div>
+          <div class="badge"><div class="icon">⇋</div><div class="name">对称</div></div>
+          <div class="badge"><div class="icon">╱</div><div class="name">连直线</div></div>
+          <div class="badge"><div class="icon">min</div><div class="name">最短</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 常驻层 ============ -->
+    <div id="chapter">八年级数学·最短路径</div>
+    <div id="subtitle-layer"></div>
+
+    <!-- ============ 旁白音频 ============ -->
+    <audio id="a1" src="audio/seg-01.mp3" data-start="0.6" data-duration="13.43" data-track-index="2"></audio>
+    <audio id="a2" src="audio/seg-02.mp3" data-start="15.53" data-duration="12.2" data-track-index="2"></audio>
+    <audio id="a3" src="audio/seg-03.mp3" data-start="29.23" data-duration="11.55" data-track-index="2"></audio>
+    <audio id="a4" src="audio/seg-04.mp3" data-start="42.28" data-duration="9.13" data-track-index="2"></audio>
+    <audio id="a5" src="audio/seg-05.mp3" data-start="52.91" data-duration="15.87" data-track-index="2"></audio>
+    <audio id="a6" src="audio/seg-06.mp3" data-start="70.28" data-duration="11.77" data-track-index="2"></audio>
+    <audio id="a7" src="audio/seg-07.mp3" data-start="83.55" data-duration="13.18" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    /* ==== 时间轴 (由 scaffold 从 durations.json 生成) ==== */
+    // 输出模式: video(带配音字幕) / silent(无声循环紧凑)
+    const MODE = (window.__hyperframes && window.__hyperframes.getVariables
+      ? window.__hyperframes.getVariables().mode : null) || "video";
+    const SILENT_SEG = 4.6;   // 无声模式每段时长 (无旁白, 只需看清画面+动效)
+
+    const SEGMENTS_VIDEO = [
+      { sel: "#s1", start: 0.0, duration: 14.93, transition: "blur-crossfade",
+        subtitle: "同学们，古时候有位将军，每天从军营出发，先牵马到河边饮水，再回到帐篷。怎么走，这段路才最短呢？这就是著名的将军饮马问题。" },
+      { sel: "#s2", start: 14.93, duration: 13.7, transition: "blur-crossfade",
+        subtitle: "把问题变简单。军营是点A，帐篷是点B，都在河的同一侧。要在河边找一点P，让A到P、再从P到B的总路程最短。" },
+      { sel: "#s3", start: 28.63, duration: 13.05, transition: "blur-crossfade",
+        subtitle: "关键一步是作对称。把点A沿着河岸翻到对岸，得到对称点A撇。A到河边任意一点的距离，都等于A撇到那一点的距离。" },
+      { sel: "#s4", start: 41.68, duration: 10.63, transition: "blur-crossfade",
+        subtitle: "接下来，连接A撇和B，这条直线跟河岸的交点，就是我们要找的P点。将军就应该在这里饮马。" },
+      { sel: "#s5", start: 52.31, duration: 17.37, transition: "push-up",
+        subtitle: "因为AP等于A撇P，所以AP加PB就等于A撇P加PB。两点之间线段最短，当A撇、P、B三点连成一条直线时，总路程正好等于A撇B，这就是最短。" },
+      { sel: "#s6", start: 69.68, duration: 13.27, transition: "blur-crossfade",
+        subtitle: "这个方法叫化折为直。不管是在正方形里，还是在坐标系里，只要求两条线段的和最短，都是先作对称点，再连成直线。" },
+      { sel: "#s7", start: 82.95, duration: 14.68, transition: "blur-crossfade",
+        subtitle: "将军饮马的核心就一句话：作对称，化折为直。两条线段的和，最短就等于对称点到另一点的距离。记住这个方法，这类题就不难了。" },
+    ];
+
+    // 无声模式: 每段等长紧凑重排; 视频模式沿用音频驱动时间轴
+    let _acc = 0;
+    const SEGMENTS = MODE === "silent"
+      ? SEGMENTS_VIDEO.map((s) => { const o = { ...s, start: _acc, duration: SILENT_SEG }; _acc += SILENT_SEG; return o; })
+      : SEGMENTS_VIDEO;
+
+    /* ==== 波形生成 + 描边入场 helper (对应 Manim 的 wave_path / Create) ====
+       用法: <polyline data-wave='{"x0":70,"y0":230,"len":790,"amp":62,"cycles":4,
+                                    "harmonics":[[3,0.5]]}' fill="none" stroke="..."/>
+             然后在场景函数里 drawIn("#my-wave", t + 0.5, 1.0);
+       注意: 环境动效不要与入场动效叠同一元素的 transform (挂子元素或改 opacity)。 */
+    function makeWaves() {
+      document.querySelectorAll("[data-wave]").forEach((el) => {
+        const cfg = JSON.parse(el.getAttribute("data-wave"));
+        const lambda = cfg.len / cfg.cycles;
+        const cycles = cfg.flow ? cfg.cycles + 1 : cfg.cycles;
+        const len = cfg.flow ? cfg.len + lambda : cfg.len;
+        const n = Math.round((cfg.samples || 160) * (cycles / cfg.cycles));
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+          const x = (i / n) * len;
+          let y = Math.sin((2 * Math.PI * cycles * i) / n);
+          (cfg.harmonics || []).forEach(([mult, w]) => {
+            y += w * Math.sin((2 * Math.PI * cycles * mult * i) / n);
+          });
+          pts.push(`${(cfg.x0 + x).toFixed(1)},${(cfg.y0 - cfg.amp * y).toFixed(1)}`);
+        }
+        el.setAttribute("points", pts.join(" "));
+        el.dataset.lambda = lambda.toFixed(1);
+      });
+    }
+    makeWaves();
+    function drawIn(sel, t, dur, ease) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const len = Math.ceil(el.getTotalLength());
+        el.style.strokeDasharray = len;
+        tl.fromTo(el, { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, t);
+      });
+    }
+    /* 波形向左滚动一个波长并循环 = 声波持续传播。
+       speed 是波速(px/s), 同一场景内所有波用同一速度, 频率高的自然滚得密 */
+    const WAVE_SPEED = 220;
+    function flowWave(sel, t, until) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const lambda = parseFloat(el.dataset.lambda);
+        const period = lambda / WAVE_SPEED;
+        const n = Math.max(1, Math.ceil((until - t) / period));
+        tl.fromTo(el, { x: 0 },
+          { x: -lambda, duration: period, ease: "none", repeat: n - 1 }, t);
+      });
+    }
+
+    /* ==== 每场景入场编排 ==== */
+    function scene1(t) {
+      tl.fromTo("#s1-title", { y: 70, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.2);
+      tl.fromTo("#s1-icon", { scale: 0.6, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, t + 0.7);
+      tl.fromTo("#s1-subs .pill", { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.09 }, t + 1.2);
+      tl.fromTo("#s1-tagline", { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "sine.out" }, t + 1.9);
+    }
+    function scene2(t) {
+      drawIn("#s2-diagram line", t + 0.3, 0.6, "power2.out");
+      tl.fromTo("#s2-diagram text", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, t + 0.8);
+      drawIn("#s2-path", t + 1.0, 0.9, "power1.inOut");
+      tl.fromTo("#s2-diagram circle", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2.2)", stagger: 0.15 }, t + 1.8);
+      tl.fromTo("#s2-cl", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "sine.out" }, t + 2.6);
+      tl.fromTo("#s2-callout", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.8)" }, t + 2.75);
+      tl.fromTo("#s2-card", { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.4);
+      tl.to("#s2-P", { scale: 1.3, transformOrigin: "center", yoyo: true, repeat: 9, duration: 0.5, ease: "sine.inOut" }, t + 3.2);
+    }
+    function scene3(t) {
+      drawIn("#s3-diagram line:not(#s3-perp)", t + 0.3, 0.5, "power2.out");
+      tl.fromTo("#s3-diagram circle:first-of-type", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, t + 0.6);
+      tl.fromTo("#s3-diagram text:first-of-type", { opacity: 0 }, { opacity: 1, duration: 0.3 }, t + 0.9);
+      drawIn("#s3-perp", t + 1.2, 0.7, "power1.inOut");
+      tl.fromTo("#s3-tick", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "sine.out" }, t + 1.9);
+      tl.fromTo("#s3-Ap", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.4)" }, t + 2.2);
+      tl.fromTo("#s3-callout", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.8)" }, t + 2.7);
+      tl.fromTo("#s3-card", { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.3);
+      tl.to("#s3-Ap", { scale: 1.25, transformOrigin: "center", yoyo: true, repeat: 7, duration: 0.55, ease: "sine.inOut" }, t + 3.2);
+    }
+    function scene4(t) {
+      drawIn("#s4-diagram line:not(#s4-line)", t + 0.3, 0.4, "power1.out");
+      tl.fromTo("#s4-diagram circle:not(#s4-P)", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.12 }, t + 0.5);
+      tl.fromTo("#s4-diagram text", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.08 }, t + 0.8);
+      drawIn("#s4-line", t + 1.4, 1.0, "power2.inOut");
+      tl.fromTo("#s4-P", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.6)" }, t + 2.5);
+      tl.fromTo("#s4-callout", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "back.out(1.6)" }, t + 3.0);
+      tl.fromTo("#s4-card", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.5);
+      tl.to("#s4-P", { scale: 1.25, transformOrigin: "center", yoyo: true, repeat: 9, duration: 0.5, ease: "sine.inOut" }, t + 3.4);
+    }
+    function scene5(t) {
+      tl.fromTo("#s5-diagram circle", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.1 }, t + 0.3);
+      tl.fromTo("#s5-diagram text:not(:last-of-type)", { opacity: 0 }, { opacity: 1, duration: 0.35, stagger: 0.06 }, t + 0.6);
+      drawIn("#s5-diagram line:not([x1='120'])", t + 1.0, 0.8, "power1.inOut");
+      tl.fromTo("#s5-diagram g", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, t + 1.9);
+      tl.fromTo("#s5-diagram text:last-of-type", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, t + 2.4);
+      tl.fromTo("#s5-callout", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.8)" }, t + 3.0);
+      tl.fromTo("#s5-card", { scale: 0.9, opacity: 0, transformOrigin: "center" }, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.3)" }, t + 3.5);
+    }
+    function scene6(t) {
+      tl.fromTo("#s6-diagram text:nth-of-type(1)", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + 0.3);
+      drawIn("#s6-diagram rect, #s6-diagram line", t + 0.5, 0.8, "power1.inOut");
+      tl.fromTo("#s6-diagram circle", { scale: 0, transformOrigin: "center", opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.08 }, t + 1.3);
+      tl.fromTo("#s6-diagram text:not(:nth-of-type(1))", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.05 }, t + 1.8);
+      tl.fromTo("#s6-card", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 2.6);
+    }
+    function scene7(t) {
+      tl.fromTo("#s7-number", { scale: 0.4, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.6)" }, t + 0.3);
+      tl.fromTo("#s7-note", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, t + 1.0);
+      tl.fromTo("#s7-card", { y: 90, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 1.6);
+      tl.fromTo("#s7-bar .badge", { y: 44, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", stagger: 0.12 }, t + 2.4);
+      tl.to("#s7-number-inner", { scale: 1.03, transformOrigin: "50% 50%", yoyo: true, repeat: 7, duration: 0.8, ease: "sine.inOut" }, t + 1.4);
+      // 收尾淡出 (仅视频模式; 无声循环不淡出, 保证首尾衔接)
+      if (MODE !== "silent") {
+        const end = t + SEGMENTS[6].duration;
+        tl.to("#s7 .scene-content, #s7 .section-chip, #chapter", { opacity: 0, duration: 0.6, ease: "power1.in" }, end - 0.7);
+      }
+    }
+    const SCENE_BUILDERS = [scene1, scene2, scene3, scene4, scene5, scene6, scene7];
+
+    /* ================================================================
+       以下为通用引擎, 一般不用改
+       ================================================================ */
+    // 字幕: 由 SEGMENTS 生成, 与旁白同步 (无声模式不生成字幕)
+    const subLayer = document.getElementById("subtitle-layer");
+    if (MODE !== "silent") SEGMENTS.forEach((seg, i) => {
+      const div = document.createElement("div");
+      div.className = "subtitle";
+      div.id = "sub-" + (i + 1);
+      div.textContent = seg.subtitle;
+      subLayer.appendChild(div);
+      const tIn = seg.start + (i === 0 ? 0.4 : 0.7);
+      const tOut = (i < SEGMENTS.length - 1
+        ? SEGMENTS[i + 1].start : seg.start + seg.duration) - 0.25;
+      tl.fromTo("#sub-" + (i + 1), { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, tIn);
+      tl.to("#sub-" + (i + 1), { opacity: 0, duration: 0.25, ease: "power1.in" }, tOut);
+      tl.set("#sub-" + (i + 1), { visibility: "hidden" }, tOut + 0.3);  // 硬杀, 防复活
+    });
+
+    // 转场: 在每段 start 处切换; blur-crossfade 为主, push-up 点缀 (全片 ≤2 次)
+    for (let i = 1; i < SEGMENTS.length; i++) {
+      const prev = SEGMENTS[i - 1], cur = SEGMENTS[i];
+      const T = cur.start;
+      if (prev.transition === "push-up") {
+        tl.to(prev.sel, { y: -1080, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.fromTo(cur.sel, { y: 1080, opacity: 1 },
+          { y: 0, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.set(prev.sel, { opacity: 0, visibility: "hidden", y: 0 }, T + 0.55);
+      } else {
+        tl.to(prev.sel, { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, T);
+        tl.fromTo(cur.sel, { filter: "blur(10px)", scale: 0.97, opacity: 0 },
+          { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, T + 0.1);
+        tl.set(prev.sel, { visibility: "hidden" }, T + 0.65);
+      }
+    }
+
+    // 场景内容编排
+    SCENE_BUILDERS.forEach((fn, i) => fn(SEGMENTS[i].start));
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Grok Imagine 生图"
+  short_description: "用 grok-imagine-image 生成图片"
+  brand_color: "#111827"
+  default_prompt: "用 $grok-imagine-image 生成一张温馨的阅读角图片，柔和自然光。"
+
+policy:
+  allow_implicit_invocation: true

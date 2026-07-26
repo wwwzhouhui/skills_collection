@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  文章解说视频 通用模板 (HyperFrames) — 全数据驱动
+  =================================================
+  版式复刻自"左文右图九章解说"参考片, 配色为 cozy-handdrawn 温暖手绘系。
+  本文件不需要手改: scripts/scaffold.py 会把 storyboard.json + audio/timeline.json
+  + images/ 合成后替换下面三个占位符:
+    1) {"title": "换一个字段，换一种气质", "theme": "midnight", "chapters": [{"id": 1, "layout": "illustration", "kicker": "主题 / midnight", "headline": ["深色科技风", "给 AI 内容的另一套皮肤"], "subhead": "深蓝黑底、琥珀金强调、宋体大标题——为科技类解读准备的气质", "card": {"title": "这套主题", "items": [{"label": "底色", "text": "深蓝黑 + 暖色射光", "at": 1}, {"label": "强调", "text": "琥珀金点亮关键处", "at": 2}, {"label": "标题", "text": "宋体，杂志的味道", "at": 3}]}, "panels": [], "terminal": null, "tags": ["theme: midnight"], "image": "images/ch-01.png", "start": 0.0, "duration": 10.5, "sentences": [{"text": "同一条视频管线，现在有了第二套皮肤。", "start": 0.7, "duration": 2.93}, {"text": "深蓝黑的底，琥珀金的强调色。", "start": 3.81, "duration": 2.64}, {"text": "标题换成宋体，科技内容该有的克制感。", "start": 6.63, "duration": 3.12}]}, {"id": 2, "layout": "grid", "kicker": "机制 / 一个字段", "headline": ["theme 只是一个字段", "版式动画全部继承"], "subhead": "warm 温暖手绘，midnight 深色科技——同一份分镜两种成片", "card": null, "panels": [{"title": "warm", "desc": "奶油纸底 + 珊瑚红，亲和感", "at": 1}, {"title": "midnight", "desc": "深蓝黑底 + 琥珀金，科技感", "at": 2}], "terminal": null, "tags": ["one storyboard, two skins"], "image": null, "start": 10.5, "duration": 11.36, "sentences": [{"text": "温暖手绘风还在，适合讲亲和的内容。", "start": 11.2, "duration": 2.93}, {"text": "深色科技风是新的，适合讲模型和论文。", "start": 14.31, "duration": 3.21}, {"text": "分镜不用改一个字，换个字段重新渲染就行。", "start": 17.7, "duration": 3.41}]}, {"id": 3, "layout": "terminal", "kicker": "上手 / 五步出片", "headline": ["整条管线", "就是五条命令"], "subhead": "分镜写好之后，剩下的全部交给终端", "card": {"title": "每步做什么", "items": [{"label": "生图", "text": "每章一张插图", "at": 1}, {"label": "配音", "text": "逐句 TTS + 时间轴", "at": 2}, {"label": "出片", "text": "lint + 渲染 + 蒙太奇", "at": 3}]}, "panels": [], "terminal": {"title": "article-video — zsh", "lines": [{"type": "comment", "text": "# storyboard.json 写好之后", "at": 1}, {"type": "cmd", "text": "python3 scripts/make_manifest.py demo/", "at": 1}, {"type": "cmd", "text": "python3 scripts/tts_pipeline.py demo/", "at": 2}, {"type": "out", "text": "45 句音频 → audio/  总时长 165.2s", "at": 2}, {"type": "cmd", "text": "bash scripts/build.sh demo/", "at": 3}, {"type": "ok", "text": "✓ renders/demo.mp4 · 1080p · 2m45s", "at": 4}]}, "tags": ["pipeline"], "image": null, "start": 21.86, "duration": 12.34, "sentences": [{"text": "插图，一条命令批量生成。", "start": 22.56, "duration": 2.15}, {"text": "配音和时间轴，也是一条命令。", "start": 24.89, "duration": 2.44}, {"text": "最后渲染出片，还是一条命令。", "start": 27.51, "duration": 2.47}, {"text": "命令行内容是页面直接渲染的，不会有一个错字。", "start": 30.16, "duration": 3.29}]}, {"id": 4, "layout": "statement", "kicker": "收尾 / 开源", "headline": ["换一个字段", "换一种气质"], "subhead": "两套主题都会开源，你也可以加第三套", "card": null, "panels": [], "terminal": null, "tags": ["open-source"], "image": null, "start": 34.2, "duration": 9.54, "sentences": [{"text": "这两套主题，连同整条管线，都会开源。", "start": 34.9, "duration": 3.57}, {"text": "配色抽成了变量，你也可以加自己的第三套。", "start": 38.65, "duration": 4.34}]}]}          — 章节数据 (含每句字幕时间)
+    2) 43.74                      — 总时长 (timeline.json 的 total)
+    3) <!__AUDIO_TAGS__>              — 每句一个 <audio> 标签
+  规则 (与 teaching-animation 相同, 违反渲染必坏):
+    - 一律 tl.fromTo(), 不用 tl.from()
+    - 除最后一章外不写退场 — 转场就是退场
+    - 环境动效挂 tl, 有限 repeat, 禁 repeat:-1 / Math.random() / Date.now()
+    - 入场 tween 和环境动效不叠同一元素 transform (入场挂 frame, 漂浮挂 img)
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* 系统字体显式声明 (缺了 lint 报 font_family_without_font_face) */
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+    @font-face { font-family: "Menlo"; src: local("Menlo"); }
+    @font-face { font-family: "Songti SC"; src: local("Songti SC"); }   /* midnight 主题标题用 */
+
+    /* ==== 主题 warm (默认): 奶油纸底 + 珊瑚红强调 + 低饱和粉彩 (cozy-handdrawn 同族) ==== */
+    :root {
+      --bg:          #FAF5EC;   /* 奶油纸底 (60%) */
+      --ink:         #35302A;   /* 正文墨色 */
+      --neutral:     #8C8377;   /* 次级文字 / kicker */
+      --coral:       #DE7356;   /* 强调: 当前章 / 卡片标头 / 下划线 (10%) */
+      --blue:        #6E96B4;   /* 粉彩蓝 (条目色系 1) */
+      --mint:        #7FAE92;   /* 粉彩绿 (条目色系 2) */
+      --lavender:    #9C8FBA;   /* 粉彩紫 (条目色系 3) */
+      --peach:       #D9A06A;   /* 粉彩橙 (条目色系 4) */
+      --card-bg:     #FFFDF8;   /* 卡片底 */
+      --card-border: #D9CEBC;   /* 卡片描边 */
+      --faint:       #DCD3C4;   /* 未到章节 / 进度轨道 */
+    }
+
+    /* ==== 主题 midnight: AI 科技博主风 — 深蓝黑底 + 琥珀金强调 + 宋体大标题
+         (host 品牌视觉同族; 插图建议 executive-tech 风格 + 不去底 + 暗色相框) ==== */
+    body[data-theme="midnight"] {
+      --bg:          #10161F;
+      --ink:         #ECE6DA;
+      --neutral:     #94A0B2;
+      --coral:       #E8A84C;   /* 琥珀金 */
+      --blue:        #7FA9CE;
+      --mint:        #82C4A7;
+      --lavender:    #A89DDB;
+      --peach:       #DFA470;
+      --card-bg:     #171E2A;
+      --card-border: #2B3546;
+      --faint:       #29313E;
+    }
+    body[data-theme="midnight"] .headline,
+    body[data-theme="midnight"] .st-headline {
+      font-family: "Songti SC", serif; letter-spacing: 0.02em;
+    }
+    body[data-theme="midnight"] .tag {
+      background: color-mix(in srgb, #fff 7%, transparent);
+    }
+    body[data-theme="midnight"] .point-card,
+    body[data-theme="midnight"] .panel {
+      box-shadow: 6px 6px 0 color-mix(in srgb, var(--coral) 9%, transparent);
+    }
+    body[data-theme="midnight"] #film::after {
+      mix-blend-mode: soft-light; opacity: 0.14;   /* 颗粒在暗底用 soft-light, multiply 会发黑 */
+    }
+    /* midnight 插图: executive-tech 图自带深色设计底, 不去底 → 恢复相框 */
+    body[data-theme="midnight"] .illu-frame {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 22px; padding: 14px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+    }
+    body[data-theme="midnight"] .illu-frame img {
+      filter: none; border-radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "PingFang SC", "Heiti SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+    #film { position: absolute; inset: 0; }
+
+    /* 纸张颗粒 (确定性噪点) */
+    #film::after {
+      content: ""; position: absolute; inset: 0; z-index: 60;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.10;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+
+    /* ==== 章节容器 ==== */
+    .chapter {
+      position: absolute; inset: 0; overflow: hidden;
+      background: var(--bg);
+    }
+    /* 暖色射光, 无网格 (cozy 风格禁网格纸) */
+    .chapter::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1200px 760px at 80% 18%, color-mix(in srgb, var(--peach) 10%, transparent), transparent 70%),
+        radial-gradient(900px 640px at 6% 92%, color-mix(in srgb, var(--blue) 8%, transparent), transparent 72%);
+    }
+
+    /* kicker: 左上分类标 */
+    .kicker {
+      position: absolute; top: 46px; left: 66px; z-index: 5;
+      display: flex; align-items: center; gap: 14px;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--neutral);
+    }
+    .kicker::before {
+      content: ""; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--coral);
+    }
+
+    /* 右上灰色大章号 */
+    .ghost-num {
+      position: absolute; top: 18px; right: 64px; z-index: 4;
+      font-size: 150px; font-weight: 900; line-height: 1;
+      letter-spacing: 0.02em;
+      color: color-mix(in srgb, var(--ink) 13%, transparent);
+      user-select: none;
+    }
+
+    /* ==== 左栏 ==== */
+    .left-col {
+      position: absolute; z-index: 5;
+      top: 128px; left: 66px; width: 770px;
+    }
+    .headline {
+      font-size: 66px; font-weight: 900; line-height: 1.24;
+      letter-spacing: 0.01em;
+    }
+    .subhead {
+      margin-top: 20px;
+      font-size: 28px; font-weight: 600; line-height: 1.5;
+      color: var(--neutral);
+    }
+    .rule {
+      margin-top: 22px; width: 132px; height: 7px; border-radius: 4px;
+      background: var(--coral); transform-origin: left center;
+    }
+
+    /* 要点卡: 手绘风偏移阴影 */
+    .point-card {
+      margin-top: 34px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
+      padding: 26px 32px 28px;
+      box-shadow: 7px 7px 0 color-mix(in srgb, var(--coral) 16%, transparent);
+    }
+    .point-card .pc-title {
+      font-size: 25px; font-weight: 800; color: var(--coral);
+      letter-spacing: 0.06em; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .point-card .pc-title::before {
+      content: ""; width: 11px; height: 11px; border-radius: 3px;
+      background: var(--coral); flex: none;
+    }
+    .pc-item { display: flex; align-items: baseline; gap: 18px; padding: 9px 0; }
+    .pc-item .pi-label {
+      flex: none; min-width: 96px;
+      font-size: 25px; font-weight: 800;
+    }
+    .pc-item .pi-body { flex: 1; }
+    .pc-item .pi-text { font-size: 28px; font-weight: 700; line-height: 1.4; }
+    .pc-item .pi-bar {
+      margin-top: 10px; height: 8px; border-radius: 4px;
+      background: color-mix(in srgb, var(--faint) 70%, transparent);
+      overflow: hidden;
+    }
+    .pc-item .pi-bar span {
+      display: block; height: 100%; border-radius: 4px;
+      transform-origin: left center;
+    }
+
+    /* 术语标签 */
+    .tag-row { margin-top: 28px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .tag {
+      font-family: "Menlo", monospace;
+      font-size: 20px; font-weight: 600; color: var(--ink);
+      background: color-mix(in srgb, #fff 55%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--ink) 35%, transparent);
+      border-radius: 8px; padding: 7px 16px;
+    }
+
+    /* ==== 右栏插图: 无相框, 透明底 PNG 直接浮在页面背景上
+         (插图先过 strip_background.py 去底; overflow hidden 承接 Ken Burns) ==== */
+    .illu-frame {
+      position: absolute; z-index: 5;
+      top: 140px; left: 880px; right: 56px; bottom: 282px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .illu-frame img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 30px color-mix(in srgb, var(--ink) 14%, transparent));
+    }
+
+    /* ==== 右栏卡片网格 (layout: grid 的章节, 参考"逐块生长"式排版) ==== */
+    .grid-zone {
+      position: absolute; z-index: 5;
+      top: 150px; left: 890px; right: 64px; bottom: 292px;
+      display: grid; gap: 22px;
+      grid-auto-rows: 1fr;   /* 卡片撑满右栏, 不留大片空白 */
+    }
+    .panel {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
+      padding: 26px 30px;
+      box-shadow: 6px 6px 0 color-mix(in srgb, var(--coral) 13%, transparent);
+      display: flex; flex-direction: column; gap: 10px; justify-content: center;
+    }
+    .panel .pn-num {
+      font-family: "Menlo", monospace;
+      font-size: 21px; font-weight: 700;
+    }
+    .panel .pn-title { font-size: 31px; font-weight: 800; line-height: 1.3; }
+    .panel .pn-desc { font-size: 23px; color: var(--neutral); line-height: 1.45; }
+
+    /* ==== terminal 章节右栏: 终端窗口, 命令逐行跟旁白入场 (两主题通用, 终端恒暗色) ==== */
+    .term-zone {
+      position: absolute; z-index: 5;
+      top: 150px; left: 890px; right: 64px; bottom: 292px;
+      display: flex; align-items: center;
+    }
+    .term-window {
+      width: 100%; max-height: 100%;
+      background: #151A22;
+      border: 1.5px solid #2C3542;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+    .term-bar {
+      display: flex; align-items: center; gap: 9px;
+      padding: 15px 20px;
+      background: #1C232E;
+      border-bottom: 1px solid #2C3542;
+    }
+    .term-bar i { width: 14px; height: 14px; border-radius: 50%; }
+    .term-bar i:nth-child(1) { background: #E8615A; }
+    .term-bar i:nth-child(2) { background: #E8A84C; }
+    .term-bar i:nth-child(3) { background: #6BBF74; }
+    .term-bar .term-title {
+      margin-left: 12px;
+      font-family: "Menlo", monospace;
+      font-size: 18px; color: #8593A6;
+    }
+    .term-body {
+      padding: 24px 26px 28px;
+      font-family: "Menlo", monospace;
+      font-size: 23px; line-height: 1.75;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .term-line { white-space: pre-wrap; word-break: break-all; }
+    .term-line .tl-reveal { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; }
+    .term-line.t-cmd { color: #E6EDF3; }
+    .term-line.t-cmd .tl-prompt { color: #E8A84C; font-weight: 700; }
+    .term-line.t-out { color: #8593A6; }
+    .term-line.t-ok  { color: #6BBF74; }
+    .term-line.t-comment { color: #5A6B80; font-style: italic; }
+    .term-cursor {
+      display: inline-block; width: 12px; height: 26px;
+      background: #E8A84C; vertical-align: text-bottom; margin-left: 3px;
+    }
+
+    /* ==== statement 章节: 无右栏, 全屏大字判断句 ==== */
+    .statement-wrap {
+      position: absolute; z-index: 5;
+      top: 150px; left: 130px; right: 130px; bottom: 292px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; gap: 30px;
+    }
+    .statement-wrap .st-headline {
+      font-size: 106px; font-weight: 900; line-height: 1.24; letter-spacing: 0.01em;
+    }
+    .statement-wrap .st-sub {
+      font-size: 34px; font-weight: 600; color: var(--neutral);
+      max-width: 1320px; line-height: 1.5;
+    }
+    .statement-wrap .rule { margin-top: 0; }
+    .statement-wrap .tag-row { margin-top: 6px; justify-content: center; }
+
+    /* ==== 常驻层: 字幕 + 章节进度条 ==== */
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 154px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1560px;
+      font-size: 37px; line-height: 1.5; font-weight: 800;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      border-radius: 12px; padding: 10px 30px;
+      opacity: 0;
+    }
+    #progress {
+      position: absolute; left: 66px; right: 66px; bottom: 44px; z-index: 40;
+      display: flex; gap: 26px;
+    }
+    .pg-cell { flex: 1; }
+    .pg-num {
+      font-family: "Menlo", monospace;
+      font-size: 22px; font-weight: 700; color: var(--neutral);
+      margin-bottom: 10px;
+    }
+    .pg-track {
+      height: 6px; border-radius: 3px;
+      background: color-mix(in srgb, var(--faint) 80%, transparent);
+      overflow: hidden;
+    }
+    .pg-track span {
+      display: block; height: 100%; border-radius: 3px;
+      background: var(--coral); transform: scaleX(0); transform-origin: left center;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="43.74">
+    <div id="film">
+      <div id="chapters"></div>
+      <div id="subtitle-layer"></div>
+      <div id="progress"></div>
+    </div>
+
+    <audio id="a-ch01-s01" src="audio/ch-01-s01.mp3" data-start="0.7" data-duration="2.93" data-track-index="2"></audio>
+    <audio id="a-ch01-s02" src="audio/ch-01-s02.mp3" data-start="3.81" data-duration="2.64" data-track-index="2"></audio>
+    <audio id="a-ch01-s03" src="audio/ch-01-s03.mp3" data-start="6.63" data-duration="3.12" data-track-index="2"></audio>
+    <audio id="a-ch02-s01" src="audio/ch-02-s01.mp3" data-start="11.2" data-duration="2.93" data-track-index="2"></audio>
+    <audio id="a-ch02-s02" src="audio/ch-02-s02.mp3" data-start="14.31" data-duration="3.21" data-track-index="2"></audio>
+    <audio id="a-ch02-s03" src="audio/ch-02-s03.mp3" data-start="17.7" data-duration="3.41" data-track-index="2"></audio>
+    <audio id="a-ch03-s01" src="audio/ch-03-s01.mp3" data-start="22.56" data-duration="2.15" data-track-index="2"></audio>
+    <audio id="a-ch03-s02" src="audio/ch-03-s02.mp3" data-start="24.89" data-duration="2.44" data-track-index="2"></audio>
+    <audio id="a-ch03-s03" src="audio/ch-03-s03.mp3" data-start="27.51" data-duration="2.47" data-track-index="2"></audio>
+    <audio id="a-ch03-s04" src="audio/ch-03-s04.mp3" data-start="30.16" data-duration="3.29" data-track-index="2"></audio>
+    <audio id="a-ch04-s01" src="audio/ch-04-s01.mp3" data-start="34.9" data-duration="3.57" data-track-index="2"></audio>
+    <audio id="a-ch04-s02" src="audio/ch-04-s02.mp3" data-start="38.65" data-duration="4.34" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    const DATA = {"title": "换一个字段，换一种气质", "theme": "midnight", "chapters": [{"id": 1, "layout": "illustration", "kicker": "主题 / midnight", "headline": ["深色科技风", "给 AI 内容的另一套皮肤"], "subhead": "深蓝黑底、琥珀金强调、宋体大标题——为科技类解读准备的气质", "card": {"title": "这套主题", "items": [{"label": "底色", "text": "深蓝黑 + 暖色射光", "at": 1}, {"label": "强调", "text": "琥珀金点亮关键处", "at": 2}, {"label": "标题", "text": "宋体，杂志的味道", "at": 3}]}, "panels": [], "terminal": null, "tags": ["theme: midnight"], "image": "images/ch-01.png", "start": 0.0, "duration": 10.5, "sentences": [{"text": "同一条视频管线，现在有了第二套皮肤。", "start": 0.7, "duration": 2.93}, {"text": "深蓝黑的底，琥珀金的强调色。", "start": 3.81, "duration": 2.64}, {"text": "标题换成宋体，科技内容该有的克制感。", "start": 6.63, "duration": 3.12}]}, {"id": 2, "layout": "grid", "kicker": "机制 / 一个字段", "headline": ["theme 只是一个字段", "版式动画全部继承"], "subhead": "warm 温暖手绘，midnight 深色科技——同一份分镜两种成片", "card": null, "panels": [{"title": "warm", "desc": "奶油纸底 + 珊瑚红，亲和感", "at": 1}, {"title": "midnight", "desc": "深蓝黑底 + 琥珀金，科技感", "at": 2}], "terminal": null, "tags": ["one storyboard, two skins"], "image": null, "start": 10.5, "duration": 11.36, "sentences": [{"text": "温暖手绘风还在，适合讲亲和的内容。", "start": 11.2, "duration": 2.93}, {"text": "深色科技风是新的，适合讲模型和论文。", "start": 14.31, "duration": 3.21}, {"text": "分镜不用改一个字，换个字段重新渲染就行。", "start": 17.7, "duration": 3.41}]}, {"id": 3, "layout": "terminal", "kicker": "上手 / 五步出片", "headline": ["整条管线", "就是五条命令"], "subhead": "分镜写好之后，剩下的全部交给终端", "card": {"title": "每步做什么", "items": [{"label": "生图", "text": "每章一张插图", "at": 1}, {"label": "配音", "text": "逐句 TTS + 时间轴", "at": 2}, {"label": "出片", "text": "lint + 渲染 + 蒙太奇", "at": 3}]}, "panels": [], "terminal": {"title": "article-video — zsh", "lines": [{"type": "comment", "text": "# storyboard.json 写好之后", "at": 1}, {"type": "cmd", "text": "python3 scripts/make_manifest.py demo/", "at": 1}, {"type": "cmd", "text": "python3 scripts/tts_pipeline.py demo/", "at": 2}, {"type": "out", "text": "45 句音频 → audio/  总时长 165.2s", "at": 2}, {"type": "cmd", "text": "bash scripts/build.sh demo/", "at": 3}, {"type": "ok", "text": "✓ renders/demo.mp4 · 1080p · 2m45s", "at": 4}]}, "tags": ["pipeline"], "image": null, "start": 21.86, "duration": 12.34, "sentences": [{"text": "插图，一条命令批量生成。", "start": 22.56, "duration": 2.15}, {"text": "配音和时间轴，也是一条命令。", "start": 24.89, "duration": 2.44}, {"text": "最后渲染出片，还是一条命令。", "start": 27.51, "duration": 2.47}, {"text": "命令行内容是页面直接渲染的，不会有一个错字。", "start": 30.16, "duration": 3.29}]}, {"id": 4, "layout": "statement", "kicker": "收尾 / 开源", "headline": ["换一个字段", "换一种气质"], "subhead": "两套主题都会开源，你也可以加第三套", "card": null, "panels": [], "terminal": null, "tags": ["open-source"], "image": null, "start": 34.2, "duration": 9.54, "sentences": [{"text": "这两套主题，连同整条管线，都会开源。", "start": 34.9, "duration": 3.57}, {"text": "配色抽成了变量，你也可以加自己的第三套。", "start": 38.65, "duration": 4.34}]}]};
+    if (!DATA) throw new Error("模板未经 scaffold.py 填充, 不能直接渲染");
+    document.body.dataset.theme = DATA.theme || "warm";
+
+    const LABEL_COLORS = ["var(--blue)", "var(--mint)", "var(--lavender)", "var(--peach)"];
+    const pad2 = (n) => String(n).padStart(2, "0");
+
+    /* ==== 1. 构建章节 DOM (同步构建, 渲染器 seek 前已就绪) ====
+       三种 layout: illustration(默认, 左文右图) / grid(右栏卡片网格) / statement(全屏大字) */
+    const chaptersRoot = document.getElementById("chapters");
+    DATA.chapters.forEach((ch, i) => {
+      const el = document.createElement("div");
+      el.className = "chapter";
+      el.id = "ch" + ch.id;
+      if (i > 0) el.style.opacity = "0";
+      const layout = ch.layout || "illustration";
+
+      const headHTML = `
+        <div class="kicker">${ch.kicker}</div>
+        <div class="ghost-num" data-layout-ignore>${pad2(ch.id)}</div>`;
+      const hlHTML = (cls) => `
+        <div class="${cls}" id="ch${ch.id}-hl">${ch.headline.map((l, k) => `<div id="ch${ch.id}-hl${k}">${l}</div>`).join("")}</div>`;
+      const tagsHTML = (ch.tags && ch.tags.length) ? `
+        <div class="tag-row" id="ch${ch.id}-tags">
+          ${ch.tags.map((t, j) => `<span class="tag" id="ch${ch.id}-tag${j}">${t}</span>`).join("")}
+        </div>` : "";
+
+      if (layout === "statement") {
+        el.innerHTML = `${headHTML}
+          <div class="statement-wrap" id="ch${ch.id}-st">
+            ${hlHTML("st-headline")}
+            <div class="rule" id="ch${ch.id}-rule"></div>
+            <div class="st-sub" id="ch${ch.id}-sub">${ch.subhead}</div>
+            ${tagsHTML}
+          </div>`;
+        chaptersRoot.appendChild(el);
+        return;
+      }
+
+      const items = (ch.card && ch.card.items) || [];
+      const cardHTML = ch.card ? `
+        <div class="point-card" id="ch${ch.id}-card">
+          <div class="pc-title">${ch.card.title}</div>
+          ${items.map((it, j) => `
+          <div class="pc-item" id="ch${ch.id}-item${j}">
+            <span class="pi-label" style="color:${LABEL_COLORS[j % LABEL_COLORS.length]}">${it.label}</span>
+            <span class="pi-body">
+              <span class="pi-text">${it.text}</span>
+              ${typeof it.bar === "number" ? `<span class="pi-bar"><span id="ch${ch.id}-bar${j}" style="background:${LABEL_COLORS[j % LABEL_COLORS.length]}"></span></span>` : ""}
+            </span>
+          </div>`).join("")}
+        </div>` : "";
+
+      const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const rightHTML = layout === "grid" ? `
+        <div class="grid-zone" id="ch${ch.id}-grid">
+          ${(ch.panels || []).map((pn, j) => `
+          <div class="panel" id="ch${ch.id}-panel${j}">
+            <div class="pn-num" style="color:${LABEL_COLORS[j % LABEL_COLORS.length]}">${pad2(j + 1)}</div>
+            <div class="pn-title">${pn.title}</div>
+            ${pn.desc ? `<div class="pn-desc">${pn.desc}</div>` : ""}
+          </div>`).join("")}
+        </div>` : layout === "terminal" ? `
+        <div class="term-zone" id="ch${ch.id}-term">
+          <div class="term-window">
+            <div class="term-bar"><i></i><i></i><i></i>
+              <span class="term-title">${(ch.terminal && ch.terminal.title) || "zsh"}</span></div>
+            <div class="term-body">
+              ${(ch.terminal.lines || []).map((ln, j) => {
+                const cls = "t-" + (ln.type || "out");
+                const body = ln.type === "cmd"
+                  ? `<span class="tl-prompt">$ </span><span class="tl-reveal" id="ch${ch.id}-tl${j}-r">${esc(ln.text)}</span>`
+                  : esc(ln.text);
+                return `<div class="term-line ${cls}" id="ch${ch.id}-tl${j}">${body}</div>`;
+              }).join("")}
+              <div class="term-line"><span class="term-cursor" id="ch${ch.id}-cursor"></span></div>
+            </div>
+          </div>
+        </div>` : `
+        <div class="illu-frame" id="ch${ch.id}-illu">
+          <img id="ch${ch.id}-img" src="${ch.image}" alt="" />
+        </div>`;
+
+      el.innerHTML = `${headHTML}
+        <div class="left-col">
+          ${hlHTML("headline")}
+          <div class="subhead" id="ch${ch.id}-sub">${ch.subhead}</div>
+          <div class="rule" id="ch${ch.id}-rule"></div>
+          ${cardHTML}
+          ${tagsHTML}
+        </div>
+        ${rightHTML}`;
+      chaptersRoot.appendChild(el);
+
+      if (layout === "grid") {
+        const n = (ch.panels || []).length;
+        const zone = el.querySelector(".grid-zone");
+        zone.style.gridTemplateColumns = n === 3 ? "1fr" : "1fr 1fr";
+      }
+    });
+
+    /* ==== 2. 章节进度条 ==== */
+    const progress = document.getElementById("progress");
+    DATA.chapters.forEach((ch) => {
+      const cell = document.createElement("div");
+      cell.className = "pg-cell";
+      cell.innerHTML = `<div class="pg-num" id="pg-num${ch.id}">${pad2(ch.id)}</div>
+        <div class="pg-track"><span id="pg-fill${ch.id}"></span></div>`;
+      progress.appendChild(cell);
+    });
+
+    /* ==== 3. 每章入场编排 ==== */
+    function anchorFor(ch, j, count, at) {
+      const S = ch.sentences.length;
+      let idx = at || (count <= 1 ? 1 : Math.round(1 + (j * (S - 1)) / (count - 1)));
+      idx = Math.min(Math.max(idx, 1), S);
+      return Math.max(ch.sentences[idx - 1].start, ch.start + 1.3);
+    }
+
+    DATA.chapters.forEach((ch, i) => {
+      const t = ch.start;
+      const p = (s) => `#ch${ch.id}${s}`;
+      const layout = ch.layout || "illustration";
+
+      ch.headline.forEach((_, k) => {
+        tl.fromTo(p(`-hl${k}`), { y: 46, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.25 + k * 0.13);
+      });
+      tl.fromTo(p("-sub"), { y: 26, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, t + 0.6);
+      tl.fromTo(p("-rule"), { scaleX: 0 },
+        { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.75);
+
+      if (ch.card) {
+        tl.fromTo(p("-card"), { y: 32, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.65, ease: "power2.out" }, t + 0.95);
+        ch.card.items.forEach((it, j) => {
+          const ta = anchorFor(ch, j, ch.card.items.length, it.at);
+          tl.fromTo(p(`-item${j}`), { x: -26, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, ta);
+          if (typeof it.bar === "number") {
+            tl.fromTo(p(`-bar${j}`), { scaleX: 0 },
+              { scaleX: it.bar, duration: 0.9, ease: "power2.out",
+                transformOrigin: "left center" }, ta + 0.2);
+          }
+        });
+      }
+
+      if (ch.tags && ch.tags.length) {
+        ch.tags.forEach((_, j) => {
+          tl.fromTo(p(`-tag${j}`), { scale: 0.82, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.6)" }, t + 1.25 + j * 0.1);
+        });
+      }
+
+      if (layout === "grid") {
+        /* 卡片网格: 逐块跟旁白长出来; 整个网格全章缓慢漂移 (父子分离不叠 transform) */
+        (ch.panels || []).forEach((pn, j) => {
+          const ta = anchorFor(ch, j, ch.panels.length, pn.at);
+          tl.fromTo(p(`-panel${j}`), { y: 34, opacity: 0, scale: 0.97 },
+            { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, ta);
+        });
+        tl.fromTo(p("-grid"), { y: 9 },
+          { y: -9, duration: Math.max(ch.duration - 1.0, 2), ease: "none" }, t + 0.4);
+      } else if (layout === "terminal") {
+        /* 终端: 窗口入场 → 各行按锚点出现; cmd 行 steps() 宽度揭示模拟打字 */
+        tl.fromTo(p("-term"), { y: 26, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, t + 0.35);
+        const lines = ch.terminal.lines || [];
+        let prevEnd = -1;   // 上一行动画结束时刻; 同锚点的行顺序排队, 输出不会先于命令打完
+        lines.forEach((ln, j) => {
+          let ta = anchorFor(ch, j, lines.length, ln.at);
+          ta = Math.max(ta, prevEnd + 0.12);
+          tl.fromTo(p(`-tl${j}`), { opacity: 0 },
+            { opacity: 1, duration: 0.2, ease: "none" }, ta);
+          prevEnd = ta + 0.2;
+          if (ln.type === "cmd") {
+            const typeDur = Math.min(0.055 * ln.text.length, 1.4);
+            tl.fromTo(p(`-tl${j}-r`), { width: 0 },
+              { width: "auto", duration: typeDur, ease: `steps(${ln.text.length})` }, ta + 0.1);
+            prevEnd = ta + 0.1 + typeDur;
+          }
+        });
+        /* 光标闪烁到章节结束 (有限 repeat) */
+        const blinks = Math.max(1, Math.floor((ch.duration - 1.5) / 0.9));
+        tl.fromTo(p("-cursor"), { opacity: 1 },
+          { opacity: 0, duration: 0.45, yoyo: true, repeat: blinks * 2 - 1,
+            ease: "steps(1)" }, t + 1.0);
+      } else if (layout === "statement") {
+        /* 大字判断句: 整块全章极缓推近 */
+        tl.fromTo(p("-st"), { scale: 1.0 },
+          { scale: 1.035, duration: Math.max(ch.duration - 0.8, 2), ease: "none" }, t + 0.3);
+      } else {
+        /* 插图: 入场挂 frame; 全章 Ken Burns 挂 img — 画面永远在微动, 不叠 transform */
+        tl.fromTo(p("-illu"), { y: 26, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.75, ease: "power2.out" }, t + 0.35);
+        const kbIn = i % 2 === 0;   // 奇偶章交替推近/拉远, 避免连续同方向
+        tl.fromTo(p("-img"),
+          { scale: kbIn ? 1.0 : 1.09, xPercent: kbIn ? -1.2 : 1.2 },
+          { scale: kbIn ? 1.09 : 1.0, xPercent: kbIn ? 1.2 : -1.2,
+            duration: Math.max(ch.duration - 1.0, 2), ease: "none" }, t + 0.45);
+      }
+
+      /* 进度条: 当前格随本章匀速填满; 章号变珊瑚色, 结束回墨色(保持已填) */
+      tl.set(`#pg-num${ch.id}`, { color: "var(--coral)", fontWeight: 800 }, t);
+      tl.fromTo(`#pg-fill${ch.id}`, { scaleX: 0 },
+        { scaleX: 1, duration: Math.max(ch.duration - 0.3, 0.5), ease: "none" }, t + 0.05);
+      const tEnd = t + ch.duration;
+      if (i < DATA.chapters.length - 1) {
+        tl.set(`#pg-num${ch.id}`, { color: "var(--ink)" }, tEnd);
+        tl.set(`#pg-fill${ch.id}`, { backgroundColor: "#5A5348" }, tEnd);
+      }
+    });
+
+    /* ==== 4. 章节转场: blur-crossfade ==== */
+    for (let i = 1; i < DATA.chapters.length; i++) {
+      const prev = "#ch" + DATA.chapters[i - 1].id;
+      const cur = "#ch" + DATA.chapters[i].id;
+      const T = DATA.chapters[i].start;
+      tl.to(prev, { filter: "blur(10px)", scale: 1.02, opacity: 0, duration: 0.55, ease: "power2.inOut" }, T);
+      tl.fromTo(cur, { filter: "blur(10px)", scale: 0.985, opacity: 0 },
+        { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.55, ease: "power2.inOut" }, T + 0.08);
+      tl.set(prev, { visibility: "hidden" }, T + 0.7);
+    }
+
+    /* ==== 5. 逐句字幕 (与 TTS 音频同起点) ==== */
+    const subLayer = document.getElementById("subtitle-layer");
+    let subN = 0;
+    DATA.chapters.forEach((ch) => {
+      ch.sentences.forEach((s, k) => {
+        subN += 1;
+        const div = document.createElement("div");
+        div.className = "subtitle";
+        div.id = "sub-" + subN;
+        div.textContent = s.text;
+        subLayer.appendChild(div);
+        const tIn = Math.max(s.start - 0.05, ch.start + 0.15);
+        const tOut = (k < ch.sentences.length - 1)
+          ? ch.sentences[k + 1].start - 0.12
+          : ch.start + ch.duration - 0.35;
+        tl.fromTo("#sub-" + subN, { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }, tIn);
+        tl.to("#sub-" + subN, { opacity: 0, duration: 0.22, ease: "power1.in" }, tOut);
+        tl.set("#sub-" + subN, { visibility: "hidden" }, tOut + 0.25);
+      });
+    });
+
+    /* ==== 6. 片尾淡出 ==== */
+    const last = DATA.chapters[DATA.chapters.length - 1];
+    tl.to("#film", { opacity: 0, duration: 0.7, ease: "power1.in" },
+      last.start + last.duration - 0.75);
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

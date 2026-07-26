@@ -1,0 +1,136 @@
+{
+  "topic": "midnight-demo",
+  "title": "换一个字段，换一种气质",
+  "theme": "midnight",
+  "voice": {
+    "provider": "minimax",
+    "voice_id": "host-voice-default",
+    "speed": 1.05
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "kicker": "主题 / midnight",
+      "headline": [
+        "深色科技风",
+        "给 AI 内容的另一套皮肤"
+      ],
+      "subhead": "深蓝黑底、琥珀金强调、宋体大标题——为科技类解读准备的气质",
+      "card": {
+        "title": "这套主题",
+        "items": [
+          {
+            "label": "底色",
+            "text": "深蓝黑 + 暖色射光",
+            "at": 1
+          },
+          {
+            "label": "强调",
+            "text": "琥珀金点亮关键处",
+            "at": 2
+          },
+          {
+            "label": "标题",
+            "text": "宋体，杂志的味道",
+            "at": 3
+          }
+        ]
+      },
+      "tags": [
+        "theme: midnight"
+      ],
+      "narration": [
+        "同一条视频管线，现在有了第二套皮肤。",
+        "深蓝黑的底，琥珀金的强调色。",
+        "标题换成宋体，科技内容该有的克制感。"
+      ],
+      "illustration": {
+        "id": "ch-01",
+        "brief": "Dark-mode premium tech editorial diagram on deep navy-black background (#10161F), glowing amber accents. 中心一个发光的琥珀金六边形写着「JSON」，四条细金线辐射连到四个深色玻璃质感圆角卡片，卡片文字分别为：「版式」「插图」「配音」「字幕」。IMPORTANT: dark background only, no white or light background. No headline text, no title, no extra decorative text — only the five labels listed above, rendered in clear accurate Chinese characters. Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 2,
+      "layout": "grid",
+      "kicker": "机制 / 一个字段",
+      "headline": [
+        "theme 只是一个字段",
+        "版式动画全部继承"
+      ],
+      "subhead": "warm 温暖手绘，midnight 深色科技——同一份分镜两种成片",
+      "panels": [
+        {
+          "title": "warm",
+          "desc": "奶油纸底 + 珊瑚红，亲和感",
+          "at": 1
+        },
+        {
+          "title": "midnight",
+          "desc": "深蓝黑底 + 琥珀金，科技感",
+          "at": 2
+        }
+      ],
+      "tags": [
+        "one storyboard, two skins"
+      ],
+      "narration": [
+        "温暖手绘风还在，适合讲亲和的内容。",
+        "深色科技风是新的，适合讲模型和论文。",
+        "分镜不用改一个字，换个字段重新渲染就行。"
+      ]
+    },
+    {
+      "id": 3,
+      "layout": "terminal",
+      "kicker": "上手 / 五步出片",
+      "headline": [
+        "整条管线",
+        "就是五条命令"
+      ],
+      "subhead": "分镜写好之后，剩下的全部交给终端",
+      "card": {
+        "title": "每步做什么",
+        "items": [
+          { "label": "生图", "text": "每章一张插图", "at": 1 },
+          { "label": "配音", "text": "逐句 TTS + 时间轴", "at": 2 },
+          { "label": "出片", "text": "lint + 渲染 + 蒙太奇", "at": 3 }
+        ]
+      },
+      "tags": ["pipeline"],
+      "terminal": {
+        "title": "article-video — zsh",
+        "lines": [
+          { "type": "comment", "text": "# storyboard.json 写好之后", "at": 1 },
+          { "type": "cmd", "text": "python3 scripts/make_manifest.py demo/", "at": 1 },
+          { "type": "cmd", "text": "python3 scripts/tts_pipeline.py demo/", "at": 2 },
+          { "type": "out", "text": "45 句音频 → audio/  总时长 165.2s", "at": 2 },
+          { "type": "cmd", "text": "bash scripts/build.sh demo/", "at": 3 },
+          { "type": "ok", "text": "✓ renders/demo.mp4 · 1080p · 2m45s", "at": 4 }
+        ]
+      },
+      "narration": [
+        "插图，一条命令批量生成。",
+        "配音和时间轴，也是一条命令。",
+        "最后渲染出片，还是一条命令。",
+        "命令行内容是页面直接渲染的，不会有一个错字。"
+      ]
+    },
+    {
+      "id": 4,
+      "layout": "statement",
+      "kicker": "收尾 / 开源",
+      "headline": [
+        "换一个字段",
+        "换一种气质"
+      ],
+      "subhead": "两套主题都会开源，你也可以加第三套",
+      "tags": [
+        "open-source"
+      ],
+      "narration": [
+        "这两套主题，连同整条管线，都会开源。",
+        "配色抽成了变量，你也可以加自己的第三套。"
+      ]
+    }
+  ]
+}

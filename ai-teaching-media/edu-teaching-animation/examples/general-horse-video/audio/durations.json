@@ -1,0 +1,80 @@
+{
+  "topic": "将军饮马",
+  "provider": "minimax",
+  "voice_id": "female-chengshu",
+  "head_pad": 0.6,
+  "tail_pad": 0.9,
+  "total": 97.63,
+  "segments": [
+    {
+      "id": 1,
+      "title": "引入",
+      "file": "audio/seg-01.mp3",
+      "audio_duration": 13.43,
+      "start": 0.0,
+      "audio_start": 0.6,
+      "duration": 14.93,
+      "subtitle": "同学们，古时候有位将军，每天从军营出发，先牵马到河边饮水，再回到帐篷。怎么走，这段路才最短呢？这就是著名的将军饮马问题。"
+    },
+    {
+      "id": 2,
+      "title": "抽象成数学",
+      "file": "audio/seg-02.mp3",
+      "audio_duration": 12.2,
+      "start": 14.93,
+      "audio_start": 15.53,
+      "duration": 13.7,
+      "subtitle": "把问题变简单。军营是点A，帐篷是点B，都在河的同一侧。要在河边找一点P，让A到P、再从P到B的总路程最短。"
+    },
+    {
+      "id": 3,
+      "title": "作对称点",
+      "file": "audio/seg-03.mp3",
+      "audio_duration": 11.55,
+      "start": 28.63,
+      "audio_start": 29.23,
+      "duration": 13.05,
+      "subtitle": "关键一步是作对称。把点A沿着河岸翻到对岸，得到对称点A撇。A到河边任意一点的距离，都等于A撇到那一点的距离。"
+    },
+    {
+      "id": 4,
+      "title": "连成直线",
+      "file": "audio/seg-04.mp3",
+      "audio_duration": 9.13,
+      "start": 41.68,
+      "audio_start": 42.28,
+      "duration": 10.63,
+      "subtitle": "接下来，连接A撇和B，这条直线跟河岸的交点，就是我们要找的P点。将军就应该在这里饮马。"
+    },
+    {
+      "id": 5,
+      "title": "为什么最短",
+      "file": "audio/seg-05.mp3",
+      "audio_duration": 15.87,
+      "start": 52.31,
+      "audio_start": 52.91,
+      "duration": 17.37,
+      "subtitle": "因为AP等于A撇P，所以AP加PB就等于A撇P加PB。两点之间线段最短，当A撇、P、B三点连成一条直线时，总路程正好等于A撇B，这就是最短。"
+    },
+    {
+      "id": 6,
+      "title": "方法与应用",
+      "file": "audio/seg-06.mp3",
+      "audio_duration": 11.77,
+      "start": 69.68,
+      "audio_start": 70.28,
+      "duration": 13.27,
+      "subtitle": "这个方法叫化折为直。不管是在正方形里，还是在坐标系里，只要求两条线段的和最短，都是先作对称点，再连成直线。"
+    },
+    {
+      "id": 7,
+      "title": "总结",
+      "file": "audio/seg-07.mp3",
+      "audio_duration": 13.18,
+      "start": 82.95,
+      "audio_start": 83.55,
+      "duration": 14.68,
+      "subtitle": "将军饮马的核心就一句话：作对称，化折为直。两条线段的和，最短就等于对称点到另一点的距离。记住这个方法，这类题就不难了。"
+    }
+  ]
+}

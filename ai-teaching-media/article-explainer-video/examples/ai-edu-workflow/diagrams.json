@@ -1,0 +1,39 @@
+{
+  "mode": "generation",
+  "aspect_ratio": "4:3",
+  "resolution": "2K",
+  "items": [
+    {
+      "id": "ch-01",
+      "prompt": "Central scene layout. 左侧一部手机屏幕展示文章评论区，最上面一条高亮的评论气泡写着「能不能动态显示？」；手机旁散落三张小小的物理信息图卡片，分别标注「声现象」「光现象」「物态变化」。右侧 host 形象托腮思考，头顶一个灯泡思考气泡写着「AI 能不能干？」。Clean minimal layout, at most 6 visual elements, generous whitespace."
+    },
+    {
+      "id": "ch-02",
+      "prompt": "Horizontal flow layout with 4 step cards connected by hand-drawn arrows: 「识别 Identify」(一个放大镜看着课本), 「拆解 Split」(一个知识点分成几张小卡), 「选色 Color」(一块调色板), 「画图 Draw」(一张迷你信息图). 流程入口处有一张便签写着「声现象」，host 形象在流程起点把便签投进去。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-03",
+      "prompt": "Left-right comparison layout. 左面板标注「AI 初稿」：一张欧姆定律示意图，上面有两个红色手绘圈圈出问题，旁注「缺条件」「漏元件」；右面板标注「审核后 Reviewed」：同一张图干净完整，带一个大的绿色对勾。中间 host 形象举着放大镜站在两块面板之间检查。底部一本小笔记本图标写着「勘误表」。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-04",
+      "prompt": "Left-right comparison layout. 左侧标注「静态 Static」：一张波形挂图钉在墙上，波形是僵直的虚线，旁边一个小人无奈地指着讲解；右侧标注「动态 Dynamic」：一块平板电脑播放动画，屏幕上的波形带运动拖尾，旁边飘着音符和声音气泡。host 形象伸手按下平板上的播放按钮。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-05",
+      "prompt": "Left-right comparison layout. 左面板标注「生图会脑补」：一顶魔法帽变出一条歪歪扭扭的波形，波形上挂着一个大问号；右面板标注「代码不会」：一个代码块卡片写着「sin(x)」，从代码块延伸出两条精确的正弦波，上面一条疏、下面一条密。host 形象坐在右面板前敲键盘。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-06",
+      "prompt": "Horizontal flow layout with 3 steps connected by hand-drawn arrows: 「先配音」(一个复古麦克风和音频波形条), 「量时长」(一个秒表贴着波形量长度), 「定场景」(一条时间轴上排着长短不一的场景卡片). host 形象拿着秒表认真测量中间那段波形。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-07",
+      "prompt": "Central scene layout. 一块软木检查板上钉着三张问题卡片：第一张写着公式「a²+b²」其中平方符号正在淡出消失，第二张是一个像幻灯片的呆板画面缩略图，第三张写着两个对不上的编号「07 ≠ 05」。host 形象拿着红笔站在板前逐条检查打勾。底部一个循环箭头标注「坑表沉淀」。Clean minimal layout, at most 6 visual elements."
+    },
+    {
+      "id": "ch-08",
+      "prompt": "Central scene layout. 中间一个打开的工具箱，箱盖贴着章鱼猫开源标志，从箱子里飞出两张卡片：一张是带打印机小图标的静态信息图，一张是带播放按钮的视频画面。host 形象站在工具箱旁做出欢迎的手势。顶部一条横幅写着「开源 Open Source」。Clean minimal layout, at most 6 visual elements."
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "topic": "midnight-demo",
+  "provider": "minimax",
+  "voice_id": "host-voice-default",
+  "head_pad": 0.7,
+  "gap": 0.18,
+  "tail_pad": 0.75,
+  "total": 43.74,
+  "chapters": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "duration": 10.5,
+      "sentences": [
+        {
+          "text": "同一条视频管线，现在有了第二套皮肤。",
+          "file": "audio/ch-01-s01.mp3",
+          "start": 0.7,
+          "duration": 2.93
+        },
+        {
+          "text": "深蓝黑的底，琥珀金的强调色。",
+          "file": "audio/ch-01-s02.mp3",
+          "start": 3.81,
+          "duration": 2.64
+        },
+        {
+          "text": "标题换成宋体，科技内容该有的克制感。",
+          "file": "audio/ch-01-s03.mp3",
+          "start": 6.63,
+          "duration": 3.12
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "start": 10.5,
+      "duration": 11.36,
+      "sentences": [
+        {
+          "text": "温暖手绘风还在，适合讲亲和的内容。",
+          "file": "audio/ch-02-s01.mp3",
+          "start": 11.2,
+          "duration": 2.93
+        },
+        {
+          "text": "深色科技风是新的，适合讲模型和论文。",
+          "file": "audio/ch-02-s02.mp3",
+          "start": 14.31,
+          "duration": 3.21
+        },
+        {
+          "text": "分镜不用改一个字，换个字段重新渲染就行。",
+          "file": "audio/ch-02-s03.mp3",
+          "start": 17.7,
+          "duration": 3.41
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "start": 21.86,
+      "duration": 12.34,
+      "sentences": [
+        {
+          "text": "插图，一条命令批量生成。",
+          "file": "audio/ch-03-s01.mp3",
+          "start": 22.56,
+          "duration": 2.15
+        },
+        {
+          "text": "配音和时间轴，也是一条命令。",
+          "file": "audio/ch-03-s02.mp3",
+          "start": 24.89,
+          "duration": 2.44
+        },
+        {
+          "text": "最后渲染出片，还是一条命令。",
+          "file": "audio/ch-03-s03.mp3",
+          "start": 27.51,
+          "duration": 2.47
+        },
+        {
+          "text": "命令行内容是页面直接渲染的，不会有一个错字。",
+          "file": "audio/ch-03-s04.mp3",
+          "start": 30.16,
+          "duration": 3.29
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "start": 34.2,
+      "duration": 9.54,
+      "sentences": [
+        {
+          "text": "这两套主题，连同整条管线，都会开源。",
+          "file": "audio/ch-04-s01.mp3",
+          "start": 34.9,
+          "duration": 3.57
+        },
+        {
+          "text": "配色抽成了变量，你也可以加自己的第三套。",
+          "file": "audio/ch-04-s02.mp3",
+          "start": 38.65,
+          "duration": 4.34
+        }
+      ]
+    }
+  ]
+}

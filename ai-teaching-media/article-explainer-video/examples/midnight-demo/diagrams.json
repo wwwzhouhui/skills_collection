@@ -1,0 +1,11 @@
+{
+  "mode": "generation",
+  "aspect_ratio": "4:3",
+  "resolution": "2K",
+  "items": [
+    {
+      "id": "ch-01",
+      "prompt": "Dark-mode premium tech editorial diagram on deep navy-black background (#10161F), glowing amber accents. 中心一个发光的琥珀金六边形写着「JSON」，四条细金线辐射连到四个深色玻璃质感圆角卡片，卡片文字分别为：「版式」「插图」「配音」「字幕」。IMPORTANT: dark background only, no white or light background. No headline text, no title, no extra decorative text — only the five labels listed above, rendered in clear accurate Chinese characters. Clean minimal layout, at most 6 visual elements."
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "topic": "ai-edu-workflow",
+  "title": "读者给孩子做的物理笔记，我用 AI 升级成了会讲课的视频",
+  "voice": { "provider": "minimax", "voice_id": "host-voice-default", "speed": 1.05 },
+  "chapters": [
+    {
+      "id": 1,
+      "kicker": "开场 / 一条评论",
+      "headline": ["一条读者评论", "让我折腾了一整天"],
+      "subhead": "老王给孩子做了整学期的物理信息图，还想要\"动态显示\"",
+      "card": {
+        "title": "事情的起点",
+        "items": [
+          { "label": "起点", "text": "评论区来了一堆家长", "at": 1 },
+          { "label": "素材", "text": "整学期物理信息图", "at": 2 },
+          { "label": "诉求", "text": "能不能动态显示？", "at": 4 }
+        ]
+      },
+      "tags": ["reader-driven"],
+      "narration": [
+        "上一篇让初中生玩AI的文章发出去后，评论区来了一堆家长。",
+        "一位叫老王的读者，给孩子做了整个学期的物理信息图。",
+        "声现象、物态变化、光现象，初二上学期全覆盖。",
+        "他还留了一句话：能不能借你的思路，直接动态显示？",
+        "我盯着这条评论，冒出一个念头：这事，AI能不能干？"
+      ],
+      "illustration": {
+        "id": "ch-01",
+        "brief": "Central scene layout. 左侧一部手机屏幕展示文章评论区，最上面一条高亮的评论气泡写着「能不能动态显示？」；手机旁散落三张小小的物理信息图卡片，分别标注「声现象」「光现象」「物态变化」。右侧 host 形象托腮思考，头顶一个灯泡思考气泡写着「AI 能不能干？」。Clean minimal layout, at most 6 visual elements, generous whitespace."
+      }
+    },
+    {
+      "id": 2,
+      "layout": "grid",
+      "kicker": "第一步 / 封装成 Skill",
+      "headline": ["丢一个知识点名字", "自动出一张信息图"],
+      "subhead": "把\"怎么画学科信息图\"的完整规则封装成 Skill，不用每次重写 prompt",
+      "panels": [
+        { "title": "识别学科", "desc": "声现象 → 初二物理第二章", "at": 2 },
+        { "title": "拆解子概念", "desc": "拆成 3-5 个核心模块", "at": 3 },
+        { "title": "自动配色", "desc": "不同章节不同色系", "at": 4 },
+        { "title": "生成画图指令", "desc": "精确到箭头怎么画", "at": 5 }
+      ],
+      "tags": ["edu-infographic"],
+      "narration": [
+        "第一步，我把出图的完整规则封装成了一个Skill。",
+        "丢给它一个知识点名字，它先判断学科、年级和章节。",
+        "再把知识点拆成3到5个核心子概念。",
+        "每个章节自动分配不同配色，不会全是蓝色。",
+        "插图描述精确到，音叉怎么振、箭头怎么画。",
+        "声现象丢进去，一张四模块的信息图就出来了。"
+      ],
+      "illustration": {
+        "id": "ch-02",
+        "brief": "Horizontal flow layout with 4 step cards connected by hand-drawn arrows: 「识别 Identify」(一个放大镜看着课本), 「拆解 Split」(一个知识点分成几张小卡), 「选色 Color」(一块调色板), 「画图 Draw」(一张迷你信息图). 流程入口处有一张便签写着「声现象」，host 形象在流程起点把便签投进去。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 3,
+      "kicker": "插曲 / 交叉审核",
+      "headline": ["AI 出的图", "不能无脑给孩子用"],
+      "subhead": "欧姆定律那张图，被 DeepSeek 交叉审核抓出两个知识硬伤",
+      "card": {
+        "title": "两个硬伤",
+        "items": [
+          { "label": "硬伤一", "text": "表述缺控制变量条件", "at": 3 },
+          { "label": "硬伤二", "text": "电路漏了滑动变阻器", "at": 4 },
+          { "label": "沉淀", "text": "坑修一次进勘误表", "at": 6 }
+        ]
+      },
+      "tags": ["cross-review"],
+      "narration": [
+        "但要说实话，出来的图不是百分百没问题。",
+        "我把欧姆定律那张，丢给DeepSeek做交叉审核。",
+        "它抓出两个硬伤：定律表述少了控制变量条件。",
+        "电路图里，还漏了必须串联的滑动变阻器。",
+        "这种错误大人看不出来，对学生就是误导。",
+        "修完的坑进了勘误表，下次生成不会再踩。"
+      ],
+      "illustration": {
+        "id": "ch-03",
+        "brief": "Left-right comparison layout. 左面板标注「AI 初稿」：一张欧姆定律示意图，上面有两个红色手绘圈圈出问题，旁注「缺条件」「漏元件」；右面板标注「审核后 Reviewed」：同一张图干净完整，带一个大的绿色对勾。中间 host 形象举着放大镜站在两块面板之间检查。底部一本小笔记本图标写着「勘误表」。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 4,
+      "kicker": "第二步 / 从静态到动态",
+      "headline": ["静态图讲不了过程", "那就让它动起来"],
+      "subhead": "振动、传播、波形变化，全是时间维度上的事，一张死图讲不清",
+      "card": {
+        "title": "第二个 Skill",
+        "items": [
+          { "label": "短板", "text": "静态图讲不了过程", "at": 2 },
+          { "label": "痛点", "text": "看不懂还得家长讲", "at": 4 },
+          { "label": "产出", "text": "动图 + 90秒配音视频", "at": 6 }
+        ]
+      },
+      "tags": ["teaching-animation"],
+      "narration": [
+        "信息图做完了，老王那句动态显示还在我脑子里。",
+        "静态图有个天然短板：它讲不了过程。",
+        "声现象的核心是振动和传播，全是时间上的事。",
+        "而且图挂在墙上，看不懂还得家长在旁边讲。",
+        "要是它自己会动、自己会讲呢？",
+        "于是我做了第二个Skill，出动图，也出配音视频。"
+      ],
+      "illustration": {
+        "id": "ch-04",
+        "brief": "Left-right comparison layout. 左侧标注「静态 Static」：一张波形挂图钉在墙上，波形是僵直的虚线，旁边一个小人无奈地指着讲解；右侧标注「动态 Dynamic」：一块平板电脑播放动画，屏幕上的波形带运动拖尾，旁边飘着音符和声音气泡。host 形象伸手按下平板上的播放按钮。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 5,
+      "layout": "grid",
+      "kicker": "关键设计 / 代码渲染",
+      "headline": ["画面不是生成的图片", "是代码渲染出来的"],
+      "subhead": "波形按正弦函数采样，电路符号按国标画——生图会脑补，代码不会",
+      "panels": [
+        { "title": "生图会脑补", "desc": "波形画歪了自己不知道，错了只能重新抽卡", "at": 1 },
+        { "title": "代码不会", "desc": "正弦采样 + 国标符号，错了改一行参数重渲", "at": 4 }
+      ],
+      "tags": ["code-rendered", "SVG"],
+      "narration": [
+        "动图里有个细节，值得单独说。",
+        "低频波滚得疏，高频波滚得密，用的是同一个波速。",
+        "这不是装饰动画，物理上是对的。",
+        "因为画面不是AI生成的图片，是代码渲染的。",
+        "波形按正弦函数采样，电路符号按国标画。",
+        "生图模型偶尔会脑补，代码不会。"
+      ],
+      "illustration": {
+        "id": "ch-05",
+        "brief": "Left-right comparison layout. 左面板标注「生图会脑补」：一顶魔法帽变出一条歪歪扭扭的波形，波形上挂着一个大问号；右面板标注「代码不会」：一个代码块卡片写着「sin(x)」，从代码块延伸出两条精确的正弦波，上面一条疏、下面一条密。host 形象坐在右面板前敲键盘。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 6,
+      "layout": "grid",
+      "kicker": "关键设计 / 先配音后画面",
+      "headline": ["先配音，后画面", "音画同步是生出来的"],
+      "subhead": "先量出每段旁白的实际时长，再用它决定每个场景多长",
+      "panels": [
+        { "title": "先配音", "desc": "TTS 生成全部旁白", "at": 2 },
+        { "title": "量时长", "desc": "每段音频的实际长度", "at": 3 },
+        { "title": "定场景", "desc": "用时长决定画面节奏", "at": 4 }
+      ],
+      "tags": ["TTS-first"],
+      "narration": [
+        "视频管线里有个反直觉的设计顺序。",
+        "拿到分镜，第一件事不是画画面，是配音。",
+        "旁白全部生成后，量出每一段的实际时长。",
+        "再用这个时长，去定每个场景的长度。",
+        "音画同步不是剪出来的，是生出来的。"
+      ],
+      "illustration": {
+        "id": "ch-06",
+        "brief": "Horizontal flow layout with 3 steps connected by hand-drawn arrows: 「先配音」(一个复古麦克风和音频波形条), 「量时长」(一个秒表贴着波形量长度), 「定场景」(一条时间轴上排着长短不一的场景卡片). host 形象拿着秒表认真测量中间那段波形。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 7,
+      "kicker": "边界 / 别急着无脑信",
+      "headline": ["能保证画得对", "保证不了讲得对"],
+      "subhead": "公式的平方丢了、两套编号对不上——盯三遍没发现，看成片才发现",
+      "card": {
+        "title": "踩过的坑",
+        "items": [
+          { "label": "字体", "text": "宋体缺²渲染成空白", "at": 2 },
+          { "label": "盲区", "text": "编号 bug 盯三遍没发现", "at": 4 },
+          { "label": "结论", "text": "AI 起草，人来审", "at": 6 }
+        ]
+      },
+      "tags": ["review-loop"],
+      "narration": [
+        "当然，这条管线自己也踩了不少坑。",
+        "勾股定理的平方，渲染出来直接消失了。",
+        "查下来是宋体缺字符，公式变成了a加b等于c。",
+        "还有个编号bug，我盯了三遍预览都没发现。",
+        "直到以观众身份看成片，才觉得不对劲。",
+        "所以结论是：AI起草，人来审，缺一不可。"
+      ],
+      "illustration": {
+        "id": "ch-07",
+        "brief": "Central scene layout. 一块软木检查板上钉着三张问题卡片：第一张写着公式「a²+b²」其中平方符号正在淡出消失，第二张是一个像幻灯片的呆板画面缩略图，第三张写着两个对不上的编号「07 ≠ 05」。host 形象拿着红笔站在板前逐条检查打勾。底部一个循环箭头标注「坑表沉淀」。Clean minimal layout, at most 6 visual elements."
+      }
+    },
+    {
+      "id": 8,
+      "kicker": "收尾 / 拿去用",
+      "headline": ["两个 Skill 都开源了", "装上就能用"],
+      "subhead": "静态图打印贴墙，动图视频存平板，孩子自己点开看",
+      "card": {
+        "title": "两种用法",
+        "items": [
+          { "label": "信息图", "text": "打印出来贴墙上", "at": 2 },
+          { "label": "视频", "text": "存平板孩子自己看", "at": 3 },
+          { "label": "下一步", "text": "词级对齐 + 竖屏版", "at": 5 }
+        ]
+      },
+      "tags": ["open-source", "GitHub"],
+      "narration": [
+        "从老王的一条评论开始，我做了三件事。",
+        "复刻信息图，封装成Skill，再升级成会讲的视频。",
+        "两个Skill都开源了，地址在文末。",
+        "你家孩子暑假在复习的话，直接拿去用。",
+        "有想做的学科和知识点，评论区告诉我。"
+      ],
+      "illustration": {
+        "id": "ch-08",
+        "brief": "Central scene layout. 中间一个打开的工具箱，箱盖贴着章鱼猫开源标志，从箱子里飞出两张卡片：一张是带打印机小图标的静态信息图，一张是带播放按钮的视频画面。host 形象站在工具箱旁做出欢迎的手势。顶部一条横幅写着「开源 Open Source」。Clean minimal layout, at most 6 visual elements."
+      }
+    }
+  ]
+}

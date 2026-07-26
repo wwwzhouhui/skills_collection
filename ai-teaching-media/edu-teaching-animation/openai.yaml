@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teaching Animation"
+  short_description: "Concept → narrated teaching video + silent looping animation (Minimax TTS + HyperFrames)"
+  default_prompt: "给我一个概念(如'光现象'/'杠杆原理'),自动生成带中文配音的教学视频和无声循环动图(公众号内嵌),配色按主题适配"

@@ -1,0 +1,337 @@
+{
+  "topic": "ai-edu-workflow",
+  "provider": "minimax",
+  "voice_id": "host-voice-default",
+  "head_pad": 0.7,
+  "gap": 0.18,
+  "tail_pad": 0.75,
+  "total": 168.02,
+  "chapters": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "duration": 23.35,
+      "sentences": [
+        {
+          "text": "上一篇让初中生玩AI的文章发出去后，评论区来了一堆家长。",
+          "file": "audio/ch-01-s01.mp3",
+          "start": 0.7,
+          "duration": 4.14
+        },
+        {
+          "text": "一位叫老王的读者，给孩子做了整个学期的物理信息图。",
+          "file": "audio/ch-01-s02.mp3",
+          "start": 5.02,
+          "duration": 3.85
+        },
+        {
+          "text": "声现象、物态变化、光现象，初二上学期全覆盖。",
+          "file": "audio/ch-01-s03.mp3",
+          "start": 9.05,
+          "duration": 4.14
+        },
+        {
+          "text": "他还留了一句话：能不能借你的思路，直接动态显示？",
+          "file": "audio/ch-01-s04.mp3",
+          "start": 13.37,
+          "duration": 4.14
+        },
+        {
+          "text": "我盯着这条评论，冒出一个念头：这事，AI能不能干？",
+          "file": "audio/ch-01-s05.mp3",
+          "start": 17.69,
+          "duration": 4.91
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "start": 23.35,
+      "duration": 23.39,
+      "sentences": [
+        {
+          "text": "第一步，我把出图的完整规则封装成了一个Skill。",
+          "file": "audio/ch-02-s01.mp3",
+          "start": 24.05,
+          "duration": 3.53
+        },
+        {
+          "text": "丢给它一个知识点名字，它先判断学科、年级和章节。",
+          "file": "audio/ch-02-s02.mp3",
+          "start": 27.76,
+          "duration": 4.55
+        },
+        {
+          "text": "再把知识点拆成3到5个核心子概念。",
+          "file": "audio/ch-02-s03.mp3",
+          "start": 32.49,
+          "duration": 2.72
+        },
+        {
+          "text": "每个章节自动分配不同配色，不会全是蓝色。",
+          "file": "audio/ch-02-s04.mp3",
+          "start": 35.39,
+          "duration": 3.29
+        },
+        {
+          "text": "插图描述精确到，音叉怎么振、箭头怎么画。",
+          "file": "audio/ch-02-s05.mp3",
+          "start": 38.86,
+          "duration": 3.66
+        },
+        {
+          "text": "声现象丢进去，一张四模块的信息图就出来了。",
+          "file": "audio/ch-02-s06.mp3",
+          "start": 42.7,
+          "duration": 3.29
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "start": 46.74,
+      "duration": 22.48,
+      "sentences": [
+        {
+          "text": "但要说实话，出来的图不是百分百没问题。",
+          "file": "audio/ch-03-s01.mp3",
+          "start": 47.44,
+          "duration": 3.12
+        },
+        {
+          "text": "我把欧姆定律那张，丢给DeepSeek做交叉审核。",
+          "file": "audio/ch-03-s02.mp3",
+          "start": 50.74,
+          "duration": 3.61
+        },
+        {
+          "text": "它抓出两个硬伤：定律表述少了控制变量条件。",
+          "file": "audio/ch-03-s03.mp3",
+          "start": 54.53,
+          "duration": 3.41
+        },
+        {
+          "text": "电路图里，还漏了必须串联的滑动变阻器。",
+          "file": "audio/ch-03-s04.mp3",
+          "start": 58.12,
+          "duration": 3.29
+        },
+        {
+          "text": "这种错误大人看不出来，对学生就是误导。",
+          "file": "audio/ch-03-s05.mp3",
+          "start": 61.59,
+          "duration": 3.21
+        },
+        {
+          "text": "修完的坑进了勘误表，下次生成不会再踩。",
+          "file": "audio/ch-03-s06.mp3",
+          "start": 64.98,
+          "duration": 3.49
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "start": 69.22,
+      "duration": 20.98,
+      "sentences": [
+        {
+          "text": "信息图做完了，老王那句动态显示还在我脑子里。",
+          "file": "audio/ch-04-s01.mp3",
+          "start": 69.92,
+          "duration": 3.49
+        },
+        {
+          "text": "静态图有个天然短板：它讲不了过程。",
+          "file": "audio/ch-04-s02.mp3",
+          "start": 73.59,
+          "duration": 2.76
+        },
+        {
+          "text": "声现象的核心是振动和传播，全是时间上的事。",
+          "file": "audio/ch-04-s03.mp3",
+          "start": 76.53,
+          "duration": 3.41
+        },
+        {
+          "text": "而且图挂在墙上，看不懂还得家长在旁边讲。",
+          "file": "audio/ch-04-s04.mp3",
+          "start": 80.12,
+          "duration": 3.21
+        },
+        {
+          "text": "要是它自己会动、自己会讲呢？",
+          "file": "audio/ch-04-s05.mp3",
+          "start": 83.51,
+          "duration": 2.23
+        },
+        {
+          "text": "于是我做了第二个Skill，出动图，也出配音视频。",
+          "file": "audio/ch-04-s06.mp3",
+          "start": 85.92,
+          "duration": 3.53
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "start": 90.2,
+      "duration": 21.2,
+      "sentences": [
+        {
+          "text": "动图里有个细节，值得单独说。",
+          "file": "audio/ch-05-s01.mp3",
+          "start": 90.9,
+          "duration": 2.51
+        },
+        {
+          "text": "低频波滚得疏，高频波滚得密，用的是同一个波速。",
+          "file": "audio/ch-05-s02.mp3",
+          "start": 93.59,
+          "duration": 4.42
+        },
+        {
+          "text": "这不是装饰动画，物理上是对的。",
+          "file": "audio/ch-05-s03.mp3",
+          "start": 98.19,
+          "duration": 2.51
+        },
+        {
+          "text": "因为画面不是AI生成的图片，是代码渲染的。",
+          "file": "audio/ch-05-s04.mp3",
+          "start": 100.88,
+          "duration": 3.29
+        },
+        {
+          "text": "波形按正弦函数采样，电路符号按国标画。",
+          "file": "audio/ch-05-s05.mp3",
+          "start": 104.35,
+          "duration": 3.53
+        },
+        {
+          "text": "生图模型偶尔会脑补，代码不会。",
+          "file": "audio/ch-05-s06.mp3",
+          "start": 108.06,
+          "duration": 2.59
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "start": 111.4,
+      "duration": 17.35,
+      "sentences": [
+        {
+          "text": "视频管线里有个反直觉的设计顺序。",
+          "file": "audio/ch-06-s01.mp3",
+          "start": 112.1,
+          "duration": 2.64
+        },
+        {
+          "text": "拿到分镜，第一件事不是画画面，是配音。",
+          "file": "audio/ch-06-s02.mp3",
+          "start": 114.92,
+          "duration": 3.41
+        },
+        {
+          "text": "旁白全部生成后，量出每一段的实际时长。",
+          "file": "audio/ch-06-s03.mp3",
+          "start": 118.51,
+          "duration": 3.21
+        },
+        {
+          "text": "再用这个时长，去定每个场景的长度。",
+          "file": "audio/ch-06-s04.mp3",
+          "start": 121.9,
+          "duration": 2.8
+        },
+        {
+          "text": "音画同步不是剪出来的，是生出来的。",
+          "file": "audio/ch-06-s05.mp3",
+          "start": 124.88,
+          "duration": 3.12
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "start": 128.75,
+      "duration": 21.95,
+      "sentences": [
+        {
+          "text": "当然，这条管线自己也踩了不少坑。",
+          "file": "audio/ch-07-s01.mp3",
+          "start": 129.45,
+          "duration": 2.72
+        },
+        {
+          "text": "勾股定理的平方，渲染出来直接消失了。",
+          "file": "audio/ch-07-s02.mp3",
+          "start": 132.35,
+          "duration": 3.01
+        },
+        {
+          "text": "查下来是宋体缺字符，公式变成了a加b等于c。",
+          "file": "audio/ch-07-s03.mp3",
+          "start": 135.54,
+          "duration": 4.14
+        },
+        {
+          "text": "还有个编号bug，我盯了三遍预览都没发现。",
+          "file": "audio/ch-07-s04.mp3",
+          "start": 139.86,
+          "duration": 3.16
+        },
+        {
+          "text": "直到以观众身份看成片，才觉得不对劲。",
+          "file": "audio/ch-07-s05.mp3",
+          "start": 143.2,
+          "duration": 2.96
+        },
+        {
+          "text": "所以结论是：AI起草，人来审，缺一不可。",
+          "file": "audio/ch-07-s06.mp3",
+          "start": 146.34,
+          "duration": 3.61
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "start": 150.7,
+      "duration": 17.32,
+      "sentences": [
+        {
+          "text": "从老王的一条评论开始，我做了三件事。",
+          "file": "audio/ch-08-s01.mp3",
+          "start": 151.4,
+          "duration": 2.93
+        },
+        {
+          "text": "复刻信息图，封装成Skill，再升级成会讲的视频。",
+          "file": "audio/ch-08-s02.mp3",
+          "start": 154.51,
+          "duration": 3.85
+        },
+        {
+          "text": "两个Skill都开源了，地址在文末。",
+          "file": "audio/ch-08-s03.mp3",
+          "start": 158.54,
+          "duration": 2.72
+        },
+        {
+          "text": "你家孩子暑假在复习的话，直接拿去用。",
+          "file": "audio/ch-08-s04.mp3",
+          "start": 161.44,
+          "duration": 2.72
+        },
+        {
+          "text": "有想做的学科和知识点，评论区告诉我。",
+          "file": "audio/ch-08-s05.mp3",
+          "start": 164.34,
+          "duration": 2.93
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "topic": "将军饮马",
+  "topic_slug": "general-horse-watering",
+  "chapter": "八年级数学·最短路径",
+  "palette": "math",
+  "voice": { "provider": "minimax", "voice_id": "female-chengshu", "speed": 1.0 },
+  "segments": [
+    {
+      "id": 1,
+      "title": "引入",
+      "narration": "同学们，古时候有位将军，每天从军营出发，先牵马到河边饮水，再回到帐篷。怎么走，这段路才最短呢？这就是著名的将军饮马问题。",
+      "visual": "主标题'将军饮马' + 河流与马的图标 + 六个子概念胶囊(抽象/对称/连线/最短/化折为直/应用) + 副标题",
+      "transition": "blur-crossfade",
+      "min_duration": 6
+    },
+    {
+      "id": 2,
+      "title": "抽象成数学",
+      "narration": "把问题变简单。军营是点A，帐篷是点B，都在河的同一侧。要在河边找一点P，让A到P、再从P到B的总路程最短。",
+      "visual": "一条水平直线代表河(标'河岸 l'); 直线同侧两点 A(军营) B(帐篷); 河边一个动点 P; 折线 A→P→B 连起来; callout 指 P '在河边找一点 P'; 右侧卡片: 求 PA+PB 最短",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 3,
+      "title": "作对称点",
+      "narration": "关键一步是作对称。把点A沿着河岸翻到对岸，得到对称点A撇。A到河边任意一点的距离，都等于A撇到那一点的距离。",
+      "visual": "河岸直线 + 点A(上方) + 从A向直线作垂线虚线 + 对称点A'(下方,与A关于直线对称,等距虚线标注); callout 'A 关于河岸的对称点 A′'; 右侧卡片: 对称性质 PA=PA'",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 4,
+      "title": "连成直线",
+      "narration": "接下来，连接A撇和B，这条直线跟河岸的交点，就是我们要找的P点。将军就应该在这里饮马。",
+      "visual": "河岸 + A + A'(下方) + B(上方同侧); 连 A'B 一条直线, 交河岸于 P(高亮); callout '交点就是最优的 P'; 右侧卡片: 连 A′B 交河岸得 P",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 5,
+      "title": "为什么最短",
+      "narration": "因为AP等于A撇P，所以AP加PB就等于A撇P加PB。两点之间线段最短，当A撇、P、B三点连成一条直线时，总路程正好等于A撇B，这就是最短。",
+      "visual": "河岸 + A + A' + B + P; 标注 AP=A'P(等长记号); 折线 A'→P→B 拉直成 A'B; 大字 PA+PB = A'P+PB ≥ A'B; callout '三点共线时最短'; 右侧卡片: 化折为直",
+      "transition": "push-up"
+    },
+    {
+      "id": 6,
+      "title": "方法与应用",
+      "narration": "这个方法叫化折为直。不管是在正方形里，还是在坐标系里，只要求两条线段的和最短，都是先作对称点，再连成直线。",
+      "visual": "两个小图并排: 左=正方形里的将军饮马(对角线思路), 右=坐标系里两点+x轴对称; 各配一句标签; 右侧卡片: 通法三步(找定直线→作对称→连直线)",
+      "transition": "blur-crossfade"
+    },
+    {
+      "id": 7,
+      "title": "总结",
+      "narration": "将军饮马的核心就一句话：作对称，化折为直。两条线段的和，最短就等于对称点到另一点的距离。记住这个方法，这类题就不难了。",
+      "visual": "大字'化折为直' + 注释 + 本章小结卡片(作对称/连直线/线段最短) + summary_bar 四枚徽章(A/对称/直线/最短)",
+      "min_duration": 8
+    }
+  ]
+}

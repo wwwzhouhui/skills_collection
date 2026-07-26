@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-composition-variables='[{"id":"mode","type":"enum","label":"输出模式","default":"video","options":[{"value":"video","label":"视频(带配音字幕)"},{"value":"silent","label":"无声MP4(循环)"}]}]'>
+<!--
+  声现象 · 教学视频 (基于 assets/video-template/index.html)
+  时间轴来自 audio/durations.json (先跑 scripts/minimax_tts.py 再改本文件)
+  渲染: bash ../../scripts/build_video.sh .
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* 系统 CJK 字体声明 (渲染器要求显式 @font-face, 系统字体用 local()) */
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Songti SC"; src: local("Songti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+
+    /* ==== 配色 v2: 声现象 (暖橙 10% 强调 + 冷灰青 30% 结构 + 米色 60% 底) ==== */
+    :root {
+      --primary:   #E8631C;   /* 强调: 波形主体/公式/大数字/编号 */
+      --accent:    #F4A24C;   /* 次强调: 对比波形 */
+      --highlight: #FFD166;
+      --ink:       #22303C;   /* 蓝黑正文 (冷) */
+      --neutral:   #5E7183;   /* 冷灰青: kicker/标签/副标题 */
+      --soft:      #FFFDF6;   /* 卡片底 */
+      --line:      #9DAEBB;   /* 结构线/网格 (冷) */
+      --bg:        #FFF6E5;
+      --series:    #5E7183;   /* 章节标 (冷) */
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "Heiti SC", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+
+    .scene {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+    }
+    .scene + .scene { opacity: 0; }
+    /* 底纹三层: 冷网格(粗+细) + 暖冷双射光 */
+    .scene::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1100px 700px at 78% 22%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%),
+        radial-gradient(900px 620px at 10% 90%, color-mix(in srgb, var(--series) 9%, transparent), transparent 72%),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px);
+    }
+    /* 纸张颗粒 (确定性噪点, 盖在最上层做胶片质感) */
+    .scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 10;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.16;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+    .ghost {
+      position: absolute; right: 48px; bottom: -60px; z-index: 0;
+      font-family: "Songti SC", serif;
+      font-size: 460px; font-weight: 900; line-height: 1;
+      color: color-mix(in srgb, var(--series) 14%, transparent);
+      letter-spacing: -0.04em; user-select: none;
+    }
+
+    .scene-content {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      padding: 150px 110px 190px;
+      display: flex; gap: 70px; align-items: center;
+    }
+    .diagram-zone { flex: 1.25; height: 100%; position: relative; }
+    .card-zone { flex: 1; display: flex; flex-direction: column; gap: 32px; justify-content: center; }
+
+    #chapter {
+      position: absolute; top: 42px; right: 56px; z-index: 50;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.12em;
+      color: var(--series);
+      padding-bottom: 6px;
+      border-bottom: 3px solid color-mix(in srgb, var(--series) 45%, transparent);
+    }
+
+    .section-chip {
+      position: absolute; top: 42px; left: 56px; z-index: 5;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-chip .num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 30px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-chip .label {
+      background: #fff; border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+      border-radius: 16px; padding: 10px 26px;
+      font-size: 32px; font-weight: 800;
+      box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+    .pill {
+      background: #fff; border: 1.5px solid color-mix(in srgb, var(--neutral) 38%, transparent);
+      border-radius: 999px; padding: 12px 30px;
+      font-size: 30px; font-weight: 700;
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--ink) 8%, transparent);
+    }
+
+    /* 卡片 v2: 去大色块, 左侧主色细边 + kicker 小标 + 细规则线 */
+    .info-card {
+      border-radius: 18px; overflow: hidden;
+      border: 1.5px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 14px 42px color-mix(in srgb, var(--primary) 9%, transparent);
+      background: color-mix(in srgb, #fff 88%, var(--soft));
+    }
+    .info-card .card-title {
+      color: var(--neutral);
+      font-size: 23px; font-weight: 700; letter-spacing: 0.35em;
+      margin: 24px 32px 0; padding-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+    }
+    .info-card .card-title::before {
+      content: ""; width: 12px; height: 12px; flex: none;
+      background: var(--primary);
+    }
+    .info-card .card-body { padding: 20px 32px 28px; display: flex; flex-direction: column; gap: 14px; }
+    .info-card .card-body p {
+      font-size: 30px; line-height: 1.5;
+      padding-left: 24px; position: relative;
+    }
+    .info-card .card-body p::before {
+      content: ""; position: absolute; left: 0; top: 16px;
+      width: 9px; height: 9px; border-radius: 2px;
+      background: color-mix(in srgb, var(--primary) 70%, #fff);
+    }
+    .info-card .formula {
+      font-family: "Songti SC", serif;
+      font-size: 38px; font-weight: 900; color: var(--primary);
+      padding: 10px 0 0; letter-spacing: 0.04em;
+    }
+
+    .callout-label {
+      position: absolute; font-size: 26px; font-weight: 700;
+      color: var(--primary);
+      background: color-mix(in srgb, #fff 82%, transparent);
+      border: 2px solid var(--primary); border-radius: 12px;
+      padding: 6px 16px;
+    }
+
+    .summary-bar { display: flex; gap: 56px; justify-content: center; }
+    .badge { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .badge .icon {
+      width: 96px; height: 96px; border-radius: 50%;
+      border: 3px solid var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, #fff);
+      font-size: 44px; display: flex; align-items: center; justify-content: center;
+      color: var(--primary);
+    }
+    .badge .name { font-size: 26px; font-weight: 700; }
+
+    .t-hero  {
+      font-family: "Songti SC", serif;
+      font-size: 150px; font-weight: 900; letter-spacing: 0.01em; color: var(--primary);
+      line-height: 1.08;
+    }
+    .t-label { font-size: 24px; font-weight: 600; letter-spacing: 0.35em; color: var(--neutral); }
+
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 52px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1480px;
+      font-size: 34px; line-height: 1.5; font-weight: 600;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, #fff 88%, transparent);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px; padding: 16px 36px;
+      box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+      opacity: 0;
+    }
+
+    .diagram-zone svg { width: 100%; height: 100%; overflow: visible; }
+    .diagram-zone text { font-family: inherit; }
+    .wave-label { font-size: 28px; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="97.09">
+
+    <!-- ============ 场景 1: 标题引入 (0.00 - 13.02) ============ -->
+    <div id="s1" class="scene">
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 40px;">
+        <div id="s1-icon" style="height: 190px;">
+          <svg viewBox="0 0 360 200" style="height: 190px; overflow: visible;">
+            <g stroke="var(--primary)" stroke-width="9" fill="none" stroke-linecap="round">
+              <line x1="120" y1="30" x2="120" y2="110"/>
+              <line x1="170" y1="30" x2="170" y2="110"/>
+              <path d="M 120 110 A 25 25 0 0 0 170 110"/>
+              <line x1="145" y1="133" x2="145" y2="185"/>
+            </g>
+            <g stroke="var(--accent)" stroke-width="5" fill="none" stroke-linecap="round" id="s1-arcs">
+              <path d="M 215 35 A 45 45 0 0 1 215 125" opacity="0.9"/>
+              <path d="M 235 15 A 72 72 0 0 1 235 145" opacity="0.6"/>
+              <path d="M 255 -3 A 98 98 0 0 1 255 163" opacity="0.35"/>
+            </g>
+          </svg>
+        </div>
+        <div id="s1-title" class="t-hero">声现象</div>
+        <div id="s1-subs" style="display: flex; gap: 22px;">
+          <span class="pill">振动发声</span><span class="pill">声波传播</span><span class="pill">音调</span>
+          <span class="pill">响度</span><span class="pill">音色</span><span class="pill">声速</span>
+        </div>
+        <div id="s1-tagline" class="t-label">—— 声音的产生与特性 ——</div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 2: 振动发声 (13.02 - 27.06) ============ -->
+    <div id="s2" class="scene">
+      <div class="ghost" data-layout-ignore>01</div>
+      <div class="section-chip"><span class="num">1</span><span class="label">振动发声</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone">
+          <svg viewBox="0 0 900 700">
+            <!-- 音叉 -->
+            <g id="s2-fork" stroke="var(--ink)" stroke-width="12" fill="none" stroke-linecap="round">
+              <line x1="260" y1="120" x2="260" y2="360"/>
+              <line x1="340" y1="120" x2="340" y2="360"/>
+              <path d="M 260 360 A 40 40 0 0 0 340 360"/>
+              <line x1="300" y1="398" x2="300" y2="520"/>
+            </g>
+            <rect id="s2-base" x="240" y="520" width="120" height="28" rx="8"
+                  fill="var(--line)" opacity="0.65"/>
+            <!-- 振动箭头 -->
+            <g id="s2-arrows" stroke="var(--primary)" stroke-width="7" fill="var(--primary)" stroke-linecap="round">
+              <line x1="235" y1="160" x2="185" y2="160"/><polygon points="185,160 202,151 202,169"/>
+              <line x1="365" y1="160" x2="415" y2="160"/><polygon points="415,160 398,151 398,169"/>
+            </g>
+            <!-- 声波弧 -->
+            <g id="s2-waves" stroke="var(--accent)" fill="none" stroke-linecap="round">
+              <path class="s2-arc" d="M 480 190 A 62 62 0 0 1 480 314" stroke-width="6" opacity="0.9"/>
+              <path class="s2-arc" d="M 512 156 A 104 104 0 0 1 512 348" stroke-width="5" opacity="0.6"/>
+              <path class="s2-arc" d="M 544 122 A 148 148 0 0 1 544 382" stroke-width="5" opacity="0.4"/>
+              <path class="s2-arc" d="M 576 88  A 192 192 0 0 1 576 416" stroke-width="4" opacity="0.25"/>
+            </g>
+            <!-- callout: 振动源 -->
+            <g id="s2-callout-line">
+              <circle cx="300" cy="534" r="9" fill="var(--primary)"/>
+              <line x1="300" y1="548" x2="300" y2="620" stroke="var(--primary)" stroke-width="4"/>
+            </g>
+          </svg>
+          <div id="s2-callout" class="callout-label" style="left: 22%; bottom: 1%;">振动源</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s2-card">
+            <div class="card-title">振动发声</div>
+            <div class="card-body">
+              <p>声音由物体振动产生</p>
+              <p>振动停止，发声也停止</p>
+              <p>一切发声体都在振动</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 3: 声波传播 (27.06 - 42.60) ============ -->
+    <div id="s3" class="scene">
+      <div class="ghost" data-layout-ignore>02</div>
+      <div class="section-chip"><span class="num">2</span><span class="label">声波传播</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone">
+          <svg viewBox="0 0 900 700">
+            <!-- 同心圆声波 -->
+            <g id="s3-rings" fill="none" stroke="var(--accent)">
+              <circle class="s3-ring" cx="330" cy="330" r="110" stroke-width="6" opacity="0"/>
+              <circle class="s3-ring" cx="330" cy="330" r="175" stroke-width="5" opacity="0"/>
+              <circle class="s3-ring" cx="330" cy="330" r="240" stroke-width="5" opacity="0"/>
+              <circle class="s3-ring" cx="330" cy="330" r="305" stroke-width="4" opacity="0"/>
+            </g>
+            <!-- 鼓 -->
+            <g id="s3-drum">
+              <rect x="240" y="330" width="180" height="115" rx="14" fill="#C0392B" opacity="0.85"/>
+              <ellipse cx="330" cy="330" rx="90" ry="26" fill="var(--soft)"
+                       stroke="var(--ink)" stroke-width="5"/>
+            </g>
+            <!-- 鼓槌 -->
+            <g id="s3-stick" stroke-linecap="round">
+              <line x1="470" y1="185" x2="392" y2="290" stroke="var(--line)" stroke-width="10"/>
+              <circle cx="470" cy="185" r="17" fill="var(--accent)"/>
+            </g>
+            <!-- callout: 声源 -->
+            <g id="s3-callout-line">
+              <circle cx="330" cy="330" r="9" fill="var(--primary)"/>
+              <line x1="330" y1="344" x2="230" y2="620" stroke="var(--primary)" stroke-width="4"/>
+            </g>
+          </svg>
+          <div id="s3-callout" class="callout-label" style="left: 12%; bottom: 1%;">声源</div>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s3-card">
+            <div class="card-title">声波传播</div>
+            <div class="card-body">
+              <p>声音以波的形式传播</p>
+              <p>传声需要介质（固/液/气）</p>
+              <p>真空不能传声</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 4: 音调 (42.60 - 55.06) ============ -->
+    <div id="s4" class="scene">
+      <div class="ghost" data-layout-ignore>03</div>
+      <div class="section-chip"><span class="num">3</span><span class="label">音调</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone">
+          <svg viewBox="0 0 940 700" style="overflow: hidden;">
+            <text id="s4-label-low" x="70" y="120" class="wave-label" fill="var(--accent)">低音调（频率低）</text>
+            <polyline id="s4-wave-low" data-layout-allow-overflow data-wave='{"x0":70,"y0":230,"len":790,"amp":62,"cycles":2.5,"flow":true}'
+                      fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+            <text id="s4-label-high" x="70" y="420" class="wave-label" fill="var(--primary)">高音调（频率高）</text>
+            <polyline id="s4-wave-high" data-layout-allow-overflow data-wave='{"x0":70,"y0":530,"len":790,"amp":62,"cycles":7,"flow":true}'
+                      fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s4-card">
+            <div class="card-title">音调</div>
+            <div class="card-body">
+              <p>音调高低由频率决定</p>
+              <p>频率：每秒振动的次数</p>
+              <p>单位：赫兹（Hz）</p>
+              <div class="formula">频率越高 → 音调越高</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 5: 响度 (55.06 - 69.35) ============ -->
+    <div id="s5" class="scene">
+      <div class="ghost" data-layout-ignore>04</div>
+      <div class="section-chip"><span class="num">4</span><span class="label">响度</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone">
+          <svg viewBox="0 0 940 700" style="overflow: hidden;">
+            <text id="s5-label-small" x="70" y="120" class="wave-label" fill="var(--accent)">响度小（振幅小）</text>
+            <polyline id="s5-wave-small" data-layout-allow-overflow data-wave='{"x0":70,"y0":220,"len":790,"amp":30,"cycles":4.5,"flow":true}'
+                      fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+            <text id="s5-label-big" x="70" y="400" class="wave-label" fill="var(--primary)">响度大（振幅大）</text>
+            <polyline id="s5-wave-big" data-layout-allow-overflow data-wave='{"x0":70,"y0":545,"len":790,"amp":95,"cycles":4.5,"flow":true}'
+                      fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round"/>
+            <!-- 振幅双向箭头 -->
+            <g id="s5-amp" stroke="var(--ink)" stroke-width="5" fill="var(--ink)" stroke-linecap="round">
+              <line x1="895" y1="455" x2="895" y2="635"/>
+              <polygon points="895,450 886,468 904,468"/>
+              <polygon points="895,640 886,622 904,622"/>
+            </g>
+            <text id="s5-amp-label" x="860" y="430" class="wave-label" fill="var(--ink)">振幅</text>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s5-card">
+            <div class="card-title">响度</div>
+            <div class="card-body">
+              <p>响度大小由振幅决定</p>
+              <p>振幅：偏离平衡位置的最大距离</p>
+              <p>还与距离声源远近有关</p>
+              <div class="formula">振幅越大 → 响度越大</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 6: 音色 (69.35 - 82.75) ============ -->
+    <div id="s6" class="scene">
+      <div class="ghost" data-layout-ignore>05</div>
+      <div class="section-chip"><span class="num">5</span><span class="label">音色</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone">
+          <svg viewBox="0 0 940 700" style="overflow: hidden;">
+            <text id="s6-label-flute" x="70" y="120" class="wave-label" fill="var(--accent)">笛子（波形简单）</text>
+            <polyline id="s6-wave-flute" data-layout-allow-overflow data-wave='{"x0":70,"y0":230,"len":790,"amp":62,"cycles":4,"flow":true}'
+                      fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+            <text id="s6-label-violin" x="70" y="420" class="wave-label" fill="var(--primary)">小提琴（波形复杂）</text>
+            <polyline id="s6-wave-violin"
+                      data-layout-allow-overflow data-wave='{"x0":70,"y0":530,"len":790,"amp":48,"cycles":4,"harmonics":[[3,0.5],[7,0.28]],"flow":true}'
+                      fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s6-card">
+            <div class="card-title">音色</div>
+            <div class="card-body">
+              <p>音色由材料和结构决定</p>
+              <p>不同乐器 → 不同波形</p>
+              <p>同一音调和响度下，仍可分辨</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 7: 声速与总结 (82.75 - 97.09) ============ -->
+    <div id="s7" class="scene">
+      <div class="ghost" data-layout-ignore>06</div>
+      <div class="section-chip"><span class="num">6</span><span class="label">声速与总结</span></div>
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 30px;">
+        <div id="s7-number" class="t-hero" style="font-size: 150px;"><span id="s7-number-inner" style="display: inline-block;">340 m/s</span></div>
+        <div id="s7-note" class="t-label" style="font-size: 30px;">声音在空气中的传播速度（15°C）</div>
+        <div class="info-card" id="s7-card" style="width: 1060px; flex: none;">
+          <div class="card-title">本章小结</div>
+          <div class="card-body">
+            <p>声音由振动产生，通过介质传播</p>
+            <p>音调 ← 频率　｜　响度 ← 振幅　｜　音色 ← 材料和结构</p>
+            <p>真空不能传声</p>
+          </div>
+        </div>
+        <div class="summary-bar" id="s7-bar">
+          <div class="badge"><div class="icon">∿</div><div class="name">振动</div></div>
+          <div class="badge"><div class="icon">◎</div><div class="name">声波</div></div>
+          <div class="badge"><div class="icon">♪</div><div class="name">频率</div></div>
+          <div class="badge"><div class="icon">↕</div><div class="name">振幅</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 常驻层 ============ -->
+    <div id="chapter">初二物理·第2章</div>
+    <div id="subtitle-layer"></div>
+
+    <!-- ============ 旁白音频 (data-start = durations.json 的 audio_start) ============ -->
+    <audio id="a1" src="audio/seg-01.mp3" data-start="0.6"   data-duration="11.52" data-track-index="2"></audio>
+    <audio id="a2" src="audio/seg-02.mp3" data-start="13.62" data-duration="12.54" data-track-index="2"></audio>
+    <audio id="a3" src="audio/seg-03.mp3" data-start="27.66" data-duration="14.04" data-track-index="2"></audio>
+    <audio id="a4" src="audio/seg-04.mp3" data-start="43.2" data-duration="10.96" data-track-index="2"></audio>
+    <audio id="a5" src="audio/seg-05.mp3" data-start="55.66" data-duration="12.79" data-track-index="2"></audio>
+    <audio id="a6" src="audio/seg-06.mp3" data-start="69.95"  data-duration="11.9" data-track-index="2"></audio>
+    <audio id="a7" src="audio/seg-07.mp3" data-start="83.35" data-duration="12.84" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    /* ==== 输出模式: video(带配音字幕) / gif(无声循环紧凑) ==== */
+    const MODE = (window.__hyperframes && window.__hyperframes.getVariables
+      ? window.__hyperframes.getVariables().mode : null) || "video";
+    const SILENT_SEG = 4.6;   // 无声模式每段时长 (无旁白, 只需看清画面+动效)
+
+    /* ==== 时间轴 (video: audio/durations.json 驱动) ==== */
+    const SEGMENTS_VIDEO = [
+      { sel: "#s1", start: 0.0,   duration: 13.02, transition: "blur-crossfade",
+        subtitle: "同学们，你有没有想过，我们每天听到的各种声音，是怎么产生、又是怎么传到耳朵里的？今天我们就来揭开声现象的秘密。" },
+      { sel: "#s2", start: 13.02, duration: 14.04, transition: "blur-crossfade",
+        subtitle: "同学们看，敲响的音叉在快速振动，声音就是这样产生的。振动停止，发声也停止。一切正在发声的物体，都在振动。" },
+      { sel: "#s3", start: 27.06, duration: 15.54, transition: "blur-crossfade",
+        subtitle: "鼓面振动时，会推着周围的空气，一圈一圈向外传开，这就是声波。传声需要介质，固体、液体、气体都行，真空可不行。" },
+      { sel: "#s4", start: 42.6, duration: 12.46, transition: "blur-crossfade",
+        subtitle: "你看这两条波形，下面这条振动得更快，也就是频率更高，听起来声音就更尖、更高。频率越高，音调就越高。" },
+      { sel: "#s5", start: 55.06, duration: 14.29, transition: "blur-crossfade",
+        subtitle: "再看振幅。下面这条波摆动的幅度更大，声音听起来就更响。振幅越大，响度越大。离声源越近，听到的也越响。" },
+      { sel: "#s6", start: 69.35,  duration: 13.4, transition: "push-up",
+        subtitle: "同样的音调和响度，为什么一听就知道是笛子还是小提琴？秘密在波形。材料和结构不同，波形就不同，这就是音色。" },
+      { sel: "#s7", start: 82.75, duration: 14.34, transition: "blur-crossfade",
+        subtitle: "最后记住这个数字：在十五摄氏度的空气里，声音每秒能跑三百四十米。振动产生声音，介质传播声音，这就是声现象的全部秘密。" },
+    ];
+
+    // 无声模式: 每段等长紧凑重排; 视频模式沿用音频驱动时间轴
+    let _acc = 0;
+    const SEGMENTS = MODE === "silent"
+      ? SEGMENTS_VIDEO.map((s) => { const o = { ...s, start: _acc, duration: SILENT_SEG }; _acc += SILENT_SEG; return o; })
+      : SEGMENTS_VIDEO;
+
+    /* ==== 波形生成 + 描边入场 + 相位流动 helper (对应 Manim 的 wave_path) ====
+       flow:true 时多生成一个波长, 供 flowWave() 无缝滚动 */
+    function makeWaves() {
+      document.querySelectorAll("[data-wave]").forEach((el) => {
+        const cfg = JSON.parse(el.getAttribute("data-wave"));
+        const lambda = cfg.len / cfg.cycles;
+        const cycles = cfg.flow ? cfg.cycles + 1 : cfg.cycles;
+        const len = cfg.flow ? cfg.len + lambda : cfg.len;
+        const n = Math.round((cfg.samples || 160) * (cycles / cfg.cycles));
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+          const x = (i / n) * len;
+          let y = Math.sin((2 * Math.PI * cycles * i) / n);
+          (cfg.harmonics || []).forEach(([mult, w]) => {
+            y += w * Math.sin((2 * Math.PI * cycles * mult * i) / n);
+          });
+          pts.push(`${(cfg.x0 + x).toFixed(1)},${(cfg.y0 - cfg.amp * y).toFixed(1)}`);
+        }
+        el.setAttribute("points", pts.join(" "));
+        el.dataset.lambda = lambda.toFixed(1);
+      });
+    }
+    makeWaves();
+    function drawIn(sel, t, dur, ease) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const len = Math.ceil(el.getTotalLength());
+        el.style.strokeDasharray = len;
+        tl.fromTo(el, { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, t);
+      });
+    }
+    /* 波形向左滚动一个波长并循环 = 声波持续传播。
+       speed 是波速(px/s), 同一场景内所有波用同一速度, 频率高的自然滚得密 */
+    const WAVE_SPEED = 220;
+    function flowWave(sel, t, until) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const lambda = parseFloat(el.dataset.lambda);
+        const period = lambda / WAVE_SPEED;
+        const n = Math.max(1, Math.ceil((until - t) / period));
+        tl.fromTo(el, { x: 0 },
+          { x: -lambda, duration: period, ease: "none", repeat: n - 1 }, t);
+      });
+    }
+
+    /* ==== 每场景入场编排 ==== */
+    function scene1(t) {
+      tl.fromTo("#s1-title", { y: 70, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.2);
+      tl.fromTo("#s1-icon", { scale: 0.6, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, t + 0.7);
+      tl.fromTo("#s1-subs .pill", { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.09 }, t + 1.2);
+      tl.fromTo("#s1-tagline", { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "sine.out" }, t + 1.9);
+      // 环境: 声波弧呼吸
+      tl.to("#s1-arcs", { opacity: 0.45, yoyo: true, repeat: 9, duration: 0.6, ease: "sine.inOut" }, t + 1.6);
+    }
+
+    function scene2(t) {
+      drawIn("#s2-fork line, #s2-fork path", t + 0.3, 0.7, "power2.inOut");
+      tl.fromTo("#s2-base", { opacity: 0 }, { opacity: 0.65, duration: 0.4, ease: "sine.out" }, t + 0.9);
+      tl.fromTo("#s2-arrows", { opacity: 0, scale: 0.7, transformOrigin: "50% 50%" },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, t + 1.2);
+      drawIn(".s2-arc", t + 1.5, 0.9, "power1.out");
+      tl.fromTo("#s2-callout-line", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, t + 2.6);
+      tl.fromTo("#s2-callout", { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.8)" }, t + 2.8);
+      tl.fromTo("#s2-card", { x: 90, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.4);
+      // 环境: 振动箭头闪动 (挂子元素, 不与入场 scale 叠同一目标)
+      tl.to("#s2-arrows line, #s2-arrows polygon", { opacity: 0.45, yoyo: true, repeat: 11, duration: 0.4, ease: "sine.inOut" }, t + 2.0);
+    }
+
+    function scene3(t) {
+      tl.fromTo("#s3-drum", { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, t + 0.3);
+      tl.fromTo("#s3-stick", { rotation: -18, opacity: 0, transformOrigin: "90% 10%" },
+        { rotation: 0, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, t + 0.8);
+      // 声波圈: 持续向外发射 (从鼓面涌出→放大→消散, 循环)
+      const s3End = t + SEGMENTS[2].duration;
+      document.querySelectorAll(".s3-ring").forEach((ring, i) => {
+        const t0 = t + 1.3 + i * 0.55;
+        const cycle = 2.2;
+        const n = Math.max(1, Math.ceil((s3End - t0) / cycle));
+        tl.fromTo(ring,
+          { scale: 0.3, opacity: 0.85 - i * 0.12, transformOrigin: "330px 330px" },
+          { scale: 1.12, opacity: 0, duration: cycle, ease: "power1.out", repeat: n - 1 }, t0);
+      });
+      tl.fromTo("#s3-callout-line", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, t + 2.6);
+      tl.fromTo("#s3-callout", { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.8)" }, t + 2.8);
+      tl.fromTo("#s3-card", { y: 80, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.4);
+    }
+
+    function scene4(t) {
+      tl.fromTo("#s4-label-low", { opacity: 0, x: -40 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, t + 0.3);
+      drawIn("#s4-wave-low", t + 0.5, 1.0, "power1.inOut");
+      tl.fromTo("#s4-label-high", { opacity: 0, x: -40 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, t + 1.4);
+      drawIn("#s4-wave-high", t + 1.6, 1.0, "power2.out");
+      tl.fromTo("#s4-card", { x: 90, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 2.9);
+      // 环境: 波形相位流动 (同波速, 高频波纹更密) — "声音在传播"
+      const s4End = t + SEGMENTS[3].duration;
+      flowWave("#s4-wave-low", t + 1.7, s4End);
+      flowWave("#s4-wave-high", t + 2.8, s4End);
+    }
+
+    function scene5(t) {
+      drawIn("#s5-wave-small", t + 0.3, 0.9, "sine.inOut");
+      tl.fromTo("#s5-label-small", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, t + 0.7);
+      drawIn("#s5-wave-big", t + 1.2, 0.9, "power2.inOut");
+      tl.fromTo("#s5-label-big", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, t + 1.6);
+      tl.fromTo("#s5-amp", { scaleY: 0, opacity: 0, transformOrigin: "50% 50%" },
+        { scaleY: 1, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, t + 2.3);
+      tl.fromTo("#s5-amp-label", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, t + 2.6);
+      tl.fromTo("#s5-card", { y: 80, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 3.2);
+      // 环境: 波形相位流动
+      const s5End = t + SEGMENTS[4].duration;
+      flowWave("#s5-wave-small", t + 1.4, s5End);
+      flowWave("#s5-wave-big", t + 2.3, s5End);
+    }
+
+    function scene6(t) {
+      tl.fromTo("#s6-label-flute", { opacity: 0, y: -26 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + 0.3);
+      drawIn("#s6-wave-flute", t + 0.5, 0.9, "sine.inOut");
+      tl.fromTo("#s6-label-violin", { opacity: 0, y: -26 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + 1.4);
+      drawIn("#s6-wave-violin", t + 1.6, 1.1, "power2.inOut");
+      tl.fromTo("#s6-card", { scale: 0.9, opacity: 0, transformOrigin: "50% 50%" },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.3)" }, t + 3.0);
+      // 环境: 波形相位流动 (同音调 → 同波长同速度, 只有波形形状不同)
+      const s6End = t + SEGMENTS[5].duration;
+      flowWave("#s6-wave-flute", t + 1.6, s6End);
+      flowWave("#s6-wave-violin", t + 2.9, s6End);
+    }
+
+    function scene7(t) {
+      tl.fromTo("#s7-number", { scale: 0.4, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.6)" }, t + 0.3);
+      tl.fromTo("#s7-note", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, t + 1.0);
+      tl.fromTo("#s7-card", { y: 90, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 1.6);
+      tl.fromTo("#s7-bar .badge", { y: 44, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", stagger: 0.12 }, t + 2.4);
+      // 环境: 大数字轻呼吸 (挂内层 span, 入场 scale 在外层 div)
+      tl.to("#s7-number-inner", { scale: 1.03, transformOrigin: "50% 50%", yoyo: true, repeat: 7, duration: 0.8, ease: "sine.inOut" }, t + 1.4);
+      // 收尾淡出 (仅视频模式; 无声循环不淡出, 保证首尾衔接)
+      if (MODE !== "silent") {
+        const end = t + SEGMENTS[6].duration;
+        tl.to("#s7 .scene-content, #s7 .section-chip, #chapter", { opacity: 0, duration: 0.6, ease: "power1.in" }, end - 0.7);
+      }
+    }
+    const SCENE_BUILDERS = [scene1, scene2, scene3, scene4, scene5, scene6, scene7];
+
+    /* ================================================================
+       通用引擎 (与模板一致)
+       ================================================================ */
+    // 字幕: 仅视频模式生成 (GIF 无声, 不要字幕)
+    const subLayer = document.getElementById("subtitle-layer");
+    if (MODE !== "silent") SEGMENTS.forEach((seg, i) => {
+      const div = document.createElement("div");
+      div.className = "subtitle";
+      div.id = "sub-" + (i + 1);
+      div.textContent = seg.subtitle;
+      subLayer.appendChild(div);
+      const tIn = seg.start + (i === 0 ? 0.4 : 0.7);
+      const tOut = (i < SEGMENTS.length - 1
+        ? SEGMENTS[i + 1].start : seg.start + seg.duration) - 0.25;
+      tl.fromTo("#sub-" + (i + 1), { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, tIn);
+      tl.to("#sub-" + (i + 1), { opacity: 0, duration: 0.25, ease: "power1.in" }, tOut);
+      tl.set("#sub-" + (i + 1), { visibility: "hidden" }, tOut + 0.3);
+    });
+
+    for (let i = 1; i < SEGMENTS.length; i++) {
+      const prev = SEGMENTS[i - 1], cur = SEGMENTS[i];
+      const T = cur.start;
+      if (prev.transition === "push-up") {
+        tl.to(prev.sel, { y: -1080, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.fromTo(cur.sel, { y: 1080, opacity: 1 },
+          { y: 0, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.set(prev.sel, { opacity: 0, visibility: "hidden", y: 0 }, T + 0.55);
+      } else {
+        tl.to(prev.sel, { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, T);
+        tl.fromTo(cur.sel, { filter: "blur(10px)", scale: 0.97, opacity: 0 },
+          { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, T + 0.1);
+        tl.set(prev.sel, { visibility: "hidden" }, T + 0.65);
+      }
+    }
+
+    SCENE_BUILDERS.forEach((fn, i) => fn(SEGMENTS[i].start));
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

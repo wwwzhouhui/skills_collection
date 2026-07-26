@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  文章解说视频 通用模板 (HyperFrames) — 全数据驱动
+  =================================================
+  版式复刻自"左文右图九章解说"参考片, 配色为 cozy-handdrawn 温暖手绘系。
+  本文件不需要手改: scripts/scaffold.py 会把 storyboard.json + audio/timeline.json
+  + images/ 合成后替换下面三个占位符:
+    1) {"title": "读者给孩子做的物理笔记，我用 AI 升级成了会讲课的视频", "chapters": [{"id": 1, "layout": "illustration", "kicker": "开场 / 一条评论", "headline": ["一条读者评论", "让我折腾了一整天"], "subhead": "老王给孩子做了整学期的物理信息图，还想要\"动态显示\"", "card": {"title": "事情的起点", "items": [{"label": "起点", "text": "评论区来了一堆家长", "at": 1}, {"label": "素材", "text": "整学期物理信息图", "at": 2}, {"label": "诉求", "text": "能不能动态显示？", "at": 4}]}, "panels": [], "tags": ["reader-driven"], "image": "images/ch-01.png", "start": 0.0, "duration": 23.35, "sentences": [{"text": "上一篇让初中生玩AI的文章发出去后，评论区来了一堆家长。", "start": 0.7, "duration": 4.14}, {"text": "一位叫老王的读者，给孩子做了整个学期的物理信息图。", "start": 5.02, "duration": 3.85}, {"text": "声现象、物态变化、光现象，初二上学期全覆盖。", "start": 9.05, "duration": 4.14}, {"text": "他还留了一句话：能不能借你的思路，直接动态显示？", "start": 13.37, "duration": 4.14}, {"text": "我盯着这条评论，冒出一个念头：这事，AI能不能干？", "start": 17.69, "duration": 4.91}]}, {"id": 2, "layout": "grid", "kicker": "第一步 / 封装成 Skill", "headline": ["丢一个知识点名字", "自动出一张信息图"], "subhead": "把\"怎么画学科信息图\"的完整规则封装成 Skill，不用每次重写 prompt", "card": null, "panels": [{"title": "识别学科", "desc": "声现象 → 初二物理第二章", "at": 2}, {"title": "拆解子概念", "desc": "拆成 3-5 个核心模块", "at": 3}, {"title": "自动配色", "desc": "不同章节不同色系", "at": 4}, {"title": "生成画图指令", "desc": "精确到箭头怎么画", "at": 5}], "tags": ["edu-infographic"], "image": null, "start": 23.35, "duration": 23.39, "sentences": [{"text": "第一步，我把出图的完整规则封装成了一个Skill。", "start": 24.05, "duration": 3.53}, {"text": "丢给它一个知识点名字，它先判断学科、年级和章节。", "start": 27.76, "duration": 4.55}, {"text": "再把知识点拆成3到5个核心子概念。", "start": 32.49, "duration": 2.72}, {"text": "每个章节自动分配不同配色，不会全是蓝色。", "start": 35.39, "duration": 3.29}, {"text": "插图描述精确到，音叉怎么振、箭头怎么画。", "start": 38.86, "duration": 3.66}, {"text": "声现象丢进去，一张四模块的信息图就出来了。", "start": 42.7, "duration": 3.29}]}, {"id": 3, "layout": "illustration", "kicker": "插曲 / 交叉审核", "headline": ["AI 出的图", "不能无脑给孩子用"], "subhead": "欧姆定律那张图，被 DeepSeek 交叉审核抓出两个知识硬伤", "card": {"title": "两个硬伤", "items": [{"label": "硬伤一", "text": "表述缺控制变量条件", "at": 3}, {"label": "硬伤二", "text": "电路漏了滑动变阻器", "at": 4}, {"label": "沉淀", "text": "坑修一次进勘误表", "at": 6}]}, "panels": [], "tags": ["cross-review"], "image": "images/ch-03.png", "start": 46.74, "duration": 22.48, "sentences": [{"text": "但要说实话，出来的图不是百分百没问题。", "start": 47.44, "duration": 3.12}, {"text": "我把欧姆定律那张，丢给DeepSeek做交叉审核。", "start": 50.74, "duration": 3.61}, {"text": "它抓出两个硬伤：定律表述少了控制变量条件。", "start": 54.53, "duration": 3.41}, {"text": "电路图里，还漏了必须串联的滑动变阻器。", "start": 58.12, "duration": 3.29}, {"text": "这种错误大人看不出来，对学生就是误导。", "start": 61.59, "duration": 3.21}, {"text": "修完的坑进了勘误表，下次生成不会再踩。", "start": 64.98, "duration": 3.49}]}, {"id": 4, "layout": "illustration", "kicker": "第二步 / 从静态到动态", "headline": ["静态图讲不了过程", "那就让它动起来"], "subhead": "振动、传播、波形变化，全是时间维度上的事，一张死图讲不清", "card": {"title": "第二个 Skill", "items": [{"label": "短板", "text": "静态图讲不了过程", "at": 2}, {"label": "痛点", "text": "看不懂还得家长讲", "at": 4}, {"label": "产出", "text": "动图 + 90秒配音视频", "at": 6}]}, "panels": [], "tags": ["teaching-animation"], "image": "images/ch-04.png", "start": 69.22, "duration": 20.98, "sentences": [{"text": "信息图做完了，老王那句动态显示还在我脑子里。", "start": 69.92, "duration": 3.49}, {"text": "静态图有个天然短板：它讲不了过程。", "start": 73.59, "duration": 2.76}, {"text": "声现象的核心是振动和传播，全是时间上的事。", "start": 76.53, "duration": 3.41}, {"text": "而且图挂在墙上，看不懂还得家长在旁边讲。", "start": 80.12, "duration": 3.21}, {"text": "要是它自己会动、自己会讲呢？", "start": 83.51, "duration": 2.23}, {"text": "于是我做了第二个Skill，出动图，也出配音视频。", "start": 85.92, "duration": 3.53}]}, {"id": 5, "layout": "grid", "kicker": "关键设计 / 代码渲染", "headline": ["画面不是生成的图片", "是代码渲染出来的"], "subhead": "波形按正弦函数采样，电路符号按国标画——生图会脑补，代码不会", "card": null, "panels": [{"title": "生图会脑补", "desc": "波形画歪了自己不知道，错了只能重新抽卡", "at": 1}, {"title": "代码不会", "desc": "正弦采样 + 国标符号，错了改一行参数重渲", "at": 4}], "tags": ["code-rendered", "SVG"], "image": null, "start": 90.2, "duration": 21.2, "sentences": [{"text": "动图里有个细节，值得单独说。", "start": 90.9, "duration": 2.51}, {"text": "低频波滚得疏，高频波滚得密，用的是同一个波速。", "start": 93.59, "duration": 4.42}, {"text": "这不是装饰动画，物理上是对的。", "start": 98.19, "duration": 2.51}, {"text": "因为画面不是AI生成的图片，是代码渲染的。", "start": 100.88, "duration": 3.29}, {"text": "波形按正弦函数采样，电路符号按国标画。", "start": 104.35, "duration": 3.53}, {"text": "生图模型偶尔会脑补，代码不会。", "start": 108.06, "duration": 2.59}]}, {"id": 6, "layout": "grid", "kicker": "关键设计 / 先配音后画面", "headline": ["先配音，后画面", "音画同步是生出来的"], "subhead": "先量出每段旁白的实际时长，再用它决定每个场景多长", "card": null, "panels": [{"title": "先配音", "desc": "TTS 生成全部旁白", "at": 2}, {"title": "量时长", "desc": "每段音频的实际长度", "at": 3}, {"title": "定场景", "desc": "用时长决定画面节奏", "at": 4}], "tags": ["TTS-first"], "image": null, "start": 111.4, "duration": 17.35, "sentences": [{"text": "视频管线里有个反直觉的设计顺序。", "start": 112.1, "duration": 2.64}, {"text": "拿到分镜，第一件事不是画画面，是配音。", "start": 114.92, "duration": 3.41}, {"text": "旁白全部生成后，量出每一段的实际时长。", "start": 118.51, "duration": 3.21}, {"text": "再用这个时长，去定每个场景的长度。", "start": 121.9, "duration": 2.8}, {"text": "音画同步不是剪出来的，是生出来的。", "start": 124.88, "duration": 3.12}]}, {"id": 7, "layout": "illustration", "kicker": "边界 / 别急着无脑信", "headline": ["能保证画得对", "保证不了讲得对"], "subhead": "公式的平方丢了、两套编号对不上——盯三遍没发现，看成片才发现", "card": {"title": "踩过的坑", "items": [{"label": "字体", "text": "宋体缺²渲染成空白", "at": 2}, {"label": "盲区", "text": "编号 bug 盯三遍没发现", "at": 4}, {"label": "结论", "text": "AI 起草，人来审", "at": 6}]}, "panels": [], "tags": ["review-loop"], "image": "images/ch-07.png", "start": 128.75, "duration": 21.95, "sentences": [{"text": "当然，这条管线自己也踩了不少坑。", "start": 129.45, "duration": 2.72}, {"text": "勾股定理的平方，渲染出来直接消失了。", "start": 132.35, "duration": 3.01}, {"text": "查下来是宋体缺字符，公式变成了a加b等于c。", "start": 135.54, "duration": 4.14}, {"text": "还有个编号bug，我盯了三遍预览都没发现。", "start": 139.86, "duration": 3.16}, {"text": "直到以观众身份看成片，才觉得不对劲。", "start": 143.2, "duration": 2.96}, {"text": "所以结论是：AI起草，人来审，缺一不可。", "start": 146.34, "duration": 3.61}]}, {"id": 8, "layout": "illustration", "kicker": "收尾 / 拿去用", "headline": ["两个 Skill 都开源了", "装上就能用"], "subhead": "静态图打印贴墙，动图视频存平板，孩子自己点开看", "card": {"title": "两种用法", "items": [{"label": "信息图", "text": "打印出来贴墙上", "at": 2}, {"label": "视频", "text": "存平板孩子自己看", "at": 3}, {"label": "下一步", "text": "词级对齐 + 竖屏版", "at": 5}]}, "panels": [], "tags": ["open-source", "GitHub"], "image": "images/ch-08.png", "start": 150.7, "duration": 17.32, "sentences": [{"text": "从老王的一条评论开始，我做了三件事。", "start": 151.4, "duration": 2.93}, {"text": "复刻信息图，封装成Skill，再升级成会讲的视频。", "start": 154.51, "duration": 3.85}, {"text": "两个Skill都开源了，地址在文末。", "start": 158.54, "duration": 2.72}, {"text": "你家孩子暑假在复习的话，直接拿去用。", "start": 161.44, "duration": 2.72}, {"text": "有想做的学科和知识点，评论区告诉我。", "start": 164.34, "duration": 2.93}]}]}          — 章节数据 (含每句字幕时间)
+    2) 168.02                      — 总时长 (timeline.json 的 total)
+    3) <!__AUDIO_TAGS__>              — 每句一个 <audio> 标签
+  规则 (与 teaching-animation 相同, 违反渲染必坏):
+    - 一律 tl.fromTo(), 不用 tl.from()
+    - 除最后一章外不写退场 — 转场就是退场
+    - 环境动效挂 tl, 有限 repeat, 禁 repeat:-1 / Math.random() / Date.now()
+    - 入场 tween 和环境动效不叠同一元素 transform (入场挂 frame, 漂浮挂 img)
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* 系统字体显式声明 (缺了 lint 报 font_family_without_font_face) */
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+    @font-face { font-family: "Menlo"; src: local("Menlo"); }
+
+    /* ==== cozy-handdrawn 配色: 奶油纸底 + 珊瑚红强调 + 低饱和粉彩 ==== */
+    :root {
+      --bg:          #FAF5EC;   /* 奶油纸底 (60%) */
+      --ink:         #35302A;   /* 正文墨色 */
+      --neutral:     #8C8377;   /* 次级文字 / kicker */
+      --coral:       #DE7356;   /* 强调: 当前章 / 卡片标头 / 下划线 (10%) */
+      --blue:        #6E96B4;   /* 粉彩蓝 (条目色系 1) */
+      --mint:        #7FAE92;   /* 粉彩绿 (条目色系 2) */
+      --lavender:    #9C8FBA;   /* 粉彩紫 (条目色系 3) */
+      --peach:       #D9A06A;   /* 粉彩橙 (条目色系 4) */
+      --card-bg:     #FFFDF8;   /* 卡片底 */
+      --card-border: #D9CEBC;   /* 卡片描边 */
+      --faint:       #DCD3C4;   /* 未到章节 / 进度轨道 */
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "PingFang SC", "Heiti SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+    #film { position: absolute; inset: 0; }
+
+    /* 纸张颗粒 (确定性噪点) */
+    #film::after {
+      content: ""; position: absolute; inset: 0; z-index: 60;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.10;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+
+    /* ==== 章节容器 ==== */
+    .chapter {
+      position: absolute; inset: 0; overflow: hidden;
+      background: var(--bg);
+    }
+    /* 暖色射光, 无网格 (cozy 风格禁网格纸) */
+    .chapter::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1200px 760px at 80% 18%, color-mix(in srgb, var(--peach) 10%, transparent), transparent 70%),
+        radial-gradient(900px 640px at 6% 92%, color-mix(in srgb, var(--blue) 8%, transparent), transparent 72%);
+    }
+
+    /* kicker: 左上分类标 */
+    .kicker {
+      position: absolute; top: 46px; left: 66px; z-index: 5;
+      display: flex; align-items: center; gap: 14px;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--neutral);
+    }
+    .kicker::before {
+      content: ""; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--coral);
+    }
+
+    /* 右上灰色大章号 */
+    .ghost-num {
+      position: absolute; top: 18px; right: 64px; z-index: 4;
+      font-size: 150px; font-weight: 900; line-height: 1;
+      letter-spacing: 0.02em;
+      color: color-mix(in srgb, var(--ink) 13%, transparent);
+      user-select: none;
+    }
+
+    /* ==== 左栏 ==== */
+    .left-col {
+      position: absolute; z-index: 5;
+      top: 128px; left: 66px; width: 770px;
+    }
+    .headline {
+      font-size: 66px; font-weight: 900; line-height: 1.24;
+      letter-spacing: 0.01em;
+    }
+    .subhead {
+      margin-top: 20px;
+      font-size: 28px; font-weight: 600; line-height: 1.5;
+      color: var(--neutral);
+    }
+    .rule {
+      margin-top: 22px; width: 132px; height: 7px; border-radius: 4px;
+      background: var(--coral); transform-origin: left center;
+    }
+
+    /* 要点卡: 手绘风偏移阴影 */
+    .point-card {
+      margin-top: 34px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
+      padding: 26px 32px 28px;
+      box-shadow: 7px 7px 0 color-mix(in srgb, var(--coral) 16%, transparent);
+    }
+    .point-card .pc-title {
+      font-size: 25px; font-weight: 800; color: var(--coral);
+      letter-spacing: 0.06em; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .point-card .pc-title::before {
+      content: ""; width: 11px; height: 11px; border-radius: 3px;
+      background: var(--coral); flex: none;
+    }
+    .pc-item { display: flex; align-items: baseline; gap: 18px; padding: 9px 0; }
+    .pc-item .pi-label {
+      flex: none; min-width: 96px;
+      font-size: 25px; font-weight: 800;
+    }
+    .pc-item .pi-body { flex: 1; }
+    .pc-item .pi-text { font-size: 28px; font-weight: 700; line-height: 1.4; }
+    .pc-item .pi-bar {
+      margin-top: 10px; height: 8px; border-radius: 4px;
+      background: color-mix(in srgb, var(--faint) 70%, transparent);
+      overflow: hidden;
+    }
+    .pc-item .pi-bar span {
+      display: block; height: 100%; border-radius: 4px;
+      transform-origin: left center;
+    }
+
+    /* 术语标签 */
+    .tag-row { margin-top: 28px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .tag {
+      font-family: "Menlo", monospace;
+      font-size: 20px; font-weight: 600; color: var(--ink);
+      background: color-mix(in srgb, #fff 55%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--ink) 35%, transparent);
+      border-radius: 8px; padding: 7px 16px;
+    }
+
+    /* ==== 右栏插图 (overflow hidden 承接 Ken Burns 缓推缓拉) ==== */
+    .illu-frame {
+      position: absolute; z-index: 5;
+      top: 150px; left: 890px; right: 64px; bottom: 292px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 16px 44px color-mix(in srgb, var(--ink) 10%, transparent);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .illu-frame img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain; border-radius: 12px;
+    }
+
+    /* ==== 右栏卡片网格 (layout: grid 的章节, 参考"逐块生长"式排版) ==== */
+    .grid-zone {
+      position: absolute; z-index: 5;
+      top: 150px; left: 890px; right: 64px; bottom: 292px;
+      display: grid; gap: 22px;
+      grid-auto-rows: 1fr;   /* 卡片撑满右栏, 不留大片空白 */
+    }
+    .panel {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
+      padding: 26px 30px;
+      box-shadow: 6px 6px 0 color-mix(in srgb, var(--coral) 13%, transparent);
+      display: flex; flex-direction: column; gap: 10px; justify-content: center;
+    }
+    .panel .pn-num {
+      font-family: "Menlo", monospace;
+      font-size: 21px; font-weight: 700;
+    }
+    .panel .pn-title { font-size: 31px; font-weight: 800; line-height: 1.3; }
+    .panel .pn-desc { font-size: 23px; color: var(--neutral); line-height: 1.45; }
+
+    /* ==== statement 章节: 无右栏, 全屏大字判断句 ==== */
+    .statement-wrap {
+      position: absolute; z-index: 5;
+      top: 150px; left: 130px; right: 130px; bottom: 292px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; gap: 30px;
+    }
+    .statement-wrap .st-headline {
+      font-size: 106px; font-weight: 900; line-height: 1.24; letter-spacing: 0.01em;
+    }
+    .statement-wrap .st-sub {
+      font-size: 34px; font-weight: 600; color: var(--neutral);
+      max-width: 1320px; line-height: 1.5;
+    }
+    .statement-wrap .rule { margin-top: 0; }
+    .statement-wrap .tag-row { margin-top: 6px; justify-content: center; }
+
+    /* ==== 常驻层: 字幕 + 章节进度条 ==== */
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 154px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1560px;
+      font-size: 37px; line-height: 1.5; font-weight: 800;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      border-radius: 12px; padding: 10px 30px;
+      opacity: 0;
+    }
+    #progress {
+      position: absolute; left: 66px; right: 66px; bottom: 44px; z-index: 40;
+      display: flex; gap: 26px;
+    }
+    .pg-cell { flex: 1; }
+    .pg-num {
+      font-family: "Menlo", monospace;
+      font-size: 22px; font-weight: 700; color: var(--neutral);
+      margin-bottom: 10px;
+    }
+    .pg-track {
+      height: 6px; border-radius: 3px;
+      background: color-mix(in srgb, var(--faint) 80%, transparent);
+      overflow: hidden;
+    }
+    .pg-track span {
+      display: block; height: 100%; border-radius: 3px;
+      background: var(--coral); transform: scaleX(0); transform-origin: left center;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="168.02">
+    <div id="film">
+      <div id="chapters"></div>
+      <div id="subtitle-layer"></div>
+      <div id="progress"></div>
+    </div>
+
+    <audio id="a-ch01-s01" src="audio/ch-01-s01.mp3" data-start="0.7" data-duration="4.14" data-track-index="2"></audio>
+    <audio id="a-ch01-s02" src="audio/ch-01-s02.mp3" data-start="5.02" data-duration="3.85" data-track-index="2"></audio>
+    <audio id="a-ch01-s03" src="audio/ch-01-s03.mp3" data-start="9.05" data-duration="4.14" data-track-index="2"></audio>
+    <audio id="a-ch01-s04" src="audio/ch-01-s04.mp3" data-start="13.37" data-duration="4.14" data-track-index="2"></audio>
+    <audio id="a-ch01-s05" src="audio/ch-01-s05.mp3" data-start="17.69" data-duration="4.91" data-track-index="2"></audio>
+    <audio id="a-ch02-s01" src="audio/ch-02-s01.mp3" data-start="24.05" data-duration="3.53" data-track-index="2"></audio>
+    <audio id="a-ch02-s02" src="audio/ch-02-s02.mp3" data-start="27.76" data-duration="4.55" data-track-index="2"></audio>
+    <audio id="a-ch02-s03" src="audio/ch-02-s03.mp3" data-start="32.49" data-duration="2.72" data-track-index="2"></audio>
+    <audio id="a-ch02-s04" src="audio/ch-02-s04.mp3" data-start="35.39" data-duration="3.29" data-track-index="2"></audio>
+    <audio id="a-ch02-s05" src="audio/ch-02-s05.mp3" data-start="38.86" data-duration="3.66" data-track-index="2"></audio>
+    <audio id="a-ch02-s06" src="audio/ch-02-s06.mp3" data-start="42.7" data-duration="3.29" data-track-index="2"></audio>
+    <audio id="a-ch03-s01" src="audio/ch-03-s01.mp3" data-start="47.44" data-duration="3.12" data-track-index="2"></audio>
+    <audio id="a-ch03-s02" src="audio/ch-03-s02.mp3" data-start="50.74" data-duration="3.61" data-track-index="2"></audio>
+    <audio id="a-ch03-s03" src="audio/ch-03-s03.mp3" data-start="54.53" data-duration="3.41" data-track-index="2"></audio>
+    <audio id="a-ch03-s04" src="audio/ch-03-s04.mp3" data-start="58.12" data-duration="3.29" data-track-index="2"></audio>
+    <audio id="a-ch03-s05" src="audio/ch-03-s05.mp3" data-start="61.59" data-duration="3.21" data-track-index="2"></audio>
+    <audio id="a-ch03-s06" src="audio/ch-03-s06.mp3" data-start="64.98" data-duration="3.49" data-track-index="2"></audio>
+    <audio id="a-ch04-s01" src="audio/ch-04-s01.mp3" data-start="69.92" data-duration="3.49" data-track-index="2"></audio>
+    <audio id="a-ch04-s02" src="audio/ch-04-s02.mp3" data-start="73.59" data-duration="2.76" data-track-index="2"></audio>
+    <audio id="a-ch04-s03" src="audio/ch-04-s03.mp3" data-start="76.53" data-duration="3.41" data-track-index="2"></audio>
+    <audio id="a-ch04-s04" src="audio/ch-04-s04.mp3" data-start="80.12" data-duration="3.21" data-track-index="2"></audio>
+    <audio id="a-ch04-s05" src="audio/ch-04-s05.mp3" data-start="83.51" data-duration="2.23" data-track-index="2"></audio>
+    <audio id="a-ch04-s06" src="audio/ch-04-s06.mp3" data-start="85.92" data-duration="3.53" data-track-index="2"></audio>
+    <audio id="a-ch05-s01" src="audio/ch-05-s01.mp3" data-start="90.9" data-duration="2.51" data-track-index="2"></audio>
+    <audio id="a-ch05-s02" src="audio/ch-05-s02.mp3" data-start="93.59" data-duration="4.42" data-track-index="2"></audio>
+    <audio id="a-ch05-s03" src="audio/ch-05-s03.mp3" data-start="98.19" data-duration="2.51" data-track-index="2"></audio>
+    <audio id="a-ch05-s04" src="audio/ch-05-s04.mp3" data-start="100.88" data-duration="3.29" data-track-index="2"></audio>
+    <audio id="a-ch05-s05" src="audio/ch-05-s05.mp3" data-start="104.35" data-duration="3.53" data-track-index="2"></audio>
+    <audio id="a-ch05-s06" src="audio/ch-05-s06.mp3" data-start="108.06" data-duration="2.59" data-track-index="2"></audio>
+    <audio id="a-ch06-s01" src="audio/ch-06-s01.mp3" data-start="112.1" data-duration="2.64" data-track-index="2"></audio>
+    <audio id="a-ch06-s02" src="audio/ch-06-s02.mp3" data-start="114.92" data-duration="3.41" data-track-index="2"></audio>
+    <audio id="a-ch06-s03" src="audio/ch-06-s03.mp3" data-start="118.51" data-duration="3.21" data-track-index="2"></audio>
+    <audio id="a-ch06-s04" src="audio/ch-06-s04.mp3" data-start="121.9" data-duration="2.8" data-track-index="2"></audio>
+    <audio id="a-ch06-s05" src="audio/ch-06-s05.mp3" data-start="124.88" data-duration="3.12" data-track-index="2"></audio>
+    <audio id="a-ch07-s01" src="audio/ch-07-s01.mp3" data-start="129.45" data-duration="2.72" data-track-index="2"></audio>
+    <audio id="a-ch07-s02" src="audio/ch-07-s02.mp3" data-start="132.35" data-duration="3.01" data-track-index="2"></audio>
+    <audio id="a-ch07-s03" src="audio/ch-07-s03.mp3" data-start="135.54" data-duration="4.14" data-track-index="2"></audio>
+    <audio id="a-ch07-s04" src="audio/ch-07-s04.mp3" data-start="139.86" data-duration="3.16" data-track-index="2"></audio>
+    <audio id="a-ch07-s05" src="audio/ch-07-s05.mp3" data-start="143.2" data-duration="2.96" data-track-index="2"></audio>
+    <audio id="a-ch07-s06" src="audio/ch-07-s06.mp3" data-start="146.34" data-duration="3.61" data-track-index="2"></audio>
+    <audio id="a-ch08-s01" src="audio/ch-08-s01.mp3" data-start="151.4" data-duration="2.93" data-track-index="2"></audio>
+    <audio id="a-ch08-s02" src="audio/ch-08-s02.mp3" data-start="154.51" data-duration="3.85" data-track-index="2"></audio>
+    <audio id="a-ch08-s03" src="audio/ch-08-s03.mp3" data-start="158.54" data-duration="2.72" data-track-index="2"></audio>
+    <audio id="a-ch08-s04" src="audio/ch-08-s04.mp3" data-start="161.44" data-duration="2.72" data-track-index="2"></audio>
+    <audio id="a-ch08-s05" src="audio/ch-08-s05.mp3" data-start="164.34" data-duration="2.93" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    const DATA = {"title": "读者给孩子做的物理笔记，我用 AI 升级成了会讲课的视频", "chapters": [{"id": 1, "layout": "illustration", "kicker": "开场 / 一条评论", "headline": ["一条读者评论", "让我折腾了一整天"], "subhead": "老王给孩子做了整学期的物理信息图，还想要\"动态显示\"", "card": {"title": "事情的起点", "items": [{"label": "起点", "text": "评论区来了一堆家长", "at": 1}, {"label": "素材", "text": "整学期物理信息图", "at": 2}, {"label": "诉求", "text": "能不能动态显示？", "at": 4}]}, "panels": [], "tags": ["reader-driven"], "image": "images/ch-01.png", "start": 0.0, "duration": 23.35, "sentences": [{"text": "上一篇让初中生玩AI的文章发出去后，评论区来了一堆家长。", "start": 0.7, "duration": 4.14}, {"text": "一位叫老王的读者，给孩子做了整个学期的物理信息图。", "start": 5.02, "duration": 3.85}, {"text": "声现象、物态变化、光现象，初二上学期全覆盖。", "start": 9.05, "duration": 4.14}, {"text": "他还留了一句话：能不能借你的思路，直接动态显示？", "start": 13.37, "duration": 4.14}, {"text": "我盯着这条评论，冒出一个念头：这事，AI能不能干？", "start": 17.69, "duration": 4.91}]}, {"id": 2, "layout": "grid", "kicker": "第一步 / 封装成 Skill", "headline": ["丢一个知识点名字", "自动出一张信息图"], "subhead": "把\"怎么画学科信息图\"的完整规则封装成 Skill，不用每次重写 prompt", "card": null, "panels": [{"title": "识别学科", "desc": "声现象 → 初二物理第二章", "at": 2}, {"title": "拆解子概念", "desc": "拆成 3-5 个核心模块", "at": 3}, {"title": "自动配色", "desc": "不同章节不同色系", "at": 4}, {"title": "生成画图指令", "desc": "精确到箭头怎么画", "at": 5}], "tags": ["edu-infographic"], "image": null, "start": 23.35, "duration": 23.39, "sentences": [{"text": "第一步，我把出图的完整规则封装成了一个Skill。", "start": 24.05, "duration": 3.53}, {"text": "丢给它一个知识点名字，它先判断学科、年级和章节。", "start": 27.76, "duration": 4.55}, {"text": "再把知识点拆成3到5个核心子概念。", "start": 32.49, "duration": 2.72}, {"text": "每个章节自动分配不同配色，不会全是蓝色。", "start": 35.39, "duration": 3.29}, {"text": "插图描述精确到，音叉怎么振、箭头怎么画。", "start": 38.86, "duration": 3.66}, {"text": "声现象丢进去，一张四模块的信息图就出来了。", "start": 42.7, "duration": 3.29}]}, {"id": 3, "layout": "illustration", "kicker": "插曲 / 交叉审核", "headline": ["AI 出的图", "不能无脑给孩子用"], "subhead": "欧姆定律那张图，被 DeepSeek 交叉审核抓出两个知识硬伤", "card": {"title": "两个硬伤", "items": [{"label": "硬伤一", "text": "表述缺控制变量条件", "at": 3}, {"label": "硬伤二", "text": "电路漏了滑动变阻器", "at": 4}, {"label": "沉淀", "text": "坑修一次进勘误表", "at": 6}]}, "panels": [], "tags": ["cross-review"], "image": "images/ch-03.png", "start": 46.74, "duration": 22.48, "sentences": [{"text": "但要说实话，出来的图不是百分百没问题。", "start": 47.44, "duration": 3.12}, {"text": "我把欧姆定律那张，丢给DeepSeek做交叉审核。", "start": 50.74, "duration": 3.61}, {"text": "它抓出两个硬伤：定律表述少了控制变量条件。", "start": 54.53, "duration": 3.41}, {"text": "电路图里，还漏了必须串联的滑动变阻器。", "start": 58.12, "duration": 3.29}, {"text": "这种错误大人看不出来，对学生就是误导。", "start": 61.59, "duration": 3.21}, {"text": "修完的坑进了勘误表，下次生成不会再踩。", "start": 64.98, "duration": 3.49}]}, {"id": 4, "layout": "illustration", "kicker": "第二步 / 从静态到动态", "headline": ["静态图讲不了过程", "那就让它动起来"], "subhead": "振动、传播、波形变化，全是时间维度上的事，一张死图讲不清", "card": {"title": "第二个 Skill", "items": [{"label": "短板", "text": "静态图讲不了过程", "at": 2}, {"label": "痛点", "text": "看不懂还得家长讲", "at": 4}, {"label": "产出", "text": "动图 + 90秒配音视频", "at": 6}]}, "panels": [], "tags": ["teaching-animation"], "image": "images/ch-04.png", "start": 69.22, "duration": 20.98, "sentences": [{"text": "信息图做完了，老王那句动态显示还在我脑子里。", "start": 69.92, "duration": 3.49}, {"text": "静态图有个天然短板：它讲不了过程。", "start": 73.59, "duration": 2.76}, {"text": "声现象的核心是振动和传播，全是时间上的事。", "start": 76.53, "duration": 3.41}, {"text": "而且图挂在墙上，看不懂还得家长在旁边讲。", "start": 80.12, "duration": 3.21}, {"text": "要是它自己会动、自己会讲呢？", "start": 83.51, "duration": 2.23}, {"text": "于是我做了第二个Skill，出动图，也出配音视频。", "start": 85.92, "duration": 3.53}]}, {"id": 5, "layout": "grid", "kicker": "关键设计 / 代码渲染", "headline": ["画面不是生成的图片", "是代码渲染出来的"], "subhead": "波形按正弦函数采样，电路符号按国标画——生图会脑补，代码不会", "card": null, "panels": [{"title": "生图会脑补", "desc": "波形画歪了自己不知道，错了只能重新抽卡", "at": 1}, {"title": "代码不会", "desc": "正弦采样 + 国标符号，错了改一行参数重渲", "at": 4}], "tags": ["code-rendered", "SVG"], "image": null, "start": 90.2, "duration": 21.2, "sentences": [{"text": "动图里有个细节，值得单独说。", "start": 90.9, "duration": 2.51}, {"text": "低频波滚得疏，高频波滚得密，用的是同一个波速。", "start": 93.59, "duration": 4.42}, {"text": "这不是装饰动画，物理上是对的。", "start": 98.19, "duration": 2.51}, {"text": "因为画面不是AI生成的图片，是代码渲染的。", "start": 100.88, "duration": 3.29}, {"text": "波形按正弦函数采样，电路符号按国标画。", "start": 104.35, "duration": 3.53}, {"text": "生图模型偶尔会脑补，代码不会。", "start": 108.06, "duration": 2.59}]}, {"id": 6, "layout": "grid", "kicker": "关键设计 / 先配音后画面", "headline": ["先配音，后画面", "音画同步是生出来的"], "subhead": "先量出每段旁白的实际时长，再用它决定每个场景多长", "card": null, "panels": [{"title": "先配音", "desc": "TTS 生成全部旁白", "at": 2}, {"title": "量时长", "desc": "每段音频的实际长度", "at": 3}, {"title": "定场景", "desc": "用时长决定画面节奏", "at": 4}], "tags": ["TTS-first"], "image": null, "start": 111.4, "duration": 17.35, "sentences": [{"text": "视频管线里有个反直觉的设计顺序。", "start": 112.1, "duration": 2.64}, {"text": "拿到分镜，第一件事不是画画面，是配音。", "start": 114.92, "duration": 3.41}, {"text": "旁白全部生成后，量出每一段的实际时长。", "start": 118.51, "duration": 3.21}, {"text": "再用这个时长，去定每个场景的长度。", "start": 121.9, "duration": 2.8}, {"text": "音画同步不是剪出来的，是生出来的。", "start": 124.88, "duration": 3.12}]}, {"id": 7, "layout": "illustration", "kicker": "边界 / 别急着无脑信", "headline": ["能保证画得对", "保证不了讲得对"], "subhead": "公式的平方丢了、两套编号对不上——盯三遍没发现，看成片才发现", "card": {"title": "踩过的坑", "items": [{"label": "字体", "text": "宋体缺²渲染成空白", "at": 2}, {"label": "盲区", "text": "编号 bug 盯三遍没发现", "at": 4}, {"label": "结论", "text": "AI 起草，人来审", "at": 6}]}, "panels": [], "tags": ["review-loop"], "image": "images/ch-07.png", "start": 128.75, "duration": 21.95, "sentences": [{"text": "当然，这条管线自己也踩了不少坑。", "start": 129.45, "duration": 2.72}, {"text": "勾股定理的平方，渲染出来直接消失了。", "start": 132.35, "duration": 3.01}, {"text": "查下来是宋体缺字符，公式变成了a加b等于c。", "start": 135.54, "duration": 4.14}, {"text": "还有个编号bug，我盯了三遍预览都没发现。", "start": 139.86, "duration": 3.16}, {"text": "直到以观众身份看成片，才觉得不对劲。", "start": 143.2, "duration": 2.96}, {"text": "所以结论是：AI起草，人来审，缺一不可。", "start": 146.34, "duration": 3.61}]}, {"id": 8, "layout": "illustration", "kicker": "收尾 / 拿去用", "headline": ["两个 Skill 都开源了", "装上就能用"], "subhead": "静态图打印贴墙，动图视频存平板，孩子自己点开看", "card": {"title": "两种用法", "items": [{"label": "信息图", "text": "打印出来贴墙上", "at": 2}, {"label": "视频", "text": "存平板孩子自己看", "at": 3}, {"label": "下一步", "text": "词级对齐 + 竖屏版", "at": 5}]}, "panels": [], "tags": ["open-source", "GitHub"], "image": "images/ch-08.png", "start": 150.7, "duration": 17.32, "sentences": [{"text": "从老王的一条评论开始，我做了三件事。", "start": 151.4, "duration": 2.93}, {"text": "复刻信息图，封装成Skill，再升级成会讲的视频。", "start": 154.51, "duration": 3.85}, {"text": "两个Skill都开源了，地址在文末。", "start": 158.54, "duration": 2.72}, {"text": "你家孩子暑假在复习的话，直接拿去用。", "start": 161.44, "duration": 2.72}, {"text": "有想做的学科和知识点，评论区告诉我。", "start": 164.34, "duration": 2.93}]}]};
+    if (!DATA) throw new Error("模板未经 scaffold.py 填充, 不能直接渲染");
+
+    const LABEL_COLORS = ["var(--blue)", "var(--mint)", "var(--lavender)", "var(--peach)"];
+    const pad2 = (n) => String(n).padStart(2, "0");
+
+    /* ==== 1. 构建章节 DOM (同步构建, 渲染器 seek 前已就绪) ====
+       三种 layout: illustration(默认, 左文右图) / grid(右栏卡片网格) / statement(全屏大字) */
+    const chaptersRoot = document.getElementById("chapters");
+    DATA.chapters.forEach((ch, i) => {
+      const el = document.createElement("div");
+      el.className = "chapter";
+      el.id = "ch" + ch.id;
+      if (i > 0) el.style.opacity = "0";
+      const layout = ch.layout || "illustration";
+
+      const headHTML = `
+        <div class="kicker">${ch.kicker}</div>
+        <div class="ghost-num" data-layout-ignore>${pad2(ch.id)}</div>`;
+      const hlHTML = (cls) => `
+        <div class="${cls}" id="ch${ch.id}-hl">${ch.headline.map((l, k) => `<div id="ch${ch.id}-hl${k}">${l}</div>`).join("")}</div>`;
+      const tagsHTML = (ch.tags && ch.tags.length) ? `
+        <div class="tag-row" id="ch${ch.id}-tags">
+          ${ch.tags.map((t, j) => `<span class="tag" id="ch${ch.id}-tag${j}">${t}</span>`).join("")}
+        </div>` : "";
+
+      if (layout === "statement") {
+        el.innerHTML = `${headHTML}
+          <div class="statement-wrap" id="ch${ch.id}-st">
+            ${hlHTML("st-headline")}
+            <div class="rule" id="ch${ch.id}-rule"></div>
+            <div class="st-sub" id="ch${ch.id}-sub">${ch.subhead}</div>
+            ${tagsHTML}
+          </div>`;
+        chaptersRoot.appendChild(el);
+        return;
+      }
+
+      const items = (ch.card && ch.card.items) || [];
+      const cardHTML = ch.card ? `
+        <div class="point-card" id="ch${ch.id}-card">
+          <div class="pc-title">${ch.card.title}</div>
+          ${items.map((it, j) => `
+          <div class="pc-item" id="ch${ch.id}-item${j}">
+            <span class="pi-label" style="color:${LABEL_COLORS[j % LABEL_COLORS.length]}">${it.label}</span>
+            <span class="pi-body">
+              <span class="pi-text">${it.text}</span>
+              ${typeof it.bar === "number" ? `<span class="pi-bar"><span id="ch${ch.id}-bar${j}" style="background:${LABEL_COLORS[j % LABEL_COLORS.length]}"></span></span>` : ""}
+            </span>
+          </div>`).join("")}
+        </div>` : "";
+
+      const rightHTML = layout === "grid" ? `
+        <div class="grid-zone" id="ch${ch.id}-grid">
+          ${(ch.panels || []).map((pn, j) => `
+          <div class="panel" id="ch${ch.id}-panel${j}">
+            <div class="pn-num" style="color:${LABEL_COLORS[j % LABEL_COLORS.length]}">${pad2(j + 1)}</div>
+            <div class="pn-title">${pn.title}</div>
+            ${pn.desc ? `<div class="pn-desc">${pn.desc}</div>` : ""}
+          </div>`).join("")}
+        </div>` : `
+        <div class="illu-frame" id="ch${ch.id}-illu">
+          <img id="ch${ch.id}-img" src="${ch.image}" alt="" />
+        </div>`;
+
+      el.innerHTML = `${headHTML}
+        <div class="left-col">
+          ${hlHTML("headline")}
+          <div class="subhead" id="ch${ch.id}-sub">${ch.subhead}</div>
+          <div class="rule" id="ch${ch.id}-rule"></div>
+          ${cardHTML}
+          ${tagsHTML}
+        </div>
+        ${rightHTML}`;
+      chaptersRoot.appendChild(el);
+
+      if (layout === "grid") {
+        const n = (ch.panels || []).length;
+        const zone = el.querySelector(".grid-zone");
+        zone.style.gridTemplateColumns = n === 3 ? "1fr" : "1fr 1fr";
+      }
+    });
+
+    /* ==== 2. 章节进度条 ==== */
+    const progress = document.getElementById("progress");
+    DATA.chapters.forEach((ch) => {
+      const cell = document.createElement("div");
+      cell.className = "pg-cell";
+      cell.innerHTML = `<div class="pg-num" id="pg-num${ch.id}">${pad2(ch.id)}</div>
+        <div class="pg-track"><span id="pg-fill${ch.id}"></span></div>`;
+      progress.appendChild(cell);
+    });
+
+    /* ==== 3. 每章入场编排 ==== */
+    function anchorFor(ch, j, count, at) {
+      const S = ch.sentences.length;
+      let idx = at || (count <= 1 ? 1 : Math.round(1 + (j * (S - 1)) / (count - 1)));
+      idx = Math.min(Math.max(idx, 1), S);
+      return Math.max(ch.sentences[idx - 1].start, ch.start + 1.3);
+    }
+
+    DATA.chapters.forEach((ch, i) => {
+      const t = ch.start;
+      const p = (s) => `#ch${ch.id}${s}`;
+      const layout = ch.layout || "illustration";
+
+      ch.headline.forEach((_, k) => {
+        tl.fromTo(p(`-hl${k}`), { y: 46, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, t + 0.25 + k * 0.13);
+      });
+      tl.fromTo(p("-sub"), { y: 26, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, t + 0.6);
+      tl.fromTo(p("-rule"), { scaleX: 0 },
+        { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.75);
+
+      if (ch.card) {
+        tl.fromTo(p("-card"), { y: 32, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.65, ease: "power2.out" }, t + 0.95);
+        ch.card.items.forEach((it, j) => {
+          const ta = anchorFor(ch, j, ch.card.items.length, it.at);
+          tl.fromTo(p(`-item${j}`), { x: -26, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, ta);
+          if (typeof it.bar === "number") {
+            tl.fromTo(p(`-bar${j}`), { scaleX: 0 },
+              { scaleX: it.bar, duration: 0.9, ease: "power2.out",
+                transformOrigin: "left center" }, ta + 0.2);
+          }
+        });
+      }
+
+      if (ch.tags && ch.tags.length) {
+        ch.tags.forEach((_, j) => {
+          tl.fromTo(p(`-tag${j}`), { scale: 0.82, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.6)" }, t + 1.25 + j * 0.1);
+        });
+      }
+
+      if (layout === "grid") {
+        /* 卡片网格: 逐块跟旁白长出来; 整个网格全章缓慢漂移 (父子分离不叠 transform) */
+        (ch.panels || []).forEach((pn, j) => {
+          const ta = anchorFor(ch, j, ch.panels.length, pn.at);
+          tl.fromTo(p(`-panel${j}`), { y: 34, opacity: 0, scale: 0.97 },
+            { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, ta);
+        });
+        tl.fromTo(p("-grid"), { y: 9 },
+          { y: -9, duration: Math.max(ch.duration - 1.0, 2), ease: "none" }, t + 0.4);
+      } else if (layout === "statement") {
+        /* 大字判断句: 整块全章极缓推近 */
+        tl.fromTo(p("-st"), { scale: 1.0 },
+          { scale: 1.035, duration: Math.max(ch.duration - 0.8, 2), ease: "none" }, t + 0.3);
+      } else {
+        /* 插图: 入场挂 frame; 全章 Ken Burns 挂 img — 画面永远在微动, 不叠 transform */
+        tl.fromTo(p("-illu"), { y: 26, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.75, ease: "power2.out" }, t + 0.35);
+        const kbIn = i % 2 === 0;   // 奇偶章交替推近/拉远, 避免连续同方向
+        tl.fromTo(p("-img"),
+          { scale: kbIn ? 1.0 : 1.09, xPercent: kbIn ? -1.2 : 1.2 },
+          { scale: kbIn ? 1.09 : 1.0, xPercent: kbIn ? 1.2 : -1.2,
+            duration: Math.max(ch.duration - 1.0, 2), ease: "none" }, t + 0.45);
+      }
+
+      /* 进度条: 当前格随本章匀速填满; 章号变珊瑚色, 结束回墨色(保持已填) */
+      tl.set(`#pg-num${ch.id}`, { color: "var(--coral)", fontWeight: 800 }, t);
+      tl.fromTo(`#pg-fill${ch.id}`, { scaleX: 0 },
+        { scaleX: 1, duration: Math.max(ch.duration - 0.3, 0.5), ease: "none" }, t + 0.05);
+      const tEnd = t + ch.duration;
+      if (i < DATA.chapters.length - 1) {
+        tl.set(`#pg-num${ch.id}`, { color: "var(--ink)" }, tEnd);
+        tl.set(`#pg-fill${ch.id}`, { backgroundColor: "#5A5348" }, tEnd);
+      }
+    });
+
+    /* ==== 4. 章节转场: blur-crossfade ==== */
+    for (let i = 1; i < DATA.chapters.length; i++) {
+      const prev = "#ch" + DATA.chapters[i - 1].id;
+      const cur = "#ch" + DATA.chapters[i].id;
+      const T = DATA.chapters[i].start;
+      tl.to(prev, { filter: "blur(10px)", scale: 1.02, opacity: 0, duration: 0.55, ease: "power2.inOut" }, T);
+      tl.fromTo(cur, { filter: "blur(10px)", scale: 0.985, opacity: 0 },
+        { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.55, ease: "power2.inOut" }, T + 0.08);
+      tl.set(prev, { visibility: "hidden" }, T + 0.7);
+    }
+
+    /* ==== 5. 逐句字幕 (与 TTS 音频同起点) ==== */
+    const subLayer = document.getElementById("subtitle-layer");
+    let subN = 0;
+    DATA.chapters.forEach((ch) => {
+      ch.sentences.forEach((s, k) => {
+        subN += 1;
+        const div = document.createElement("div");
+        div.className = "subtitle";
+        div.id = "sub-" + subN;
+        div.textContent = s.text;
+        subLayer.appendChild(div);
+        const tIn = Math.max(s.start - 0.05, ch.start + 0.15);
+        const tOut = (k < ch.sentences.length - 1)
+          ? ch.sentences[k + 1].start - 0.12
+          : ch.start + ch.duration - 0.35;
+        tl.fromTo("#sub-" + subN, { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }, tIn);
+        tl.to("#sub-" + subN, { opacity: 0, duration: 0.22, ease: "power1.in" }, tOut);
+        tl.set("#sub-" + subN, { visibility: "hidden" }, tOut + 0.25);
+      });
+    });
+
+    /* ==== 6. 片尾淡出 ==== */
+    const last = DATA.chapters[DATA.chapters.length - 1];
+    tl.to("#film", { opacity: 0, duration: 0.7, ease: "power1.in" },
+      last.start + last.duration - 0.75);
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

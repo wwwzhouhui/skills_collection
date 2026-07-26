@@ -1,0 +1,80 @@
+{
+  "topic": "声现象",
+  "provider": "minimax",
+  "voice_id": "female-chengshu",
+  "head_pad": 0.6,
+  "tail_pad": 0.9,
+  "total": 97.09,
+  "segments": [
+    {
+      "id": 1,
+      "title": "引入",
+      "file": "audio/seg-01.mp3",
+      "audio_duration": 11.52,
+      "start": 0.0,
+      "audio_start": 0.6,
+      "duration": 13.02,
+      "subtitle": "同学们，你有没有想过，我们每天听到的各种声音，是怎么产生、又是怎么传到耳朵里的？今天我们就来揭开声现象的秘密。"
+    },
+    {
+      "id": 2,
+      "title": "振动发声",
+      "file": "audio/seg-02.mp3",
+      "audio_duration": 12.54,
+      "start": 13.02,
+      "audio_start": 13.62,
+      "duration": 14.04,
+      "subtitle": "同学们看，敲响的音叉在快速振动，声音就是这样产生的。振动停止，发声也停止。一切正在发声的物体，都在振动。"
+    },
+    {
+      "id": 3,
+      "title": "声波传播",
+      "file": "audio/seg-03.mp3",
+      "audio_duration": 14.04,
+      "start": 27.06,
+      "audio_start": 27.66,
+      "duration": 15.54,
+      "subtitle": "鼓面振动时，会推着周围的空气，一圈一圈向外传开，这就是声波。传声需要介质，固体、液体、气体都行，真空可不行。"
+    },
+    {
+      "id": 4,
+      "title": "音调",
+      "file": "audio/seg-04.mp3",
+      "audio_duration": 10.96,
+      "start": 42.6,
+      "audio_start": 43.2,
+      "duration": 12.46,
+      "subtitle": "你看这两条波形，下面这条振动得更快，也就是频率更高，听起来声音就更尖、更高。频率越高，音调就越高。"
+    },
+    {
+      "id": 5,
+      "title": "响度",
+      "file": "audio/seg-05.mp3",
+      "audio_duration": 12.79,
+      "start": 55.06,
+      "audio_start": 55.66,
+      "duration": 14.29,
+      "subtitle": "再看振幅。下面这条波摆动的幅度更大，声音听起来就更响。振幅越大，响度越大。离声源越近，听到的也越响。"
+    },
+    {
+      "id": 6,
+      "title": "音色",
+      "file": "audio/seg-06.mp3",
+      "audio_duration": 11.9,
+      "start": 69.35,
+      "audio_start": 69.95,
+      "duration": 13.4,
+      "subtitle": "同样的音调和响度，为什么一听就知道是笛子还是小提琴？秘密在波形。材料和结构不同，波形就不同，这就是音色。"
+    },
+    {
+      "id": 7,
+      "title": "声速与总结",
+      "file": "audio/seg-07.mp3",
+      "audio_duration": 12.84,
+      "start": 82.75,
+      "audio_start": 83.35,
+      "duration": 14.34,
+      "subtitle": "最后记住这个数字：在十五摄氏度的空气里，声音每秒能跑三百四十米。振动产生声音，介质传播声音，这就是声现象的全部秘密。"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# 生成产物不进 git(87MB+ 的历史输出)
+covers/
+demo-cases/outputs/
+.DS_Store

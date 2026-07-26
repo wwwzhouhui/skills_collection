@@ -1,0 +1,7 @@
+_smoke_*/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.pytest_cache/
+_probe_*.json
+_probe_*.log

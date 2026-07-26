@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-composition-variables='[{"id":"mode","type":"enum","label":"输出模式","default":"video","options":[{"value":"video","label":"视频(带配音字幕)"},{"value":"silent","label":"无声MP4(循环)"}]}]'>
+<!--
+  教学视频 通用模板 (HyperFrames)
+  ================================
+  与 Manim 模板 (assets/template.py) 同构: 7 段场景、章节角标、小节胶囊、
+  信息卡片、标注线、总结栏, 配色按 references/color-palettes.md 的同一主题族。
+
+  使用方式 (顺序不能乱, 时间轴依赖 TTS 产物):
+    1. 先跑 TTS: python3 scripts/minimax_tts.py storyboard.json --outdir audio/
+    2. 复制本文件到项目目录, 改 6 处:
+       a) <style> 顶部 :root 配色块 (按主题替换)
+       b) #chapter 章节文字
+       c) 7 个 .scene 的内容 (对照 storyboard 的 visual 描述画 SVG/HTML)
+       d) 7 个 <audio> 的 data-start (= durations.json 的 audio_start)
+       e) SEGMENTS 数组 (= durations.json 的 segments, 原样抄数字)
+       f) 根 div 的 data-duration (= durations.json 的 total)
+       g) scene1()..scene7() 入场编排 (时间一律写 t + 偏移)
+    3. 检查 + 渲染: bash scripts/build_video.sh <project_dir>
+
+  规则 (违反必坏, 详见 references/video-authoring.md):
+    - 场景入场一律 tl.fromTo(), 不用 tl.from()
+    - 除最后一段外, 场景内容不写退场动画 — 转场就是退场
+    - 环境动效 (呼吸/漂移) 必须挂在 tl 上, 不能裸 gsap.to()
+    - 不用 Math.random()/Date.now(); 循环动效用有限 repeat, 禁 repeat:-1
+-->
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* 系统 CJK 字体声明 (渲染器要求显式 @font-face, 系统字体用 local(), 缺了 lint 报 error) */
+    @font-face { font-family: "Heiti SC"; src: local("Heiti SC"); }
+    @font-face { font-family: "PingFang SC"; src: local("PingFang SC"); }
+    @font-face { font-family: "Songti SC"; src: local("Songti SC"); }
+    @font-face { font-family: "Noto Sans CJK SC"; src: local("Noto Sans CJK SC"); }
+
+    /* ==== 配色 (按主题整块替换, 见 references/color-palettes.md 的 CSS 映射表) ==== */
+    :root {
+      --primary:   #E8631C;   /* 主色: 波形主体/公式/大数字/编号 (10% 强调) */
+      --accent:    #F4A24C;   /* 次强调: 对比元素 */
+      --highlight: #FFD166;   /* 浅辅 */
+      --ink:       #22303C;   /* 正文: 用偏冷的深色, 与暖主色形成对比 */
+      --neutral:   #5E7183;   /* 冷中性: kicker/标签/副标题 (30% 结构) */
+      --soft:      #FFFDF6;   /* 卡片底 */
+      --line:      #9DAEBB;   /* 结构线/网格: 冷中性 */
+      --bg:        #FFF6E5;   /* 背景 (60%) */
+      --series:    #5E7183;   /* 章节标: 冷中性 */
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+      font-family: "Heiti SC", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--ink);
+    }
+
+    /* ==== 场景容器: s1 可见, s2+ opacity:0, 由转场揭示 ==== */
+    .scene {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px; overflow: hidden;
+      background: var(--bg);
+    }
+    .scene + .scene { opacity: 0; }
+    /* 底纹三层: 冷网格(粗+细) + 暖冷双射光 */
+    .scene::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(1100px 700px at 78% 22%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%),
+        radial-gradient(900px 620px at 10% 90%, color-mix(in srgb, var(--series) 9%, transparent), transparent 72%),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 13%, transparent) 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--line) 5%, transparent) 0 1px, transparent 1px 24px);
+    }
+    /* 纸张颗粒 (确定性噪点, 盖在最上层做胶片质感) */
+    .scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 10;
+      pointer-events: none; mix-blend-mode: multiply; opacity: 0.16;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="240" height="240" filter="url(%23n)" opacity="0.6"/></svg>');
+    }
+    .ghost {
+      position: absolute; right: 48px; bottom: -60px; z-index: 0;
+      font-family: "Songti SC", serif;
+      font-size: 460px; font-weight: 900; line-height: 1;
+      color: color-mix(in srgb, var(--series) 14%, transparent);
+      letter-spacing: -0.04em; user-select: none;
+    }
+
+    .scene-content {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      padding: 150px 110px 190px;
+      display: flex; gap: 70px; align-items: center;
+    }
+    .diagram-zone { flex: 1.25; height: 100%; position: relative; }
+    .card-zone { flex: 1; display: flex; flex-direction: column; gap: 32px; justify-content: center; }
+
+    /* ==== 组件: 与 Manim helper 一一对应 ==== */
+    /* chapter_corner() */
+    #chapter {
+      position: absolute; top: 42px; right: 56px; z-index: 50;
+      font-size: 26px; font-weight: 600; letter-spacing: 0.12em;
+      color: var(--series);
+      padding-bottom: 6px;
+      border-bottom: 3px solid color-mix(in srgb, var(--series) 45%, transparent);
+    }
+
+    /* section_chip() */
+    .section-chip {
+      position: absolute; top: 42px; left: 56px; z-index: 5;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-chip .num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-size: 30px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-chip .label {
+      background: #fff; border: 1.5px solid color-mix(in srgb, var(--neutral) 40%, transparent);
+      border-radius: 16px; padding: 10px 26px;
+      font-size: 32px; font-weight: 800;
+      box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+    }
+
+    /* info_card() v2: 去大色块, 左侧主色细边 + kicker 小标 + 细规则线 */
+    .info-card {
+      border-radius: 18px; overflow: hidden;
+      border: 1.5px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 14px 42px color-mix(in srgb, var(--primary) 9%, transparent);
+      background: color-mix(in srgb, #fff 88%, var(--soft));
+    }
+    .info-card .card-title {
+      color: var(--neutral);
+      font-size: 23px; font-weight: 700; letter-spacing: 0.35em;
+      margin: 24px 32px 0; padding-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid color-mix(in srgb, var(--neutral) 30%, transparent);
+    }
+    .info-card .card-title::before {
+      content: ""; width: 12px; height: 12px; flex: none;
+      background: var(--primary);
+    }
+    .info-card .card-body { padding: 20px 32px 28px; display: flex; flex-direction: column; gap: 14px; }
+    .info-card .card-body p {
+      font-size: 30px; line-height: 1.5;
+      padding-left: 24px; position: relative;
+    }
+    .info-card .card-body p::before {
+      content: ""; position: absolute; left: 0; top: 16px;
+      width: 9px; height: 9px; border-radius: 2px;
+      background: color-mix(in srgb, var(--primary) 70%, #fff);
+    }
+    .info-card .formula {
+      font-family: "Songti SC", serif;
+      font-size: 38px; font-weight: 900; color: var(--primary);
+      padding: 10px 0 0; letter-spacing: 0.04em;
+    }
+
+    .callout-label {
+      position: absolute; font-size: 26px; font-weight: 700;
+      color: var(--primary);
+      background: color-mix(in srgb, #fff 82%, transparent);
+      border: 2px solid var(--primary); border-radius: 12px;
+      padding: 6px 16px;
+    }
+
+    /* summary_bar(): icon_badge 横排 */
+    .summary-bar { display: flex; gap: 56px; justify-content: center; }
+    .badge { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .badge .icon {
+      width: 96px; height: 96px; border-radius: 50%;
+      border: 3px solid var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, #fff);
+      font-size: 44px; display: flex; align-items: center; justify-content: center;
+      color: var(--primary);
+    }
+    .badge .name { font-size: 26px; font-weight: 700; }
+
+    /* 层级文字 (styled_text) */
+    .t-hero  {
+      font-family: "Songti SC", serif;
+      font-size: 150px; font-weight: 900; letter-spacing: 0.01em; color: var(--primary);
+      line-height: 1.08;
+    }
+    .t-title { font-size: 52px; font-weight: 800; }
+    .t-body  { font-size: 32px; line-height: 1.6; }
+    sup { font-size: 0.55em; }   /* HTML 公式上标用 <sup>2</sup>, 不用 ² (宋体缺字形) */
+    .t-label { font-size: 24px; font-weight: 600; letter-spacing: 0.35em; color: var(--neutral); }
+
+    /* ==== 字幕条 (旁白同步显示) ==== */
+    #subtitle-layer {
+      position: absolute; left: 0; right: 0; bottom: 52px; z-index: 40;
+      display: flex; justify-content: center; pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; bottom: 0; max-width: 1480px;
+      font-size: 34px; line-height: 1.5; font-weight: 600;
+      text-align: center; color: var(--ink);
+      background: color-mix(in srgb, #fff 88%, transparent);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px; padding: 16px 36px;
+      box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+      opacity: 0;
+    }
+
+    /* SVG 示意图通用 */
+    .diagram-zone svg { width: 100%; height: 100%; overflow: visible; }
+    .diagram-zone text { font-family: inherit; }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+       data-start="0" data-duration="TOTAL_FROM_DURATIONS_JSON">
+
+    <!-- ============ 场景 1: 标题引入 ============ -->
+    <div id="s1" class="scene">
+      <!-- 标题页不放 ghost 编号 (ghost 与 chip 同号, 从场景 2 的 01 开始) -->
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 36px;">
+        <!-- 主题图标 (SVG, 对照 storyboard 画: 音叉/三棱镜/杠杆/电路...) -->
+        <div id="s1-icon" style="height: 180px;"><!-- svg --></div>
+        <div id="s1-title" class="t-hero">主题名</div>
+        <div id="s1-subs" style="display: flex; gap: 20px;">
+          <!-- 每个子概念一个胶囊 -->
+          <span class="section-chip" style="position: static;"><span class="label">子概念1</span></span>
+        </div>
+        <div id="s1-tagline" class="t-label">—— 副标题 ——</div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 2: 核心概念 (示例结构: 左示意图 + 右卡片) ============ -->
+    <div id="s2" class="scene">
+      <div class="ghost" data-layout-ignore>01</div>
+      <div class="section-chip"><span class="num">1</span><span class="label">子概念名</span></div>
+      <div class="scene-content">
+        <div class="diagram-zone" id="s2-diagram">
+          <!-- SVG 示意图: 主体 + 至少 1 条 callout 标注 -->
+        </div>
+        <div class="card-zone">
+          <div class="info-card" id="s2-card">
+            <div class="card-title">核心要点</div>
+            <div class="card-body">
+              <p>要点一</p>
+              <p>要点二</p>
+              <div class="formula">公式 (Unicode 写法)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 场景 3-6: 子概念 (结构同场景 2, 对比类可上下双栏) ============ -->
+    <div id="s3" class="scene">
+      <div class="ghost" data-layout-ignore>02</div>
+      <div class="section-chip"><span class="num">2</span><span class="label">子概念名</span></div>
+      <div class="scene-content"><!-- ... --></div>
+    </div>
+    <div id="s4" class="scene">
+      <div class="ghost" data-layout-ignore>03</div>
+      <div class="section-chip"><span class="num">3</span><span class="label">子概念名</span></div>
+      <div class="scene-content"><!-- ... --></div>
+    </div>
+    <div id="s5" class="scene">
+      <div class="ghost" data-layout-ignore>04</div>
+      <div class="section-chip"><span class="num">4</span><span class="label">子概念名</span></div>
+      <div class="scene-content"><!-- ... --></div>
+    </div>
+    <div id="s6" class="scene">
+      <div class="ghost" data-layout-ignore>05</div>
+      <div class="section-chip"><span class="num">5</span><span class="label">子概念名</span></div>
+      <div class="scene-content"><!-- ... --></div>
+    </div>
+
+    <!-- ============ 场景 7: 总结 ============ -->
+    <div id="s7" class="scene">
+      <div class="ghost" data-layout-ignore>06</div>
+      <div class="section-chip"><span class="num">6</span><span class="label">总结</span></div>
+      <div class="scene-content" style="flex-direction: column; justify-content: center; gap: 48px;">
+        <div id="s7-number" class="t-hero" style="font-size: 190px;">340 m/s</div>
+        <div class="info-card" id="s7-card" style="width: 1000px;">
+          <div class="card-title">本章小结</div>
+          <div class="card-body"><p>要点回顾…</p></div>
+        </div>
+        <div class="summary-bar" id="s7-bar">
+          <div class="badge"><div class="icon">∿</div><div class="name">概念1</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 常驻层: 章节角标 + 字幕 ============ -->
+    <div id="chapter">初二物理·第N章</div>
+    <div id="subtitle-layer"></div>
+
+    <!-- ============ 旁白音频: data-start = audio_start, data-duration = audio_duration
+                     (都来自 durations.json; 不写 data-duration 会报音轨重叠 warning) ============ -->
+    <audio id="a1" src="audio/seg-01.mp3" data-start="0.6" data-duration="0" data-track-index="2"></audio>
+    <audio id="a2" src="audio/seg-02.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+    <audio id="a3" src="audio/seg-03.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+    <audio id="a4" src="audio/seg-04.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+    <audio id="a5" src="audio/seg-05.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+    <audio id="a6" src="audio/seg-06.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+    <audio id="a7" src="audio/seg-07.mp3" data-start="0"   data-duration="0" data-track-index="2"></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    /* ==== 输出模式: video(带配音字幕) / silent(无声循环紧凑) ==== */
+    const MODE = (window.__hyperframes && window.__hyperframes.getVariables
+      ? window.__hyperframes.getVariables().mode : null) || "video";
+    const SILENT_SEG = 4.6;   // 无声模式每段时长 (无旁白, 只需看清画面+动效)
+
+    /* ==== 时间轴: 从 audio/durations.json 的 segments 原样抄 ==== */
+    const SEGMENTS_VIDEO = [
+      { sel: "#s1", start: 0.0, duration: 6.3, transition: "blur-crossfade", subtitle: "旁白第一句…" },
+      // { sel: "#s2", start: 6.3, duration: 9.1, transition: "blur-crossfade", subtitle: "…" },
+      // …7 段
+    ];
+    // 无声模式: 每段等长紧凑重排; 视频模式沿用音频驱动时间轴
+    let _acc = 0;
+    const SEGMENTS = MODE === "silent"
+      ? SEGMENTS_VIDEO.map((s) => { const o = { ...s, start: _acc, duration: SILENT_SEG }; _acc += SILENT_SEG; return o; })
+      : SEGMENTS_VIDEO;
+
+    /* ==== 每场景入场编排: 时间一律 t + 偏移, t = 该段 start ==== */
+    /* 规则: fromTo 而非 from; 每场景 ≥3 种 ease; 入场方向要变化; 不写退场 */
+    function scene1(t) {
+      tl.fromTo("#s1-title", { y: 70, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, t + 0.2);
+      tl.fromTo("#s1-icon", { scale: 0.6, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, t + 0.7);
+      tl.fromTo("#s1-subs", { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, t + 1.1);
+      tl.fromTo("#s1-tagline", { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "sine.out" }, t + 1.5);
+      // 环境动效示例 (必须挂 tl, repeat 用有限值):
+      // tl.to("#s1-icon", { y: -8, yoyo: true, repeat: 3, duration: 1.1, ease: "sine.inOut" }, t + 1.6);
+    }
+    function scene2(t) { /* 示意图 draw + 卡片滑入 + callout 弹出 */ }
+    function scene3(t) {}
+    function scene4(t) {}
+    function scene5(t) {}
+    function scene6(t) {}
+    function scene7(t) {
+      // 最后一段允许收尾淡出 (仅视频模式; 无声循环不淡出, 保证首尾衔接):
+      // if (MODE !== "silent") {
+      //   const end = SEGMENTS[6].start + SEGMENTS[6].duration;
+      //   tl.to("#s7 .scene-content, #chapter", { opacity: 0, duration: 0.6, ease: "power1.in" }, end - 0.7);
+      // }
+    }
+    const SCENE_BUILDERS = [scene1, scene2, scene3, scene4, scene5, scene6, scene7];
+
+    /* ==== 波形生成 + 描边入场 helper (对应 Manim 的 wave_path / Create) ====
+       用法: <polyline data-wave='{"x0":70,"y0":230,"len":790,"amp":62,"cycles":4,
+                                    "harmonics":[[3,0.5]]}' fill="none" stroke="..."/>
+             然后在场景函数里 drawIn("#my-wave", t + 0.5, 1.0);
+       注意: 环境动效不要与入场动效叠同一元素的 transform (挂子元素或改 opacity)。 */
+    function makeWaves() {
+      document.querySelectorAll("[data-wave]").forEach((el) => {
+        const cfg = JSON.parse(el.getAttribute("data-wave"));
+        const lambda = cfg.len / cfg.cycles;
+        const cycles = cfg.flow ? cfg.cycles + 1 : cfg.cycles;
+        const len = cfg.flow ? cfg.len + lambda : cfg.len;
+        const n = Math.round((cfg.samples || 160) * (cycles / cfg.cycles));
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+          const x = (i / n) * len;
+          let y = Math.sin((2 * Math.PI * cycles * i) / n);
+          (cfg.harmonics || []).forEach(([mult, w]) => {
+            y += w * Math.sin((2 * Math.PI * cycles * mult * i) / n);
+          });
+          pts.push(`${(cfg.x0 + x).toFixed(1)},${(cfg.y0 - cfg.amp * y).toFixed(1)}`);
+        }
+        el.setAttribute("points", pts.join(" "));
+        el.dataset.lambda = lambda.toFixed(1);
+      });
+    }
+    makeWaves();
+    function drawIn(sel, t, dur, ease) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const len = Math.ceil(el.getTotalLength());
+        el.style.strokeDasharray = len;
+        tl.fromTo(el, { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, t);
+      });
+    }
+    /* 波形向左滚动一个波长并循环 = 声波持续传播。
+       speed 是波速(px/s), 同一场景内所有波用同一速度, 频率高的自然滚得密 */
+    const WAVE_SPEED = 220;
+    function flowWave(sel, t, until) {
+      document.querySelectorAll(sel).forEach((el) => {
+        const lambda = parseFloat(el.dataset.lambda);
+        const period = lambda / WAVE_SPEED;
+        const n = Math.max(1, Math.ceil((until - t) / period));
+        tl.fromTo(el, { x: 0 },
+          { x: -lambda, duration: period, ease: "none", repeat: n - 1 }, t);
+      });
+    }
+
+    /* ================================================================
+       以下为通用引擎, 一般不用改
+       ================================================================ */
+    // 字幕: 由 SEGMENTS 生成, 与旁白同步 (无声模式不生成字幕)
+    const subLayer = document.getElementById("subtitle-layer");
+    if (MODE !== "silent") SEGMENTS.forEach((seg, i) => {
+      const div = document.createElement("div");
+      div.className = "subtitle";
+      div.id = "sub-" + (i + 1);
+      div.textContent = seg.subtitle;
+      subLayer.appendChild(div);
+      const tIn = seg.start + (i === 0 ? 0.4 : 0.7);
+      const tOut = (i < SEGMENTS.length - 1
+        ? SEGMENTS[i + 1].start : seg.start + seg.duration) - 0.25;
+      tl.fromTo("#sub-" + (i + 1), { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, tIn);
+      tl.to("#sub-" + (i + 1), { opacity: 0, duration: 0.25, ease: "power1.in" }, tOut);
+      tl.set("#sub-" + (i + 1), { visibility: "hidden" }, tOut + 0.3);  // 硬杀, 防复活
+    });
+
+    // 转场: 在每段 start 处切换; blur-crossfade 为主, push-up 点缀 (全片 ≤2 次)
+    for (let i = 1; i < SEGMENTS.length; i++) {
+      const prev = SEGMENTS[i - 1], cur = SEGMENTS[i];
+      const T = cur.start;
+      if (prev.transition === "push-up") {
+        tl.to(prev.sel, { y: -1080, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.fromTo(cur.sel, { y: 1080, opacity: 1 },
+          { y: 0, duration: 0.5, ease: "power3.inOut" }, T);
+        tl.set(prev.sel, { opacity: 0, visibility: "hidden", y: 0 }, T + 0.55);
+      } else {
+        tl.to(prev.sel, { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, T);
+        tl.fromTo(cur.sel, { filter: "blur(10px)", scale: 0.97, opacity: 0 },
+          { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, T + 0.1);
+        tl.set(prev.sel, { visibility: "hidden" }, T + 0.65);
+      }
+    }
+
+    // 场景内容编排
+    SCENE_BUILDERS.forEach((fn, i) => fn(SEGMENTS[i].start));
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>
