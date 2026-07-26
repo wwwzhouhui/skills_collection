@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.22-green.svg)
-![Skills](https://img.shields.io/badge/skills-18-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.24-green.svg)
+![Skills](https://img.shields.io/badge/skills-20-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -18,7 +18,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
-- **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作
+- **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作、AI 教学媒体一体化（插图/信息图/教学视频/封面/解说视频）、Grok Imagine 文生图
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -36,6 +36,8 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
+| ai-teaching-media | AI 教学媒体一体化技能包：一个目录串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路 | Python、HyperFrames、Minimax TTS、Nano Banana 2 / GPT Image 2 / Agnes Image 2.1 Flash | 2026年7月19日 | wwwzhouhui | 1.0.0 |
+| grok-imagine-image | 使用 grok-imagine-image 模型，通过兼容 Grok2API / OpenAI 风格接口（`/v1/images/generations`）文生图；自带本地脚本，支持环境变量/参数覆盖、URL 改写下载、JSON 输出 | Python、Grok2API、OpenAI Images API | 2026年7月26日 | hailaobao2026 | 1.0.0 |
 | github-trending-wan | GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流 | Python、DashScope API、Wan 2.7、信息图设计 | 2026年4月8日 | tdt | 1.0.0 |
 | wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026年4月5日 | tdt | 1.0.0 |
 | wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026年3月29日 | tdt | 1.0.0 |
@@ -55,6 +57,145 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎨 AI 教学媒体一体化（ai-teaching-media）
+
+**核心功能：**
+
+- ✅ **6 子 skill 一体化**：一个目录覆盖生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频
+- ✅ **意图自动路由**：根据用户目标自动进入对应子 skill，并按流水线串联整套教学资产
+- ✅ **知识点全套生产**：信息图 → 教学动图/配音视频 → 3:4 短视频封面
+- ✅ **技术长文全套生产**：16:9 智能插图 → 章节解说视频 → 可选封面
+- ✅ **多通道生图执行层**：统一调用 MuleRun / APImart / AtlasCloud / Agnes 等供应商
+- ✅ **配音与成片**：支持 Minimax TTS / Edge TTS，结合 HyperFrames + ffmpeg 渲染 1080p 视频
+
+**6 个子 skill：**
+
+| 子 skill | 作用 | 典型输入 | 输出 |
+|---------|------|----------|------|
+| `ai-image-generator` | 通用生图执行层（被其它子 skill 调用） | prompt / 参考图 | PNG |
+| `tech-article-diagram` | 技术长文智能插图（多风格） | Markdown 长文 | 16:9 插图 |
+| `edu-subject-infographic` | 学科知识点竖版信息图 | 知识点名称 | 9:16 信息图 |
+| `edu-teaching-animation` | 教学动图 + 配音教学视频 | 学科概念 | 无声 MP4 / 配音 MP4 |
+| `short-video-cover` | 短视频竖版封面 | 口播文案 | 3:4 封面图 |
+| `article-explainer-video` | 长文章节解说视频 | 技术文章 | 1080p MP4 |
+
+**推荐串联流水线：**
+
+| 流水线 | 适用场景 | 路径 |
+|--------|----------|------|
+| A 知识点全套 | 勾股定理、光合作用等单点知识 | 信息图 → 教学动图/视频 → 短视频封面 |
+| B 技术长文全套 | 技术教程 / Markdown 长文 | 文章插图 → 章节解说视频 → 可选封面 |
+| C 口播发布包 | 已有口播稿/脚本 | 3:4 封面 + 教学视频/解说视频 |
+
+**适用场景：**
+
+- 给技术文章自动补流程图、架构图、对比图
+- 把学科知识点做成竖版信息图和教学短视频
+- 为视频号/抖音/小红书生成 3:4 封面
+- 把长文拆成章节解说视频一站式产出
+
+**使用示例：**
+
+```
+请使用 ai-teaching-media，围绕「勾股定理」生成全套教学资产：
+信息图 + 教学动图/配音视频 + 短视频封面
+```
+
+```
+请用 ai-teaching-media 给这篇技术长文生成插图，并做成章节解说视频
+```
+
+**效果图：**
+
+![image-20260726104118522](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260726104118522.png)
+
+https://cdn.jsdelivr.net/gh/hailaobao2026/ai-teaching-video-platform@main/docs/videos/math-pythagorean-theorem.mp4
+
+**环境要求：**
+
+| 变量 / 依赖 | 必需 | 说明 |
+|-------------|------|------|
+| `MULERUN_API_KEY` / `APIMART_API_KEY` / `ATLASCLOUD_API_KEY` / `AGNES_API_KEY` | 是（任选其一） | 生图供应商密钥 |
+| `MINIMAX_API_KEY` | 否 | 配音；也可用免费 `edge-tts` |
+| Node.js ≥ 22 + ffmpeg | 是（视频链路） | 渲染教学视频/解说视频 |
+
+**技术特点：**
+
+- 总入口 `SKILL.md` 负责路由，子 skill 独立约束与实现
+- 同主题内容可复用色系与术语，保证信息图/动图/视频风格一致
+- 生图统一走 `ai-image-generator`，避免多处重复对接供应商
+- 支持从单点知识点到整篇文章的完整教学生产链路
+
+---
+
+### 🖼️ Grok Imagine Image (grok-imagine-image)
+
+**核心功能：**
+
+- ✅ **Grok Imagine 文生图**：调用 `grok-imagine-image` 模型生成图片
+- ✅ **OpenAI 风格接口**：仅使用 `POST /v1/images/generations`，兼容 Grok2API
+- ✅ **本地脚本开箱即用**：`scripts/generate.py` 支持 prompt 文件、批量数量、尺寸、超时
+- ✅ **媒体 URL 自动改写**：接口返回 `127.0.0.1` 时自动替换为配置的公网主机并下载
+- ✅ **Agent 友好输出**：支持 `--json` 机器可读结果，便于后续工作流解析
+- ✅ **配置可覆盖**：支持环境变量与命令行参数覆盖 API Base / API Key / Model
+
+**默认配置：**
+
+| 项目 | 默认值 |
+|------|--------|
+| API 地址 | `http://43.163.230.83:8000/v1` |
+| 模型 | `grok-imagine-image` |
+| 尺寸 | `1024x1024` |
+| 超时 | `180` 秒 |
+| API Key | `scripts/generate.py` 中的 `DEFAULT_API_KEY`（可替换/环境变量覆盖） |
+
+**适用场景：**
+
+- 明确要求使用 Grok Imagine / grok-imagine-image 生图
+- 其他 Skill 或本地工作流需要调用该模型
+- 需要把生成结果下载到工作区 `outputs/` 再继续处理
+
+**使用示例：**
+
+```
+请使用 grok-imagine-image 生成一张图片：
+a cozy reading nook with soft daylight
+保存到 ./outputs
+```
+
+**命令行使用：**
+
+```bash
+python scripts/generate.py   --prompt "a cozy reading nook with soft daylight"   --output-dir ./outputs   --name-tag reading-nook   --json
+```
+
+```bash
+python scripts/generate.py   --prompt-file ./prompt.txt   --output-dir ./outputs   --size 1024x1024   --n 1   --timeout 180
+```
+
+**效果图：**
+
+![image-20260726104231877](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260726104231877.png)
+
+![image-20260726104250036](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260726104250036.png)
+
+**环境要求：**
+
+| 变量 | 必需 | 说明 |
+|------|------|------|
+| `GROK_IMAGINE_API_KEY` | 建议 | API 密钥；也可通过 `--api-key` 或脚本默认值配置 |
+| `GROK_IMAGINE_API_BASE` | 否 | API 地址，默认见上表 |
+| `GROK_IMAGINE_MODEL` | 否 | 模型名，默认 `grok-imagine-image` |
+
+**技术特点：**
+
+- 严格走 Images API，不误用 Chat Completions
+- 生图成功后优先回报本地路径与可访问公网 URL
+- 支持 `--no-download` 仅返回 URL，适合调试网关
+- 适合作为独立生图技能，或被其他内容生产链路复用
+
+---
 
 ### 📚 Knowledge Absorber (知识吸收器)
 
@@ -1349,6 +1490,8 @@ skills_collection/
 │   ├── wechat-article-aggregator/
 │   ├── wechat-compliance-reviewer/
 │   ├── wan-cover-plus/
+│   ├── ai-teaching-media/
+│   ├── grok-imagine-image/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1362,6 +1505,22 @@ skills_collection/
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
+├── ai-teaching-media/             # AI 教学媒体一体化（含 6 个子 skill）
+│   ├── SKILL.md                   # 总入口与路由
+│   ├── README.md
+│   ├── ai-image-generator/        # 通用生图执行层
+│   ├── tech-article-diagram/      # 技术长文智能插图
+│   ├── edu-subject-infographic/   # 学科知识点竖版信息图
+│   ├── edu-teaching-animation/    # 教学动图 + 配音教学视频
+│   ├── short-video-cover/         # 短视频 3:4 封面
+│   └── article-explainer-video/   # 长文转章节解说视频
+├── grok-imagine-image/            # Grok Imagine 文生图技能
+│   ├── SKILL.md
+│   ├── agents/
+│   │   └── openai.yaml
+│   ├── assets/
+│   └── scripts/
+│       └── generate.py            # Grok2API 生图脚本
 ├── excel-report-generator/       # Excel 报表生成技能
 │   ├── Skill.md
 │   └── excel_generator.py
@@ -1538,6 +1697,20 @@ export MPTEXT_API_KEY="your-mptext-api-key"
 
 # DashScope API Key（knowledge-absorber、github-trending-wan 需要）
 export DASHSCOPE_API_KEY="your-dashscope-api-key"
+
+# AI 教学媒体生图供应商（ai-teaching-media，任选其一）
+export MULERUN_API_KEY="your-mulerun-api-key"
+export APIMART_API_KEY="your-apimart-api-key"
+export ATLASCLOUD_API_KEY="your-atlascloud-api-key"
+export AGNES_API_KEY="your-agnes-api-key"
+
+# AI 教学媒体配音（ai-teaching-media，可选；也可用 edge-tts）
+export MINIMAX_API_KEY="your-minimax-api-key"
+
+# Grok Imagine（grok-imagine-image）
+export GROK_IMAGINE_API_KEY="your-grok-imagine-api-key"
+export GROK_IMAGINE_API_BASE="http://43.163.230.83:8000/v1"
+export GROK_IMAGINE_MODEL="grok-imagine-image"
 
 # GitHub Token（github-trending 可选）
 export GITHUB_TOKEN="your-github-token"
@@ -1827,7 +2000,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260719152032463.png)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20260726105010363.png)
 
 ---
 
@@ -1855,10 +2028,10 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 18
+- **总技能数**: 20
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
-- **AI 多模态**: 3 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus)
+- **AI 多模态**: 5 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -1867,6 +2040,8 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **grok-imagine-image**: v1.0.0 (2026-07-26) - 初始版本，通过兼容 Grok2API / OpenAI 风格的 `/v1/images/generations` 调用 `grok-imagine-image` 文生图；内置本地脚本，支持环境变量覆盖、媒体 URL 改写下载与 JSON 输出
+- **ai-teaching-media**: v1.0.0 (2026-07-19) - 初始版本，AI 教学媒体一体化技能包，串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路
 - **knowledge-absorber**: v0.0.1 (2026-04-11) - 初始版本，深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选
 - **github-trending-wan**: v1.0.0 (2026-04-08) - 初始版本，GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流
 - **wan-cover-plus**: v1.0.0 (2026-04-05) - 初始版本，使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录。视频任务兼容 Wan 2.6 与 Wan 2.7 模型
@@ -1919,6 +2094,37 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 7 月 26 日 - version 0.0.24
+
+- ✅ 新增 **grok-imagine-image** Skill v1.0.0
+- ✅ 使用 `grok-imagine-image` 模型，通过兼容 Grok2API / OpenAI 风格接口文生图
+- ✅ 仅调用 `POST /v1/images/generations`，避免误用 Chat Completions
+- ✅ 内置本地脚本 `scripts/generate.py`，支持 prompt 文件、尺寸、数量、超时参数
+- ✅ 媒体 URL 自动改写：接口返回 `127.0.0.1` 时替换为配置的公网主机并下载
+- ✅ Agent 友好输出：支持 `--json` 机器可读结果，便于后续工作流解析
+- ✅ 配置可覆盖：支持 `GROK_IMAGINE_API_KEY` / `GROK_IMAGINE_API_BASE` / `GROK_IMAGINE_MODEL` 与命令行参数
+- ✅ 默认配置：API `http://43.163.230.83:8000/v1`、尺寸 `1024x1024`、超时 180 秒
+- ✅ 适用场景：明确指定 Grok Imagine 生图，或其他 Skill/本地工作流复用该模型
+
+### 2026 年 7 月 19 日 - version 0.0.23
+
+- ✅ 新增 **ai-teaching-media** Skill v1.0.0
+- ✅ AI 教学媒体一体化技能包：一个目录串联 6 个子能力
+- ✅ 子 skill 覆盖：
+  - `ai-image-generator` - 通用生图执行层（MuleRun / APImart / AtlasCloud / Agnes）
+  - `tech-article-diagram` - 技术长文智能插图（16:9）
+  - `edu-subject-infographic` - 学科知识点竖版信息图（9:16）
+  - `edu-teaching-animation` - 教学动图 + 配音教学视频
+  - `short-video-cover` - 短视频 3:4 封面
+  - `article-explainer-video` - 长文转章节解说视频（1080p）
+- ✅ 意图自动路由：根据用户目标进入对应子 skill，并按流水线串联整套教学资产
+- ✅ 推荐流水线：
+  - 知识点全套：信息图 → 教学动图/配音视频 → 短视频封面
+  - 技术长文全套：文章插图 → 章节解说视频 → 可选封面
+  - 口播发布包：3:4 封面 + 教学/解说视频
+- ✅ 配音与成片：支持 Minimax TTS / Edge TTS，结合 HyperFrames + ffmpeg 渲染
+- ✅ 环境依赖：生图供应商 API Key（任选其一）+ Node.js ≥ 22 + ffmpeg
 
 ### 2026 年 4 月 11 日 - version 0.0.22
 
