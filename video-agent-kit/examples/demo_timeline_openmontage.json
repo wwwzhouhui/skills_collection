@@ -1,0 +1,50 @@
+{
+  "version": "1.1",
+  "project": {
+    "name": "OpenMontage demo",
+    "task": "Demo timeline using the bundled OpenMontage sample video."
+  },
+  "sequence": {
+    "name": "preview",
+    "fps": 25,
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "platform": "generic"
+    }
+  },
+  "assets": [
+    {
+      "id": "openmontage-demo",
+      "path": "OpenMontage/assets/signal-from-tomorrow-demo.mp4",
+      "type": "video"
+    }
+  ],
+  "tracks": [
+    {
+      "id": "v1",
+      "type": "video",
+      "name": "Main video",
+      "clips": [
+        {
+          "id": "clip01",
+          "asset_id": "openmontage-demo",
+          "source": "OpenMontage/assets/signal-from-tomorrow-demo.mp4",
+          "start": 0.0,
+          "end": 3.0,
+          "timeline_start": 0.0,
+          "reason": "Opening sample segment"
+        },
+        {
+          "id": "clip02",
+          "asset_id": "openmontage-demo",
+          "source": "OpenMontage/assets/signal-from-tomorrow-demo.mp4",
+          "start": 8.0,
+          "end": 11.0,
+          "timeline_start": 3.0,
+          "reason": "Second sample segment"
+        }
+      ]
+    }
+  ]
+}

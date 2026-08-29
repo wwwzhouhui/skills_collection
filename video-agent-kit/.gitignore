@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.py[cod]
+
+# Per-machine runtime state. .video_agent/env_report.json records the absolute
+# interpreter and project paths of whoever ran the doctor (i.e. a username), so
+# it must never ship with the plugin or reach the remote.
+.video_agent/
+
+# Build / run outputs
+out/
+*.zip

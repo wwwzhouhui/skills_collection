@@ -1,0 +1,56 @@
+{
+  "version": "1.1",
+  "project": {
+    "name": "minimal highlight preview",
+    "task": "示例：从单个视频中剪出两个候选片段并拼接成预览。"
+  },
+  "sequence": {
+    "name": "preview",
+    "fps": 25,
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "platform": "generic"
+    }
+  },
+  "assets": [
+    {
+      "id": "src01",
+      "path": "input.mp4",
+      "type": "video"
+    }
+  ],
+  "tracks": [
+    {
+      "id": "v1",
+      "type": "video",
+      "name": "Main video",
+      "clips": [
+        {
+          "id": "clip01",
+          "asset_id": "src01",
+          "source": "input.mp4",
+          "start": 0.0,
+          "end": 5.0,
+          "timeline_start": 0.0,
+          "reason": "开场信息完整"
+        },
+        {
+          "id": "clip02",
+          "asset_id": "src01",
+          "source": "input.mp4",
+          "start": 12.0,
+          "end": 20.0,
+          "timeline_start": 5.0,
+          "reason": "核心动作/观点完整"
+        }
+      ]
+    }
+  ],
+  "markers": [
+    {
+      "time": 5.0,
+      "label": "cut"
+    }
+  ]
+}

@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.24-green.svg)
-![Skills](https://img.shields.io/badge/skills-20-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.25-green.svg)
+![Skills](https://img.shields.io/badge/skills-21-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -19,6 +19,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
 - **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作、AI 教学媒体一体化（插图/信息图/教学视频/封面/解说视频）、Grok Imagine 文生图
+- **视频剪辑**: 自动化视频剪辑与解说（video-agent-kit）——通用剪辑、电影解说、足球/篮球/电竞集锦、口播配音成片（Edge TTS 免费配音）
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -35,6 +36,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| video-agent-kit | 自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片，37 个 MCP 工具（抽帧理解/时间线/渲染/QC），TTS 默认 Edge TTS 免费开箱即用 | Python、MCP、ffmpeg、OpenCV、Edge TTS | 2026年8月29日 | wwwzhouhui | 0.4.3 |
 | knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
 | ai-teaching-media | AI 教学媒体一体化技能包：一个目录串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路 | Python、HyperFrames、Minimax TTS、Nano Banana 2 / GPT Image 2 / Agnes Image 2.1 Flash | 2026年7月19日 | wwwzhouhui | 1.0.0 |
 | grok-imagine-image | 使用 grok-imagine-image 模型，通过兼容 Grok2API / OpenAI 风格接口（`/v1/images/generations`）文生图；自带本地脚本，支持环境变量/参数覆盖、URL 改写下载、JSON 输出 | Python、Grok2API、OpenAI Images API | 2026年7月26日 | hailaobao2026 | 1.0.0 |
@@ -57,6 +59,45 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎬 自动化视频剪辑与解说（video-agent-kit）
+
+**核心功能：**
+
+- ✅ **通用视频剪辑**：素材发现 → 抽帧理解 → 时间线编辑 → 预览渲染 → QC 质检
+- ✅ **电影解说**：全片抽帧 + 对白转写 → 解说词编排 → 字幕烧录 → 配音成片
+- ✅ **体育/电竞集锦**：足球、篮球、LOL 比赛自动高光编排 + 中文解说配音
+- ✅ **口播配音成片**：脚本/文档 → Edge TTS 逐段配音 → 图文画面 → ffmpeg 合成
+- ✅ **TTS 免费开箱即用**：默认 Edge TTS（晓晓/云希/云健等中文音色），无需 API Key
+- ✅ **37 个 MCP 工具**：`inspect_media`、`video_ingest`、`video_watch_segment`、`subtitle_build/render`、`validate_timeline`、`render_preview`、`qc_preview`、`synthesize_narration`、`bind_narration`、`render_narrated`、`soccer_*`、`lol_*` 等
+
+**5 个子技能：**
+
+| 子 skill | 作用 | 典型输入 | 输出 |
+|---------|------|----------|------|
+| `video-edit-agent` | 总控制器：任务分类与路由 | 任意剪辑需求 | 任务方案与执行路由 |
+| `video-edit-assembly` | 多素材组装/混剪/去重/蒙太奇 | 素材文件夹 | 组装后的时间线/成片 |
+| `video-recap-workflows` | 电影解说 + 足球/篮球/电竞集锦 | 电影/比赛视频 | 中文解说成片 final.mp4 |
+| `video-speech-workflows` | 口播浓缩/字幕修复/视频流水线 | 口播视频 | 精剪/字幕/流水线方案 |
+| `env-setup` | 环境体检与依赖安装 | 新机器 | 依赖报告/自动修复 |
+
+**快速使用：**
+
+```text
+# 文档/文章 → 中文解说视频
+请把这篇文档转成一段 2 分钟的中文解说视频：<贴入内容>
+
+# 本地视频混剪
+把 footage/ 目录下的素材剪成一条 30 秒的混剪，突出动作镜头，配上字幕
+
+# 电影解说
+几分钟看完《<电影名>》：<电影文件路径>
+
+# 足球集锦
+把这场球赛剪成 3 分钟集锦，带中文解说：<比赛文件路径>
+```
+
+> 详细安装与配置（MCP 注册、Python 依赖、TTS 音色）见 [video-agent-kit/README.md](video-agent-kit/README.md)。
 
 ### 🎨 AI 教学媒体一体化（ai-teaching-media）
 
@@ -1467,6 +1508,9 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 | openpyxl | Latest | Excel 文件操作 | https://openpyxl.readthedocs.io |
 | python-pptx | Latest | PPT 生成 | https://python-pptx.readthedocs.io |
 | Playwright | Latest | 浏览器自动化 | https://playwright.dev |
+| ffmpeg | Latest | 视频处理/渲染（video-agent-kit） | https://ffmpeg.org |
+| OpenCV | 4.8+ | 视频抽帧/画面分析（video-agent-kit） | https://opencv.org |
+| Edge TTS | Latest | 免费中文语音合成（video-agent-kit） | https://github.com/rany2/edge-tts |
 
 ### 技术架构
 
@@ -1492,6 +1536,7 @@ skills_collection/
 │   ├── wan-cover-plus/
 │   ├── ai-teaching-media/
 │   ├── grok-imagine-image/
+│   ├── video-agent-kit/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1637,6 +1682,23 @@ skills_collection/
 │   │   │   └── mentor_prompts.json
 │   │   └── references/
 │   │       └── system_prompt.md
+├── video-agent-kit/             # 自动化视频剪辑与解说技能包
+│   ├── README.md                # 使用说明（含 Edge TTS 配置）
+│   ├── README.upstream.md       # 上游原始文档
+│   ├── mcp/                     # MCP 服务器（37 个工具）
+│   │   ├── video_edit_server.py # stdio 入口
+│   │   └── ve_tools/            # 工具实现（含 edge_tts_provider.py）
+│   ├── skills/                  # 5 个子技能
+│   │   ├── env-setup/           # 环境体检与依赖安装
+│   │   ├── video-edit-agent/    # 总控制器与路由
+│   │   ├── video-edit-assembly/ # 多素材组装/混剪
+│   │   ├── video-recap-workflows/ # 电影解说 + 体育/电竞集锦
+│   │   └── video-speech-workflows/ # 口播浓缩/字幕修复
+│   ├── hooks/                   # 会话钩子（可选）
+│   ├── commands/                # 斜杠命令（可选）
+│   ├── schemas/                 # 工具 JSON Schema
+│   ├── examples/                # 使用示例
+│   └── requirements.txt         # Python 依赖
 ├── .gitignore
 └── README.md
 ```
@@ -1717,6 +1779,16 @@ export GITHUB_TOKEN="your-github-token"
 
 # 企业微信 Webhook（github-trending 可选）
 export WEIXIN_WEBHOOK="your-webhook-url"
+
+# video-agent-kit（视频剪辑与解说；TTS 用 Edge TTS 免费无需配置，ASR 需自备 Key）
+export VE_PLUGIN_ROOT="/path/to/skills_collection/video-agent-kit"  # 插件根目录（可自动探测）
+export VE_EDGE_TTS_VOICE="zh-CN-XiaoxiaoNeural"    # Edge TTS 默认音色（可选）
+export VE_NARRATION_TTS_VOICE="zh-CN-YunxiNeural"  # 口播默认音色（可选）
+export VE_BGM_DIR=""                                # 背景音乐目录（可选）
+# ASR 转写（可选，不配置则 speech_transcribe 不可用）
+export VE_SPEECH_ASR_ENDPOINT="https://your-asr-host"
+export VE_SPEECH_ASR_RESOURCE_ID="your-resource-id"
+export VE_SPEECH_ASR_API_KEY="your-api-key"
 ```
 
 ---
@@ -2028,10 +2100,10 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 20
+- **总技能数**: 21
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
-- **AI 多模态**: 5 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image)
+- **AI 多模态**: 6 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2040,6 +2112,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **video-agent-kit**: v0.4.3 (2026-08-29) - 初始版本，自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片；37 个 MCP 工具（抽帧理解/时间线/渲染/QC）；TTS 默认 Edge TTS 免费开箱即用
 - **grok-imagine-image**: v1.0.0 (2026-07-26) - 初始版本，通过兼容 Grok2API / OpenAI 风格的 `/v1/images/generations` 调用 `grok-imagine-image` 文生图；内置本地脚本，支持环境变量覆盖、媒体 URL 改写下载与 JSON 输出
 - **ai-teaching-media**: v1.0.0 (2026-07-19) - 初始版本，AI 教学媒体一体化技能包，串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路
 - **knowledge-absorber**: v0.0.1 (2026-04-11) - 初始版本，深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选
@@ -2057,9 +2130,9 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 开发语言
 
-- Python: 5
+- Python: 6
 - Markdown: 3
-- MCP: 1
+- MCP: 2
 - YAML/DSL: 1
 - Bash/Shell: 2
 
@@ -2094,6 +2167,15 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 8 月 29 日 - version 0.0.25
+
+- ✅ 新增 **video-agent-kit** Skill v0.4.3
+- ✅ 自动化视频剪辑与解说视频技能包：通用剪辑、电影解说、体育/电竞集锦、口播配音成片
+- ✅ 5 个子技能：`env-setup`（环境体检）、`video-edit-agent`（总控制器）、`video-edit-assembly`（多素材组装）、`video-recap-workflows`（解说/集锦）、`video-speech-workflows`（口播浓缩/字幕）
+- ✅ 37 个 MCP 工具：抽帧理解、局部复看、字幕烧录、时间线、预览渲染、QC 质检
+- ✅ TTS 默认 **Edge TTS**（免费免 Key），中文音色开箱即用（晓晓/云希/云健等）
+- ✅ 文档：独立 README.md（使用说明）+ README.upstream.md（上游原始文档）
 
 ### 2026 年 7 月 26 日 - version 0.0.24
 

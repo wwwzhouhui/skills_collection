@@ -1,0 +1,19 @@
+# server_common.py uses the 1.x Server.list_tools/call_tool decorator API.
+mcp>=1.0.0,<2.0.0
+requests>=2.31.0
+pillow>=10.0.0
+# headless build: the plugin only encodes/decodes frames, and mixing
+# opencv-python with opencv-python-headless corrupts the shared cv2 package.
+opencv-python-headless>=4.8.0,<5.0.0
+numpy>=1.24.0
+# Chinese word segmentation + POS tags for subtitle_build.
+jieba>=0.42.1
+# Reads resolved font cmap so subtitle_build can fail before rendering tofu boxes.
+fonttools>=4.40.0
+# PySceneDetect declares opencv-python as a dependency. Runtime bootstrap installs
+# scenedetect with --no-deps so it reuses opencv-python-headless instead of
+# pulling GUI OpenCV. For manual setup, run after this requirements file:
+#   python3 -m pip install --no-deps "scenedetect>=0.6"
+click>=8.0
+platformdirs>=3.0
+tqdm>=4.0

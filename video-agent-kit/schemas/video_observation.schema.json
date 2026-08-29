@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video-agent-kit/video-observation",
+  "title": "Video Observation Package",
+  "type": "object",
+  "required": [
+    "tool",
+    "video_path",
+    "prompt_for_main_agent",
+    "transcript_text",
+    "media",
+    "frame_paths",
+    "sheet_paths",
+    "cache_signature"
+  ],
+  "$defs": {
+    "timeRange": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "prefixItems": [
+            { "type": "number", "minimum": 0 },
+            { "type": "number", "minimum": 0 }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    }
+  },
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["video_ingest", "video_watch_segment"]
+    },
+    "video_path": { "type": "string" },
+    "source_video": { "type": "string" },
+    "original_time_range": { "$ref": "#/$defs/timeRange" },
+    "used_time_range": { "$ref": "#/$defs/timeRange" },
+    "start_time": { "type": "number", "minimum": 0 },
+    "end_time": { "type": "number", "minimum": 0 },
+    "fps": { "type": "number", "exclusiveMinimum": 0 },
+    "prompt_for_main_agent": { "type": "string" },
+    "transcript_text": { "type": "string" },
+    "media": {
+      "type": "object",
+      "required": ["sample_fps", "sampled_frames", "raw_frame_timestamps_sec"],
+      "properties": {
+        "duration": { "type": "number", "exclusiveMinimum": 0 },
+        "fps": { "type": "number", "exclusiveMinimum": 0 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "sample_fps": { "type": "number", "exclusiveMinimum": 0 },
+        "sampled_frames": { "type": "integer", "minimum": 1 },
+        "sampling_mode": { "type": "string" },
+        "source_time_range": { "$ref": "#/$defs/timeRange" },
+        "t_patch_size": { "type": "integer", "minimum": 1 },
+        "raw_frame_indices": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "raw_frame_timestamps_sec": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "prod_frame_indices": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "frame_paths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sheet_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "cache_signature": { "type": "object" },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "elapsed_seconds": { "type": "number", "minimum": 0 }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "video-edit": {
+      "type": "stdio",
+      "command": "python3",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/mcp/video_edit_server.py"
+      ],
+      "cwd": "${CLAUDE_PROJECT_DIR}",
+      "env": {
+        "VE_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "VE_SPEECH_MCP_URL": "${user_config.speech_mcp_url}",
+        "VE_SPEECH_MCP_TOKEN": "${user_config.speech_mcp_token}",
+        "VE_BGM_DIR": "${user_config.bgm_dir}",
+        "VE_MAX_INLINE_IMAGES": "${user_config.max_inline_images}"
+      },
+      "timeoutMs": 900000
+    }
+  }
+}

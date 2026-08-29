@@ -1,0 +1,6 @@
+{
+  "video_path": "input.mp4",
+  "transcript_path": "out/transcript.json",
+  "output_json": "out/video_ingest.json",
+  "save_frames_dir": ".video_agent/video_frames/input_full"
+}

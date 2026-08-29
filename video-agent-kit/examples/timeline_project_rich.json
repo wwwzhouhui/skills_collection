@@ -1,0 +1,148 @@
+{
+  "version": "1.1",
+  "project": {
+    "name": "rich video edit project example",
+    "task": "展示更接近视频编辑软件项目文件的 timeline 结构。",
+    "assumptions": [
+      "render_preview 会渲染基础 video/audio/subtitle/overlay 轨，但复杂关键帧、遮罩和完整调色仍作为项目计划记录。"
+    ]
+  },
+  "sequence": {
+    "name": "main",
+    "fps": 25,
+    "timebase": 0,
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "platform": "generic",
+      "note": "横屏预览画布"
+    }
+  },
+  "assets": [
+    {
+      "id": "src01",
+      "path": "input.mp4",
+      "type": "video",
+      "metadata_path": "out/media/input.json",
+      "transcript_path": "out/transcripts/input.json"
+    },
+    {
+      "id": "bgm01",
+      "path": "music.mp3",
+      "type": "audio"
+    },
+    {
+      "id": "logo01",
+      "path": "logo.png",
+      "type": "image"
+    }
+  ],
+  "tracks": [
+    {
+      "id": "v1",
+      "type": "video",
+      "name": "Main video",
+      "order": 0,
+      "clips": [
+        {
+          "id": "clip01",
+          "asset_id": "src01",
+          "source": "input.mp4",
+          "start": 0.0,
+          "end": 5.0,
+          "timeline_start": 0.0,
+          "reason": "开场信息完整",
+          "transition_out": {
+            "type": "cut",
+            "duration": 0.04
+          }
+        },
+        {
+          "id": "clip02",
+          "asset_id": "src01",
+          "source": "input.mp4",
+          "start": 12.0,
+          "end": 20.0,
+          "timeline_start": 5.0,
+          "reason": "核心动作/观点完整",
+          "effects": [
+            {
+              "type": "color_note",
+              "enabled": true,
+              "params": {
+                "intent": "keep natural color"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "type": "music",
+      "name": "BGM plan",
+      "muted": false,
+      "clips": [
+        {
+          "id": "bgm_clip01",
+          "asset_id": "bgm01",
+          "source": "music.mp3",
+          "start": 0.0,
+          "end": 13.0,
+          "timeline_start": 0.0,
+          "volume": 0.18,
+          "reason": "添加低音量背景音乐，避免盖过原声。"
+        }
+      ]
+    },
+    {
+      "id": "sub1",
+      "type": "subtitle",
+      "name": "Subtitle plan",
+      "clips": [
+        {
+          "id": "sub01",
+          "text": "字幕示例",
+          "start": 0.0,
+          "end": 2.5,
+          "timeline_start": 0.0,
+          "reason": "烧录关键字幕提示。"
+        }
+      ]
+    },
+    {
+      "id": "ov1",
+      "type": "overlay",
+      "name": "Logo overlay",
+      "clips": [
+        {
+          "id": "logo_clip01",
+          "asset_id": "logo01",
+          "source": "logo.png",
+          "start": 0.0,
+          "duration": 6.0,
+          "timeline_start": 0.5,
+          "x": 32,
+          "y": 32,
+          "width": 180,
+          "height": 180,
+          "opacity": 0.85,
+          "reason": "展示静态品牌角标叠加。"
+        }
+      ]
+    }
+  ],
+  "markers": [
+    {
+      "time": 5.0,
+      "label": "Cut to core beat"
+    }
+  ],
+  "transitions": [
+    {
+      "type": "cut",
+      "at_clip": 0,
+      "duration": 0.04
+    }
+  ]
+}
