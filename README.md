@@ -159,6 +159,16 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - ✅ **13 套画面风格**：BlockFrame 积木、暗夜 HUD、编辑杂志、终端极客、手绘白板、极简瑞士、国潮水墨、玻璃拟态、黏土软胶、蓝图工程、像素游戏等，每种风格有独立版式 DNA（布局骨架/编排/动效签名，非简单换色）
 - ✅ **外挂字幕**：自动产出 `subtitles.srt` 供视频平台上传
 
+**🎬 视频案例：公众号文章 → 深蓝舞台解说视频（端到端实拍成片）**
+
+<video src="README.assets/voice-to-video-demo-kimi.mp4" controls preload="metadata" poster="README.assets/voice-to-video-demo-kimi-poster.jpg" width="100%"></video>
+
+> 上方案例由本技能端到端生成：输入公众号文章《Kimi 快跟上 Fable 5 了？》（约 2500 字）→ 浓缩为 600 字口播稿 → Edge TTS 配音（词级时间戳）→ 深蓝舞台风格 8 场景合成 → 无头浏览器确定性渲染成片。**成片 1 分 54 秒 · 1080p30 · 约 6MB**。
+>
+> 案例看点：画面元素逐词跟随配音出场——念到「2.5 万亿」参数卡弹入、念到「蒸馏了」渐变大字砸出、念到「封神 / 贴脸」红绿对比卡先后出现、念到「≈1%」价格大数字弹出；底部字幕逐词卡拉OK高亮，声音念到哪，高亮到哪。
+>
+> ▶️ 备用在线播放线路：[obsidian.duckcloud.fun 直链](https://obsidian.duckcloud.fun/files/final-fcdaf7c2dda61ee8a0d04ce89f896a8d27e28262.mp4)
+
 **目录结构：**
 
 ```
