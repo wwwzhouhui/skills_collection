@@ -88,6 +88,7 @@ python <skill>/scripts/render.py --html composition.html --audio build/voice.mp3
 ```
 
 - 默认 1920×1080 @30fps、CRF18。草稿用 `--fast`，小样用 `--width 1280 --height 720`。
+- 作者署名水印：`--watermark laohaibao2025`（右下角小字落款，渲染时注入、不改合成页；引擎亦支持 `HF.init({ watermark: "..." })`）。
 - 断点续渲：中断后原命令重跑即自动跳过已有帧；`--keep-frames` 保留中间帧。
 - 预计耗时 ≈ 片长 × 6-10（1080p30），长视频先告知用户。
 - 渲染完成后用 ffmpeg 抽查帧与 timeline 对齐：`ffmpeg -ss <句中时间> -i final.mp4 -frames:v 1 check.jpg`，确认该时刻画面/字幕与该句一致。

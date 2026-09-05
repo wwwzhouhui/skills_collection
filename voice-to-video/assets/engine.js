@@ -330,9 +330,27 @@
     stage.style.top = ((window.innerHeight - h * k) / 2) + "px";
   };
 
+  // ---------- 作者水印: 右下角落款(静态文本, 确定性; 放 #stage 内跟随缩放) ----------
+  HF.setWatermark = function (text) {
+    var el = document.getElementById("hf-watermark");
+    if (!text) { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "hf-watermark";
+      el.style.cssText =
+        "position:absolute;z-index:50;right:26px;bottom:14px;" +
+        "font:600 17px/1 " + "var(--mono, ui-monospace, Consolas, monospace);" +
+        "letter-spacing:1.5px;color:rgba(128,132,150,.62);" +
+        "text-shadow:0 1px 2px rgba(0,0,0,.10);pointer-events:none;user-select:none;";
+      (document.getElementById("stage") || document.body).appendChild(el);
+    }
+    el.textContent = text;
+  };
+
   HF.init = function (cfg) {
     if (HF.ready) return;
     Object.assign(HF.cfg, cfg || {});
+    if (HF.cfg.watermark) HF.setWatermark(HF.cfg.watermark);
     // SUBTITLES 可用 window.SUBTITLES 或 const SUBTITLES(全局词法作用域)声明
     var subs = window.SUBTITLES;
     if (!subs) { try { subs = (typeof SUBTITLES !== "undefined") ? SUBTITLES : null; } catch (e) { subs = null; } }

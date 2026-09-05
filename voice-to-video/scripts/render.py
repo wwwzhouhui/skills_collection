@@ -60,6 +60,8 @@ def main():
     ap.add_argument("--fast", action="store_true", help="草稿模式: crf 23 + veryfast")
     ap.add_argument("--style-kit", default=None,
                     help="渲染时注入的 kit CSS 路径(覆盖合成页 <link> 的样式, 免复制切换风格)")
+    ap.add_argument("--watermark", default=None,
+                    help="右下角作者水印文字(如 laohaibao2025), 渲染时注入, 无需改合成页")
     ap.add_argument("--wait-videos", action="store_true",
                     help="每帧等待合成页内嵌 <video> seek 完成(画面含视频素材时必开, 略慢)")
     ap.add_argument("--frames-dir", default=None)
@@ -110,6 +112,18 @@ def main():
         page.evaluate(
             "() => { const h = document.getElementById('hf-playhint');"
             " if (h) h.style.display = 'none'; }")
+        if args.watermark:
+            # 直接 DOM 注入而非 HF.setWatermark: 对加载旧版 engine.js 的存量合成页同样生效
+            page.evaluate(
+                "(t) => { let el = document.getElementById('hf-watermark');"
+                " if (!el) { el = document.createElement('div'); el.id = 'hf-watermark';"
+                " el.style.cssText = 'position:absolute;z-index:50;right:26px;bottom:14px;' +"
+                " 'font:600 17px/1 var(--mono, ui-monospace, Consolas, monospace);' +"
+                " 'letter-spacing:1.5px;color:rgba(128,132,150,.62);' +"
+                " 'text-shadow:0 1px 2px rgba(0,0,0,.10);pointer-events:none;user-select:none;';"
+                " (document.getElementById('stage') || document.body).appendChild(el); }"
+                " el.textContent = t; }",
+                args.watermark)
 
         # 预热: 字体/着色器首次渲染较慢, 先空跑一帧
         page.evaluate("() => HF.seek(0)")

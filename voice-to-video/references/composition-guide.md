@@ -112,6 +112,8 @@ A. 引用 tts.py 产出的 `build/subtitles.js`（内容即 `window.SUBTITLES = 
 <script src="engine.js"></script>
 <script>
 HF.init({ audio: "build/voice.mp3", durationMs: 0, subtitle: true, karaoke: true });
+// 可选: 作者水印常驻右下角(也可不写这里, 渲染时 render.py --watermark 注入)
+// HF.init({ audio: "build/voice.mp3", durationMs: 0, subtitle: true, karaoke: true, watermark: "laohaibao2025" });
 </script>
 ```
 

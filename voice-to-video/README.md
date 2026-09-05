@@ -172,12 +172,14 @@ python scripts/render.py --html composition.html --audio build/voice.mp3 --out f
      [--fps 30] [--width 1920] [--height 1080] [--quality 85] [--crf 18]
      [--fast]                       # 草稿模式：crf 23 + veryfast
      [--style-kit assets/kits/xxx.css]  # 渲染时注入风格，覆盖合成页 <link>
+     [--watermark laohaibao2025]        # 右下角作者署名水印（渲染时注入，不改合成页）
      [--frames-dir DIR] [--keep-frames] # 保留中间帧（默认渲完删除）
 ```
 
 - **断点续渲**：中断后原命令重跑，自动跳过已存在的帧
 - **渲染耗时**：约为片长 2 倍（1080p30，实测 178s 片 ≈ 6.2 分钟）；3 路并发互不拖慢
 - **输出**：H.264 + AAC，`-movflags +faststart`，可直接上传平台
+- **作者水印**：`--watermark <文字>` 在右下角落款（如 `laohaibao2025`）；半透明等宽小字、深浅底色均清晰，放 `#stage` 内随画面缩放；对加载旧版引擎的存量合成页同样生效（渲染器直接 DOM 注入，不依赖 `HF.setWatermark`）。合成页内也可写 `HF.init({ watermark: "..." })` 常驻
 
 ## timeline.json 格式
 
@@ -224,6 +226,7 @@ python scripts/render.py --html composition.html --audio build/voice.mp3 --out f
 - **2026-09-05 v1.1**：`tts.py` 显式 `boundary="WordBoundary"`（修复 7.2.8 默认只发句边界）；新增 `subtitles.js` 产出；卡拉OK标点回填；`render.py` 支持断点续渲与 `--style-kit` 风格注入。
 - **2026-09-05 v1.2**：风格扩展至 11 套扩展 + 1 默认；`references/styles.md` 新增**版式 DNA** 体系（按风格重组页面结构，而非仅换 CSS）；实测 5 种版式 DNA 各出一条成片（杂志跨页/终端会话/白板便利贴/瑞士网格/水墨竖排）。
 - **2026-09-05 v1.3**：新增**深蓝舞台（stage）**风格——Remotion 同美学（大圆角面板舞台、节号标题、渐变强调、面板进度线）；引擎支持**面板内嵌视频素材**（`HF.bindVideo` + `HF.waitVideos`，素材须 webm/VP9）；`render.py` 新增 `--wait-videos` 逐帧等待视频 seek；实测同款结构演示片（数字滚动/人物卡片/口播讲解/影视混剪榜单）。
+- **2026-09-05 v1.4**：新增**作者水印**——引擎 `HF.setWatermark()`（`HF.init` 可传 `watermark`），`render.py` 新增 `--watermark`（右下角小字落款，渲染时注入，旧合成页兼容）；QA 深浅双底验证；Kimi 案例成片带 `laohaibao2025` 水印重渲。
 
 ---
 
