@@ -1,0 +1,159 @@
+/* kit: swiss — 极简瑞士风(International Typographic Style)
+ * 大留白 + 严格网格 + 黑白与一点红 + 无衬线; 适合商业/观点/方法论。
+ * 组件契约与 kit.css 完全一致, 可直接替换 <link>。
+ */
+
+:root {
+  --bg: #F4F3EF;
+  --ink: #0A0A0A;
+  --paper: #FFFFFF;
+  --coral: #E63946;   /* 主强调红 */
+  --yellow: #F2C230;
+  --mint: #2A9D8F;
+  --sky: #1D4ED8;
+  --lilac: #6D597A;
+  --muted: #9A968C;
+  --bd: 2px solid #0A0A0A;
+  --shadow: none;
+  --shadow-sm: none;
+  --f-title: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+  --f-body: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+  --f-mono: "Cascadia Mono", Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--f-body); color: var(--ink); }
+
+#stage {
+  position: absolute; width: 1920px; height: 1080px;
+  transform-origin: 0 0; background: var(--bg); overflow: hidden;
+}
+/* 版式基线网格 */
+#stage::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(10, 10, 10, .05) 1px, transparent 1px);
+  background-size: 96px 96px;
+  pointer-events: none;
+}
+
+.scene { position: absolute; inset: 0; display: none; padding: 150px 190px 140px; }
+.scene.active { display: block; }
+
+.hf-header {
+  position: absolute; top: 0; left: 0; right: 0; height: 92px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 70px; border-bottom: var(--bd);
+  font-family: var(--f-title); font-weight: 700; font-size: 25px;
+}
+.hf-header .logo b { color: var(--coral); margin-right: 12px; }
+.hf-header .logo i { font-style: normal; font-family: var(--f-mono); font-weight: 400; font-size: 19px; color: var(--muted); letter-spacing: 2px; }
+.hf-footer {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 70px; border-top: var(--bd);
+  font-family: var(--f-mono); font-size: 18px; color: var(--muted);
+}
+
+.kicker {
+  display: inline-block; font-family: var(--f-mono); font-size: 22px; font-weight: 600;
+  letter-spacing: 8px; text-transform: uppercase; color: var(--coral);
+  padding: 6px 0; margin-bottom: 40px;
+}
+.title-xl { font-family: var(--f-title); font-weight: 700; font-size: 112px; line-height: 1.04; letter-spacing: -3px; }
+.title-lg { font-family: var(--f-title); font-weight: 700; font-size: 76px; line-height: 1.1; letter-spacing: -1px; }
+.hl { background: linear-gradient(transparent 60%, var(--coral) 60%, var(--coral) 92%, transparent 92%); padding: 0 4px; }
+.hl-coral { color: var(--coral); padding: 0 4px; }
+.hl-mint  { color: var(--mint); padding: 0 4px; }
+.mono { font-family: var(--f-mono); }
+
+.card {
+  background: var(--paper); border: var(--bd); border-radius: 0; padding: 42px 46px;
+}
+.card.coral { background: var(--coral); color: #fff; border-color: var(--coral); }
+.card.mint  { background: var(--mint); color: #fff; border-color: var(--mint); }
+.card.sky   { background: var(--sky); color: #fff; border-color: var(--sky); }
+
+.bullets { list-style: none; counter-reset: s; font-size: 42px; line-height: 1.45; font-weight: 700; }
+.bullets li { margin-bottom: 0; padding: 24px 0 24px 110px; position: relative; border-bottom: 2px solid #0A0A0A; }
+.bullets li:first-child { border-top: 2px solid #0A0A0A; }
+.bullets li::before {
+  counter-increment: s; content: "0" counter(s);
+  position: absolute; left: 6px; top: 26px;
+  font-family: var(--f-mono); font-size: 30px; font-weight: 600; color: var(--coral);
+}
+
+.term {
+  background: #0A0A0A; color: #F4F3EF; border: var(--bd); border-radius: 0;
+  font-family: var(--f-mono); font-size: 31px; overflow: hidden;
+}
+.term .bar {
+  display: flex; gap: 10px; align-items: center; padding: 14px 22px;
+  background: #1C1C1C; border-bottom: var(--bd);
+}
+.term .bar i { width: 16px; height: 16px; border-radius: 0; background: #F4F3EF; }
+.term .bar i:nth-child(1) { background: var(--coral); }
+.term .bar .t { margin-left: 12px; font-size: 19px; color: #9A968C; }
+.term .body { padding: 30px 34px; line-height: 1.65; }
+.term .c-prompt { color: var(--coral); font-weight: 700; }
+.term .c-cmd { color: #F4F3EF; }
+.term .c-dim { color: #9A968C; }
+
+.big-num {
+  font-family: var(--f-title); font-weight: 700; font-size: 260px; line-height: .95;
+  color: var(--coral); letter-spacing: -8px;
+}
+
+.quote {
+  font-size: 58px; font-weight: 700; line-height: 1.35; font-family: var(--f-title);
+  border-left: 10px solid var(--coral); padding-left: 44px; letter-spacing: -1px;
+}
+.quote small { display: block; margin-top: 24px; font-size: 24px; color: var(--muted); font-weight: 400; letter-spacing: 2px; }
+
+.steps { display: flex; gap: 0; align-items: stretch; border: var(--bd); }
+.step {
+  flex: 1; background: var(--paper); border-right: var(--bd); padding: 36px 30px;
+  position: static;
+}
+.step:last-child { border-right: none; }
+.step .n {
+  font-family: var(--f-mono); font-size: 24px; font-weight: 600; color: var(--coral);
+  display: block; margin-bottom: 16px; letter-spacing: 3px;
+}
+.step h4 { font-family: var(--f-title); font-size: 32px; margin-bottom: 12px; letter-spacing: -0.5px; }
+.step p { font-size: 23px; line-height: 1.55; color: #43403A; }
+
+#hf-subtitle {
+  position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%);
+  max-width: 1560px; text-align: center; pointer-events: none;
+}
+.hf-sent {
+  display: inline-block; font-size: 38px; font-weight: 500; line-height: 1.4;
+  color: var(--ink); background: rgba(255, 255, 255, .95);
+  border: var(--bd); border-radius: 0; padding: 14px 36px;
+}
+.hf-sent span.done { color: #B9B5AC; }
+.hf-sent span.on { color: #fff; background: var(--coral); padding: 0 6px; }
+
+#hf-progress {
+  position: absolute; left: 70px; right: 70px; bottom: 30px; height: 10px;
+  border: none; background: rgba(10, 10, 10, .12);
+  overflow: hidden; cursor: pointer;
+}
+#hf-progress-fill { height: 100%; width: 0; background: var(--ink); }
+#hf-timecode {
+  position: absolute; right: 70px; bottom: 6px; font-family: var(--f-mono);
+  font-size: 18px; color: var(--muted);
+}
+
+#hf-playhint {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-mono); font-size: 26px; color: var(--muted); letter-spacing: 4px;
+  pointer-events: none; opacity: 1; transition: opacity .3s;
+}
+body.hf-ready:not(.hf-playing) #hf-playhint { opacity: 1; }
+body.hf-playing #hf-playhint { opacity: 0; }
+#hf-playhint .btn {
+  border: var(--bd); background: var(--paper);
+  padding: 18px 46px; font-weight: 700; letter-spacing: 3px;
+}

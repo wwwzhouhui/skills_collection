@@ -1,0 +1,193 @@
+/* kit: pixel — 像素复古游戏风
+ * 深夜蓝底(PICO-8 色板) + 粗硬边框 + 硬投影 + 分段式血条/进度 + 对话框;
+ * 适合游戏/怀旧科技/轻松极客题材。
+ * 版式 DNA: 一切像 8-bit 游戏 UI: 对话框(▶继续)、任务清单(☐/☑)、关卡徽章、SCORE 头部。
+ */
+
+:root {
+  --bg: #1A1C2C;
+  --ink: #F4F4F4;
+  --paper: #293173;
+  --coral: #FF004D;
+  --yellow: #FFCD75;
+  --mint: #00E436;
+  --sky: #29ADFF;
+  --lilac: #FF77A8;
+  --muted: #83769C;
+  --bd: 4px solid var(--ink);
+  --shadow: 8px 8px 0 #000;
+  --shadow-sm: 5px 5px 0 #000;
+  --f-title: "Cascadia Mono", Consolas, "Microsoft YaHei", monospace;
+  --f-body: "Cascadia Mono", Consolas, "Microsoft YaHei", monospace;
+  --f-mono: "Cascadia Mono", Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--f-body); color: var(--ink); }
+
+#stage {
+  position: absolute; width: 1920px; height: 1080px;
+  transform-origin: 0 0; background: var(--bg); overflow: hidden;
+}
+/* 像素星空 + 微扫描线 */
+#stage::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(rgba(244,244,244,.9) 2px, transparent 3px) 0 0/220px 180px,
+    radial-gradient(rgba(255,205,117,.8) 2px, transparent 3px) 90px 70px/260px 220px,
+    radial-gradient(rgba(41,173,255,.8) 2px, transparent 3px) 160px 30px/300px 260px;
+  opacity: .5;
+  pointer-events: none;
+}
+#stage::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .16) 0 2px, transparent 2px 6px);
+  pointer-events: none;
+}
+
+.scene { position: absolute; inset: 0; display: none; padding: 150px 170px 150px; }
+.scene.active { display: block; }
+
+.hf-header {
+  position: absolute; top: 30px; left: 70px; right: 70px; height: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 30px; border: var(--bd); box-shadow: var(--shadow-sm);
+  background: var(--paper); font-family: var(--f-mono); font-weight: 700; font-size: 23px;
+}
+.hf-header .logo b { color: var(--yellow); margin-right: 10px; }
+.hf-footer {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 70px; font-family: var(--f-mono); font-size: 18px; color: var(--muted);
+}
+.hf-footer::before { content: "SCORE 001780  ·  1UP"; }
+
+.kicker {
+  display: inline-block; font-family: var(--f-mono); font-size: 22px; font-weight: 700;
+  letter-spacing: 3px; color: #1A1C2C; background: var(--yellow);
+  border: var(--bd); box-shadow: var(--shadow-sm); padding: 10px 24px; margin-bottom: 36px;
+}
+.kicker::before { content: "★ "; }
+.title-xl { font-family: var(--f-mono); font-weight: 700; font-size: 92px; line-height: 1.2; letter-spacing: 0; text-shadow: 5px 5px 0 var(--coral); }
+.title-lg { font-family: var(--f-mono); font-weight: 700; font-size: 70px; line-height: 1.25; text-shadow: 4px 4px 0 rgba(255, 0, 77, .55); }
+.hl { color: var(--yellow); text-shadow: 4px 4px 0 #000; padding: 0 4px; }
+.hl-coral { color: var(--coral); text-shadow: 4px 4px 0 #000; padding: 0 4px; }
+.hl-mint  { color: var(--mint); text-shadow: 4px 4px 0 #000; padding: 0 4px; }
+.mono { font-family: var(--f-mono); }
+
+/* 游戏对话框 */
+.card {
+  background: var(--paper); border: var(--bd); box-shadow: var(--shadow);
+  padding: 42px 46px; position: relative;
+}
+.card::after { content: "▼"; position: absolute; right: 30px; bottom: 16px; color: var(--yellow); font-size: 30px; }
+.card.coral { background: #571034; }
+.card.mint  { background: #136C4A; }
+.card.sky   { background: #1B4C8C; }
+
+.bullets { list-style: none; font-size: 40px; line-height: 1.55; font-weight: 700; }
+.bullets li { margin-bottom: 26px; padding-left: 70px; position: relative; }
+.bullets li::before { content: "▸"; position: absolute; left: 6px; color: var(--yellow); }
+.bullets li:nth-child(2)::before { color: var(--mint); }
+.bullets li:nth-child(3)::before { color: var(--sky); }
+.bullets li:nth-child(4)::before { color: var(--lilac); }
+
+/* 任务清单: ☐ → ☑ */
+.quest { list-style: none; font-size: 40px; font-weight: 700; }
+.quest li { margin-bottom: 26px; padding-left: 76px; position: relative; }
+.quest li::before { content: "☐"; position: absolute; left: 4px; top: 0; color: var(--ink); }
+.quest li.done::before { content: "☑"; color: var(--mint); }
+.quest li.done { color: var(--muted); }
+
+.term {
+  background: #0D0D1A; border: var(--bd); box-shadow: var(--shadow);
+  font-family: var(--f-mono); font-size: 31px; overflow: hidden;
+}
+.term .bar {
+  display: flex; gap: 10px; align-items: center; padding: 14px 22px;
+  background: var(--paper); border-bottom: var(--bd);
+}
+.term .bar i { width: 16px; height: 16px; }
+.term .bar i:nth-child(1) { background: var(--coral); }
+.term .bar i:nth-child(2) { background: var(--yellow); }
+.term .bar i:nth-child(3) { background: var(--mint); }
+.term .bar .t { margin-left: 12px; font-size: 19px; color: var(--muted); }
+.term .body { padding: 30px 34px; line-height: 1.7; }
+.term .c-prompt { color: var(--mint); font-weight: 700; }
+.term .c-cmd { color: var(--yellow); }
+.term .c-dim { color: var(--muted); }
+
+/* 分段血条式大数字容器 */
+.big-num {
+  font-family: var(--f-mono); font-weight: 700; font-size: 210px; line-height: 1;
+  color: var(--yellow); text-shadow: 8px 8px 0 var(--coral), 12px 12px 0 #000; letter-spacing: 0;
+}
+
+.quote {
+  font-size: 48px; font-weight: 700; line-height: 1.6; font-family: var(--f-mono);
+  background: var(--paper); border: var(--bd); box-shadow: var(--shadow); padding: 42px 48px;
+  position: relative;
+}
+.quote::after { content: "▼"; position: absolute; right: 30px; bottom: 14px; color: var(--yellow); font-size: 30px; }
+.quote small { display: block; margin-top: 20px; font-size: 24px; color: var(--muted); }
+
+.steps { display: flex; gap: 34px; align-items: stretch; }
+.step {
+  flex: 1; background: var(--paper); border: var(--bd); box-shadow: var(--shadow-sm);
+  padding: 38px 30px 32px; position: relative;
+}
+.step .n {
+  position: absolute; top: -30px; left: -10px; padding: 8px 18px;
+  background: var(--coral); color: #fff; border: var(--bd); box-shadow: var(--shadow-sm);
+  font-family: var(--f-mono); font-size: 24px; font-weight: 700;
+}
+.step h4 { font-family: var(--f-mono); font-size: 30px; margin-bottom: 14px; color: var(--yellow); }
+.step p { font-size: 23px; line-height: 1.55; color: var(--ink); }
+
+/* XP 进度条(组件) */
+.xpbar { height: 42px; border: var(--bd); box-shadow: var(--shadow-sm); background: #0D0D1A; overflow: hidden; }
+.xpbar .fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--mint) 0 26px, var(--sky) 26px 52px);
+}
+
+#hf-subtitle {
+  position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%);
+  max-width: 1560px; text-align: center; pointer-events: none;
+}
+.hf-sent {
+  display: inline-block; font-size: 37px; font-weight: 700; line-height: 1.45;
+  color: var(--ink); background: var(--paper); border: var(--bd); box-shadow: var(--shadow-sm);
+  padding: 16px 36px;
+}
+.hf-sent::before { content: "❝ "; color: var(--yellow); }
+.hf-sent::after { content: " ❞"; color: var(--yellow); }
+.hf-sent span.done { color: var(--muted); }
+.hf-sent span.on { color: #1A1C2C; background: var(--yellow); padding: 0 6px; }
+
+#hf-progress {
+  position: absolute; left: 70px; right: 70px; bottom: 34px; height: 26px;
+  border: var(--bd); background: #0D0D1A; overflow: hidden; cursor: pointer;
+}
+#hf-progress-fill {
+  height: 100%; width: 0;
+  background: repeating-linear-gradient(90deg, var(--coral) 0 24px, var(--lilac) 24px 48px);
+}
+#hf-timecode {
+  position: absolute; right: 70px; bottom: 8px; font-family: var(--f-mono);
+  font-size: 18px; color: var(--muted);
+}
+
+#hf-playhint {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-mono); font-size: 30px; color: var(--yellow);
+  pointer-events: none; opacity: 1; transition: opacity .3s;
+}
+body.hf-ready:not(.hf-playing) #hf-playhint { opacity: 1; }
+body.hf-playing #hf-playhint { opacity: 0; }
+#hf-playhint .btn {
+  border: var(--bd); background: var(--paper); box-shadow: var(--shadow);
+  padding: 20px 50px; font-weight: 700;
+}
+#hf-playhint .btn::before { content: "PRESS SPACE "; color: var(--mint); }

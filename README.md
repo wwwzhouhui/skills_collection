@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-0.0.26-green.svg)
-![Skills](https://img.shields.io/badge/skills-22-orange.svg)
+![Skills](https://img.shields.io/badge/skills-23-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -20,6 +20,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **内容生成**: 技术文章、公众号封面、README 文档生成
 - **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作、AI 教学媒体一体化（插图/信息图/教学视频/封面/解说视频）、Grok Imagine 文生图
 - **视频剪辑**: 自动化视频剪辑与解说（video-agent-kit）——通用剪辑、电影解说、足球/篮球/电竞集锦、口播配音成片（Edge TTS 免费配音）
+- **视频生成**: 口播文字稿一键成片（voice-to-video）——TTS 词级时间戳 + HTML 动画引擎 + 确定性逐帧渲染，画面/字幕/语音逐词对应，13 套画面风格
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -37,6 +38,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | photo-homework-a4 | 将拍照上传的手写作业清单识别、按科目整理并分类打标，基于固定模板生成一页 A4 纸即可打印的 HTML 作业清单，包含科目卡片、统计条、温馨提示和学生/家长签名区 | HTML/CSS、模板生成、图像识别、A4 打印 | 2026年9月5日 | wwwzhouhui | 1.0.0 |
+| voice-to-video | 口播文字稿一键成片技能包：Edge TTS 配音（逐词时间戳）→ 一句口播一个场景的 HTML 动画合成 → 无头浏览器逐帧确定性渲染 MP4，文字稿/语音/画面逐词对应；13 套画面风格（每套含独立版式 DNA） | Python、edge-tts、Playwright、HTML/CSS/JS、ffmpeg | 2026年9月5日 | wwwzhouhui | 1.2.0 |
 | video-agent-kit | 自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片，37 个 MCP 工具（抽帧理解/时间线/渲染/QC），TTS 默认 Edge TTS 免费开箱即用 | Python、MCP、ffmpeg、OpenCV、Edge TTS | 2026年8月29日 | wwwzhouhui | 0.4.3 |
 | knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
 | ai-teaching-media | AI 教学媒体一体化技能包：一个目录串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路 | Python、HyperFrames、Minimax TTS、Nano Banana 2 / GPT Image 2 / Agnes Image 2.1 Flash | 2026年7月19日 | wwwzhouhui | 1.0.0 |
@@ -145,6 +147,58 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 ```
 
 > 详细安装与配置（MCP 注册、Python 依赖、TTS 音色）见 [video-agent-kit/README.md](video-agent-kit/README.md)。
+
+### 🎬 口播文字稿一键成片（voice-to-video）
+
+**核心功能：**
+
+- ✅ **无素材出片**：输入一段口播文字稿（甚至只给一个主题），即可生成完整视频，画面全部程序化生成
+- ✅ **TTS 词级时间戳**：Edge TTS 合成配音并返回每个词的精确时间，自动产出逐句/逐词时间轴与 SRT 字幕
+- ✅ **画音逐词对应**：一句口播 = 一个动画场景，底部字幕逐词卡拉OK高亮——声音念到哪，画面切到哪
+- ✅ **确定性渲染**：无头浏览器逐帧 seek 截图后合成，同样输入永远渲出同样每一帧，可 git 管理、看 diff、断点续渲
+- ✅ **13 套画面风格**：BlockFrame 积木、暗夜 HUD、编辑杂志、终端极客、手绘白板、极简瑞士、国潮水墨、玻璃拟态、黏土软胶、蓝图工程、像素游戏等，每种风格有独立版式 DNA（布局骨架/编排/动效签名，非简单换色）
+- ✅ **外挂字幕**：自动产出 `subtitles.srt` 供视频平台上传
+
+**目录结构：**
+
+```
+voice-to-video/
+├── SKILL.md                        # 技能入口：六步工作流（自检→定稿→TTS→合成→预览→渲染）
+├── scripts/
+│   ├── tts.py                      # 口播稿 → voice.mp3 + timeline.json + subtitles.srt/js
+│   └── render.py                   # 合成页 → 逐帧截图 → ffmpeg 合成 MP4（支持断点续渲）
+├── assets/
+│   ├── engine.js                   # 确定性动画引擎（HF.seek，一切画面状态是时间的纯函数）
+│   ├── kit.css + kits/（12 套）     # 画面风格皮肤
+│   └── template.html               # 合成页模板
+└── references/
+    ├── composition-guide.md        # 合成页编写规范
+    └── styles.md                   # 风格目录 + 版式 DNA + 自动匹配规则
+```
+
+**工作流程：**
+
+1. 整理口播稿（纯文本，按句读分段；只给主题则先写稿确认）
+2. `tts.py` 生成配音与逐句/逐词时间轴
+3. 按所选风格的版式 DNA 编写 `composition.html`（时间戳驱动场景与元素出场）
+4. 本地预览（空格播放，检查字幕高亮与场景切换）
+5. `render.py` 逐帧渲染合成 MP4（渲染耗时约为片长 2 倍，支持 `--style-kit` 一键换风格重渲）
+
+**使用示例：**
+
+```text
+把这段稿子做成视频：（粘贴口播稿）
+用国潮水墨风做一条介绍 XX 的口播视频
+这条视频换个终端极客风重渲一版
+```
+
+**与 video-agent-kit 的分工：**
+
+- `voice-to-video`：**无素材 → 有视频**，画面由引擎生成，适合知识口播、工具介绍、教程解说
+- `video-agent-kit`：**有素材 → 剪成片**，画面来自源文件，适合电影解说、球赛/电竞集锦、混剪
+- 两者可接力：先无素材出片，再做浓缩剪辑或字幕精修
+
+> 详细文档（管线原理、timeline.json 格式、脚本参数、常见问题）见 [voice-to-video/README.md](voice-to-video/README.md)。
 
 ### 🎨 AI 教学媒体一体化（ai-teaching-media）
 
@@ -2223,6 +2277,12 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - ✅ 基于 `assets/homework-a4-template.html` 生成一页 A4 纵向可打印 HTML 作业清单
 - ✅ 内置科目卡片、主题配色、温馨提示、打印勾选框和学生/家长签名区
 - ✅ 功能说明效果图暂留空位，待后续补充
+- ✅ 新增 **voice-to-video** Skill v1.2.0（口播文字稿一键成片）
+- ✅ 无素材出片：口播稿 → Edge TTS 配音（逐词时间戳）→ HTML 动画合成 → 无头浏览器逐帧确定性渲染 MP4
+- ✅ 画音逐词对应：一句口播一个场景，字幕逐词卡拉OK高亮，场景切换/元素出场全部由词级时间戳驱动
+- ✅ 确定性渲染：同输入同输出，可 git 管理、看 diff，支持断点续渲与 `--style-kit` 一键换风格重渲
+- ✅ 13 套画面风格（BlockFrame/暗夜HUD/编辑杂志/终端极客/手绘白板/极简瑞士/国潮水墨/玻璃拟态/黏土软胶/蓝图工程/像素游戏等），每种含独立版式 DNA
+- ✅ 配套文档：SKILL.md（六步工作流）+ README.md（完整说明书）+ references（合成规范/风格目录与版式 DNA）
 
 ### 2026 年 8 月 29 日 - version 0.0.25
 

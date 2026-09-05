@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>composition</title>
+<!-- 技能资产: 样式 kit + engine.js 与本文件放同一目录(从技能 assets/ 拷贝)。
+     默认 kit.css(BlockFrame); 其他风格从 assets/kits/ 挑选, 详见 references/styles.md:
+     dark-hud / editorial / terminal / whiteboard / swiss / ink -->
+<link rel="stylesheet" href="kit.css">
+<style>
+  /* 本条视频的专属样式(可自由增改) */
+</style>
+</head>
+<body>
+
+<!-- 舞台固定 1920x1080; 渲染时视口即此尺寸, 预览时自动缩放 -->
+<div id="stage" data-width="1920" data-height="1080">
+
+  <!-- 页眉页脚(所有场景共享) -->
+  <div class="hf-header">
+    <div class="logo"><b>AI</b>系列名</div>
+    <div class="logo" style="font-size:22px;color:#8A8378">voice-to-video</div>
+  </div>
+
+  <!-- ============ 场景 0: 封面 ============
+       data-start/data-end 来自 build/timeline.json(句子 i 的 start 与 hold_end) -->
+  <section class="scene scene--cover" data-start="0" data-end="4200"
+           style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div data-anim="pop" data-dur="600" data-ease="back" class="kicker">第 01 期</div>
+    <h1 class="title-xl" data-anim="up" data-delay="300" data-dur="600">
+      把<span class="hl">口播稿</span>,<br>变成一条视频
+    </h1>
+    <p style="margin-top:36px;font-size:34px;color:#8A8378" data-anim="fade" data-delay="900">
+      文字稿 · 配音 · 动画, 逐句对应
+    </p>
+  </section>
+
+  <!-- ============ 场景 1: 要点列表 ============ -->
+  <section class="scene scene--bullets" data-start="4200" data-end="9000">
+    <div class="kicker" data-anim="fade">WHY</div>
+    <h2 class="title-lg" style="margin-bottom:44px" data-anim="up" data-delay="150">为什么这么做?</h2>
+    <ul class="bullets">
+      <li data-anim="left" data-delay="500">文字稿先变语音, 拿到<span class="hl">逐句时间戳</span></li>
+      <li data-anim="left" data-delay="1100">时间戳驱动场景切换, <span class="hl-coral">画面跟着声音走</span></li>
+      <li data-anim="left" data-delay="1700">无头浏览器逐帧截图, 渲染<span class="hl-mint">100% 确定</span></li>
+    </ul>
+  </section>
+
+  <!-- ============ 场景 2: 终端/命令 ============ -->
+  <section class="scene scene--term" data-start="9000" data-end="13500">
+    <div class="kicker" data-anim="fade">PIPELINE</div>
+    <h2 class="title-lg" style="margin-bottom:44px" data-anim="up" data-delay="150">三步出片</h2>
+    <div class="term" data-anim="up" data-delay="500" style="max-width:1200px">
+      <div class="bar"><i></i><i></i><i></i><span class="t">bash</span></div>
+      <div class="body">
+        <div><span class="c-prompt">$</span> <span class="c-cmd">python tts.py --script 口播稿.txt</span> <span class="c-dim"># 配音+时间轴</span></div>
+        <div><span class="c-prompt">$</span> <span class="c-cmd">写 composition.html</span> <span class="c-dim"># 场景=句子</span></div>
+        <div><span class="c-prompt">$</span> <span class="c-cmd">python render.py --html composition.html</span> <span class="c-dim"># 成片</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 场景 3: 大数字/统计 ============ -->
+  <section class="scene scene--stat" data-start="13500" data-end="18000"
+           style="display:flex;align-items:center;justify-content:center;gap:120px;text-align:center">
+    <div data-anim="count" data-count="0" data-delay="200" data-dur="1500" class="big-num">0</div>
+    <div style="text-align:left">
+      <h3 class="title-lg" data-anim="up" data-delay="600">元成本</h3>
+      <p style="font-size:32px;color:#8A8378;margin-top:16px" data-anim="fade" data-delay="1000">出画面靠浏览器截图, 几乎不花钱</p>
+    </div>
+  </section>
+
+  <!-- ============ 场景 4: 结尾 ============ -->
+  <section class="scene scene--end" data-start="18000"
+           style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <h1 class="title-xl" data-anim="pop" data-dur="600" data-ease="back">去试一条吧</h1>
+    <p style="margin-top:32px;font-size:34px;color:#8A8378" data-anim="fade" data-delay="500">工具开源 · 链接见简介</p>
+  </section>
+
+  <!-- 字幕 / 进度 / 提示(引擎容器, 勿删) -->
+  <div id="hf-subtitle"></div>
+  <div id="hf-progress"><div id="hf-progress-fill"></div></div>
+  <div id="hf-playhint"><div class="btn">▶ 点击播放预览</div></div>
+</div>
+
+<script src="engine.js"></script>
+<script>
+  // SUBTITLES 直接取 build/timeline.json 的 sentences 字段(逐句+逐词时间)
+  const SUBTITLES = [
+    { text: "这是第一句口播。", start: 0, end: 2000, words: [{ w: "这是", t: 100, d: 200 }, { w: "第一句", t: 300, d: 400 }, { w: "口播。", t: 700, d: 500 }] },
+    { text: "第二句在两秒后出现。", start: 2000, end: 4000, words: [] }
+  ];
+
+  HF.init({
+    audio: "build/voice.mp3",   // 预览用的配音; 留空则按内部时钟走
+    durationMs: 0,              // 0 = 由音频元数据决定; 渲染时 render.py 会显式传入
+    subtitle: true,             // 显示逐句字幕条
+    karaoke: true               // 逐词高亮(需要 words 数据)
+  });
+</script>
+</body>
+</html>
