@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.25-green.svg)
-![Skills](https://img.shields.io/badge/skills-21-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.26-green.svg)
+![Skills](https://img.shields.io/badge/skills-22-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -36,6 +36,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| photo-homework-a4 | 将拍照上传的手写作业清单识别、按科目整理并分类打标，基于固定模板生成一页 A4 纸即可打印的 HTML 作业清单，包含科目卡片、统计条、温馨提示和学生/家长签名区 | HTML/CSS、模板生成、图像识别、A4 打印 | 2026年9月5日 | wwwzhouhui | 1.0.0 |
 | video-agent-kit | 自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片，37 个 MCP 工具（抽帧理解/时间线/渲染/QC），TTS 默认 Edge TTS 免费开箱即用 | Python、MCP、ffmpeg、OpenCV、Edge TTS | 2026年8月29日 | wwwzhouhui | 0.4.3 |
 | knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
 | ai-teaching-media | AI 教学媒体一体化技能包：一个目录串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路 | Python、HyperFrames、Minimax TTS、Nano Banana 2 / GPT Image 2 / Agnes Image 2.1 Flash | 2026年7月19日 | wwwzhouhui | 1.0.0 |
@@ -59,6 +60,52 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
 
 ## Skill 功能详解
+
+### 📝 Photo Homework A4（拍照作业 → A4 打印清单）
+
+**核心功能：**
+
+- ✅ **手写作业识别**：读取用户上传的作业照片，逐条提取作业内容并按科目分组
+- ✅ **作业分类打标**：自动识别背诵类、书面类、阅读类和材料类作业，并使用对应颜色标签
+- ✅ **A4 单页清单**：基于内置模板生成固定版面的 HTML 文件，包含科目卡片、统计条、温馨提示和签名区
+- ✅ **打印友好**：严格遵循 A4 纵向单页约束，支持打印后手写勾选和学生/家长签名
+- ✅ **内容统计**：自动统计科目数、作业总数以及背诵类、书面类、材料类作业数量
+- ✅ **可选交互版**：用户未限定只要打印版时，可额外生成支持点击打卡和进度条的屏幕交互版
+
+**工作流程：**
+
+1. 读取作业照片，识别手写内容和日期
+2. 按语文、数学、英语等科目整理作业条目
+3. 根据作业语义添加背诵、书面、阅读或材料标签
+4. 复制 `assets/homework-a4-template.html` 并填充识别结果
+5. 调整科目卡片、颜色和统计数据，检查总高度不超过一页
+6. 输出 `作业清单-A4打印版.html`，并附上可核对的作业内容表格
+
+**版面特点：**
+
+- 使用双列科目卡片布局，科目数量较多或条目较长时自动收窄间距和字号
+- 内置蓝、绿、紫、橙、红、青六套主题色，科目重复时循环使用
+- 内置物理、数学、化学、英语、历史、语文、生物、地理、政治等科目图标
+- 保留卡片内分页保护，避免打印时单张科目卡片被拆分
+
+**使用示例：**
+
+```
+请识别这张作业照片，按科目整理成一页 A4 可打印的作业清单。
+```
+
+**输出与打印：**
+
+- 输出 HTML 文件，使用浏览器打开后按 `Ctrl + P` 打印
+- 打印设置选择 A4、纵向，边距选择“无”或“默认”，确保完整打印在一页纸上
+- 对识别不确定的手写条目，在交付时单独提醒用户核对
+
+**效果图：**
+
+![image-20260905123556184](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20260905123556184.png)
+
+
+---
 
 ### 🎬 自动化视频剪辑与解说（video-agent-kit）
 
@@ -2100,14 +2147,14 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 21
+- **总技能数**: 22
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
 - **AI 多模态**: 6 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
-- **效率工具**: 1 (obsidian-search)
+- **效率工具**: 2 (obsidian-search, photo-homework-a4)
 - **合规审查**: 1 (wechat-compliance-reviewer)
 
 ### 最新版本动态
@@ -2167,6 +2214,15 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 9 月 5 日 - version 0.0.26
+
+- ✅ 新增 **photo-homework-a4** Skill v1.0.0
+- ✅ 支持从手写作业照片中识别作业内容，按科目整理并提取日期
+- ✅ 支持背诵类、书面类、阅读类和材料类作业分类打标与数量统计
+- ✅ 基于 `assets/homework-a4-template.html` 生成一页 A4 纵向可打印 HTML 作业清单
+- ✅ 内置科目卡片、主题配色、温馨提示、打印勾选框和学生/家长签名区
+- ✅ 功能说明效果图暂留空位，待后续补充
 
 ### 2026 年 8 月 29 日 - version 0.0.25
 
@@ -2510,4 +2566,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 4 月 11 日 (v0.0.22)
+**文档生成时间**: 2026 年 9 月 5 日 (v0.0.26)

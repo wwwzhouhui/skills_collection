@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<!-- 页面标题中的日期需要替换为实际日期 -->
+<title>作业清单 · {日期}（A4打印版）</title>
+<style>
+  /* ===== A4 打印核心设置，请勿修改 ===== */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #e5e7eb; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #1f2937;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    min-height: 296mm;
+    margin: 16px auto;
+    background: #fff;
+    padding: 12mm 14mm 10mm;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+    .no-print { display: none !important; }
+  }
+
+  /* ===== 页眉 ===== */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #4f6ef7;
+    padding-bottom: 4mm;
+    margin-bottom: 5mm;
+  }
+  .head-left { display: flex; align-items: center; gap: 4mm; }
+  .logo {
+    width: 13mm; height: 13mm;
+    border-radius: 3mm;
+    background: linear-gradient(135deg, #4f6ef7, #9b59f5);
+    color: #fff;
+    font-size: 8mm;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+  }
+  h1 { font-size: 20pt; letter-spacing: 2px; color: #1f2937; }
+  .head-right { text-align: right; font-size: 9.5pt; color: #6b7280; line-height: 1.6; }
+  .head-right b { color: #4f6ef7; font-size: 12pt; }
+
+  /* ===== 概览统计条：数字根据实际内容重新计算 ===== */
+  .overview {
+    display: flex;
+    gap: 3mm;
+    margin-bottom: 5mm;
+  }
+  .ov-item {
+    flex: 1;
+    border-radius: 2.5mm;
+    padding: 2.5mm 3mm;
+    text-align: center;
+    color: #fff;
+    line-height: 1.4;
+  }
+  .ov-item .n { font-size: 15pt; font-weight: bold; }
+  .ov-item .t { font-size: 8pt; opacity: 0.92; }
+  .ov-blue   { background: #4f6ef7; }
+  .ov-purple { background: #9b59f5; }
+  .ov-green  { background: #1f9d7a; }
+  .ov-orange { background: #e67e22; }
+  .ov-red    { background: #c0392b; }
+
+  /* ===== 科目卡片：双列网格，科目多时可压缩为更小字号 ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    flex: 1;
+  }
+  .subject {
+    border: 0.5mm solid #e0e4ee;
+    border-top: 1.2mm solid var(--accent);
+    border-radius: 2.5mm;
+    padding: 3mm 3.5mm 3mm;
+    page-break-inside: avoid;
+  }
+  .subject-head {
+    display: flex;
+    align-items: center;
+    gap: 2.5mm;
+    margin-bottom: 2mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 0.3mm dashed #d8dde9;
+  }
+  .icon {
+    width: 8mm; height: 8mm;
+    border-radius: 2mm;
+    background: var(--accent-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5mm;
+  }
+  .subject-head h2 { font-size: 13pt; color: var(--accent); flex: 1; }
+  .subject-count {
+    font-size: 8pt;
+    color: #8a94a6;
+    background: #f3f5fa;
+    padding: 0.5mm 2.5mm;
+    border-radius: 999px;
+  }
+  ul.tasks { list-style: none; }
+  ul.tasks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5mm;
+    padding: 1.6mm 0;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    border-bottom: 0.2mm dotted #eef0f6;
+  }
+  ul.tasks li:last-child { border-bottom: none; }
+  /* 空心方框：打印后供手写打勾 */
+  .checkbox {
+    width: 4.5mm; height: 4.5mm;
+    border: 0.45mm solid #9aa7c7;
+    border-radius: 1.2mm;
+    flex-shrink: 0;
+    margin-top: 0.8mm;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 7.5pt;
+    padding: 0.2mm 1.8mm;
+    border-radius: 1.2mm;
+    margin-left: 1.5mm;
+    border: 0.25mm solid;
+  }
+  .tag-recite { color: #d97a1a; border-color: #f0c48a; background: #fff7ea; }
+  .tag-write  { color: #4f6ef7; border-color: #b9c6f9; background: #eef2fe; }
+  .tag-material { color: #1f9d7a; border-color: #9fd9c6; background: #e9f8f2; }
+  .tag-read   { color: #16a085; border-color: #9fd9c6; background: #e9f8f2; }
+
+  /* ===== 底部：温馨提示 + 签名区 ===== */
+  .footer-area {
+    margin-top: 4mm;
+    display: flex;
+    gap: 4mm;
+    align-items: stretch;
+  }
+  .note-box {
+    flex: 1;
+    border: 0.4mm solid #f0d9a8;
+    background: #fffcf3;
+    border-radius: 2.5mm;
+    padding: 2.5mm 3.5mm;
+    font-size: 9pt;
+    color: #8a6d2f;
+    line-height: 1.7;
+  }
+  .sign-box {
+    width: 62mm;
+    border: 0.4mm solid #d8dde9;
+    border-radius: 2.5mm;
+    padding: 2.5mm 3.5mm;
+    font-size: 9.5pt;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .sign-box .line {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .sign-box .blank {
+    display: inline-block;
+    border-bottom: 0.3mm solid #9aa7c7;
+    width: 26mm;
+    height: 6mm;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- 页眉：替换日期与星期 -->
+  <header>
+    <div class="head-left">
+      <div class="logo">📝</div>
+      <h1>今日作业清单</h1>
+    </div>
+    <div class="head-right">
+      <div><b>{日期，如：2026年9月4日}</b> · {星期，如：星期五}</div>
+      <div>完成一项打一个勾 ✓</div>
+    </div>
+  </header>
+
+  <!-- 概览统计条：根据识别结果统计 科目数/作业总数/背诵类/书面类/材料类 数量 -->
+  <div class="overview">
+    <div class="ov-item ov-blue"><div class="n">{科目数}</div><div class="t">科目</div></div>
+    <div class="ov-item ov-purple"><div class="n">{作业总数}</div><div class="t">作业总数</div></div>
+    <div class="ov-item ov-orange"><div class="n">{背诵类数}</div><div class="t">背诵类</div></div>
+    <div class="ov-item ov-blue"><div class="n">{书面类数}</div><div class="t">书面类</div></div>
+    <div class="ov-item ov-green"><div class="n">{材料类数}</div><div class="t">材料类</div></div>
+  </div>
+
+  <!-- 科目卡片网格：每个科目一个 .subject 卡片，双列自动排布。
+       每个科目使用不同配色（--accent 主题色 + --accent-bg 浅色底），
+       推荐色板见 SKILL.md。以下为两个示例卡片，按实际识别内容增删。 -->
+  <div class="grid">
+    <!-- 示例科目卡片 1 -->
+    <div class="subject" style="--accent:#4f6ef7; --accent-bg:#e8f0fe;">
+      <div class="subject-head">
+        <div class="icon">🧪</div><h2>{科目名，如：物理}</h2><span class="subject-count">{N} 项</span>
+      </div>
+      <ul class="tasks">
+        <li><span class="checkbox"></span><span>{作业内容}{分类标签span}</span></li>
+        <!-- 更多作业项按同样结构追加 -->
+      </ul>
+    </div>
+
+    <!-- 示例科目卡片 2 -->
+    <div class="subject" style="--accent:#2fbf9b; --accent-bg:#e6f7f1;">
+      <div class="subject-head">
+        <div class="icon">📐</div><h2>{科目名，如：数学}</h2><span class="subject-count">{N} 项</span>
+      </div>
+      <ul class="tasks">
+        <li><span class="checkbox"></span><span>{作业内容}{分类标签span}</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 底部：温馨提示（根据实际分类数量改写）+ 签名区 -->
+  <div class="footer-area">
+    <div class="note-box">
+      💡 <b>温馨提示：</b>背诵类作业（{N}项）建议放在精力最好的时段完成；材料类作业（{N}项）记得先到班级群下载对应材料；书面作业注意书写工整。
+    </div>
+    <div class="sign-box">
+      <div class="line"><span>学生签名</span><span class="blank"></span></div>
+      <div class="line"><span>家长签名</span><span class="blank"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 打印提示：仅屏幕显示，打印时自动隐藏 -->
+<div class="no-print" style="text-align:center; padding: 6mm 0 20mm; color:#6b7280; font-size: 10pt;">
+  🖨️ 打印时请选择 A4 纸、纵向、无边距，即可完整打印在一页纸上
+</div>
+</body>
+</html>
