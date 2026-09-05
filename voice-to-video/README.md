@@ -13,7 +13,7 @@
 - [目录结构](#目录结构)
 - [环境依赖](#环境依赖)
 - [使用方法](#使用方法)
-- [13 套画面风格](#13-套画面风格)
+- [12 套画面风格](#12-套画面风格)
 - [脚本参考手册](#脚本参考手册)
 - [timeline.json 格式](#timelinejson-格式)
 - [常见问题](#常见问题)
@@ -28,7 +28,7 @@
 - ✅ **配音自动生成**：edge-tts（免费、微软音色），返回每个词的精确时间戳
 - ✅ **画音严格同步**：一句口播 = 一个动画场景，字幕逐词卡拉OK高亮，声音念到哪画面切到哪
 - ✅ **确定性渲染**：同样的输入永远渲出同样的每一帧，视频可以像代码一样 git 管理、看 diff、复现
-- ✅ **13 套画面风格**：每种风格有独立的版式 DNA（布局骨架/编排/动效签名），不是简单换配色
+- ✅ **12 套画面风格**：每种风格有独立的版式 DNA（布局骨架/编排/动效签名），不是简单换配色；支持面板内嵌视频素材（webm/VP9）
 - ✅ **修改成本极低**：改稿子→重跑 TTS；改画面→改 HTML；换风格→一条渲染参数，互不影响
 - ✅ **外挂字幕**：自动产出 `subtitles.srt` 供视频平台上传
 
@@ -55,7 +55,7 @@ final.mp4
 
 1. **一切画面状态是时间 t 的纯函数**。引擎只有一个入口 `HF.seek(t)`，相同 t 永远得到相同画面——所以"渲染"就是让 t 走过整个时间轴并逐帧截图。禁用 CSS animation、setTimeout、随机数，保证确定性。
 2. **音频即时钟**。场景的 `data-start/data-end`、元素出现的 `data-delay`、卡拉OK高亮，全部来自 tts.py 产出的词级时间戳，而不是人肉估的秒数。
-3. **风格与内容解耦**。动画引擎和场景时间轴是骨架，13 套 kit（配色/字体/组件皮肤）+ 版式 DNA（布局骨架）是皮肤和肌肉，互相独立、随意替换。
+3. **风格与内容解耦**。动画引擎和场景时间轴是骨架，12 套 kit（配色/字体/组件皮肤）+ 版式 DNA（布局骨架）是皮肤和肌肉，互相独立、随意替换。
 
 ## 目录结构
 
@@ -70,7 +70,7 @@ voice-to-video/
 │   ├── engine.js                   # 确定性动画引擎（HF.seek / HF.play / 声明式动画）
 │   ├── kit.css                     # 默认风格：BlockFrame 积木风
 │   ├── template.html               # 合成页模板（含各类场景示例）
-│   └── kits/                       # 12 套扩展风格（见下表）
+│   └── kits/                       # 11 套扩展风格（见下表）
 │       ├── dark-hud.css  editorial.css  terminal.css  whiteboard.css
 │       ├── swiss.css     ink.css       glass.css      clay.css
 │       └── blueprint.css pixel.css
@@ -127,7 +127,7 @@ python scripts/render.py --html composition.html --audio build/voice.mp3 \
     --style-kit assets/kits/ink.css --out final_ink.mp4
 ```
 
-## 13 套画面风格
+## 12 套画面风格
 
 | Kit | 风格 | 一句话特征 | 适用题材 |
 |---|---|---|---|
@@ -142,6 +142,7 @@ python scripts/render.py --html composition.html --audio build/voice.mp3 \
 | `kits/clay.css` | 黏土拟态软胶风 | 粉彩蓬松、软胶质感、胶囊与圆徽章 | 轻松科普、生活、亲子 |
 | `kits/blueprint.css` | 蓝图工程风 | 工程蓝制图网格、虚线框、FIG 图号与 ⌀ 编号 | 原理讲解、架构解析 |
 | `kits/pixel.css` | 像素复古游戏风 | 8-bit 色板、游戏对话框、任务清单与血条 | 游戏、怀旧科技 |
+| `kits/stage.css` | 深蓝舞台风（Remotion 同美学） | 深夜蓝底、大圆角深蓝面板、渐变强调、节号标题+面板进度线；支持面板内嵌视频 | 产品发布、能力展示、数据讲解 |
 
 每种风格不只是配色——`references/styles.md` 的**版式 DNA** 一节规定了各自的布局骨架、编排方式、装饰元素和动效签名（例如：terminal 必须是"命令+输出"结构、swiss 禁用卡片贴网格、ink 用竖排和印章）。生成合成页时必须按 DNA 重组版面。
 
@@ -215,12 +216,14 @@ python scripts/render.py --html composition.html --audio build/voice.mp3 --out f
 | 音画差半拍 | render.py 以 ffprobe 探测的音频时长为准；确认 composition 没写死 durationMs |
 | 长视频渲染太久 | 草稿用 `--fast`/低分辨率；或 `--fps 24`；渲染支持断点续渲 |
 | 只想换风格 | 不用改合成页：`--style-kit` 注入即可 |
+| 合成页内嵌的视频是黑屏 | 无头 Chromium 无 H.264 解码器：素材必须转 webm（`ffmpeg -c:v libvpx-vp9`），渲染加 `--wait-videos`，页面用 `HF.bindVideo` 注册 |
 
 ## 版本记录
 
 - **2026-09-05 v1.0**：技能创建。TTS 词级时间轴、确定性引擎、BlockFrame 风格、端到端验证。
 - **2026-09-05 v1.1**：`tts.py` 显式 `boundary="WordBoundary"`（修复 7.2.8 默认只发句边界）；新增 `subtitles.js` 产出；卡拉OK标点回填；`render.py` 支持断点续渲与 `--style-kit` 风格注入。
-- **2026-09-05 v1.2**：风格扩展至 13 套；`references/styles.md` 新增**版式 DNA** 体系（按风格重组页面结构，而非仅换 CSS）；实测 5 种版式 DNA 各出一条成片（杂志跨页/终端会话/白板便利贴/瑞士网格/水墨竖排）。
+- **2026-09-05 v1.2**：风格扩展至 11 套扩展 + 1 默认；`references/styles.md` 新增**版式 DNA** 体系（按风格重组页面结构，而非仅换 CSS）；实测 5 种版式 DNA 各出一条成片（杂志跨页/终端会话/白板便利贴/瑞士网格/水墨竖排）。
+- **2026-09-05 v1.3**：新增**深蓝舞台（stage）**风格——Remotion 同美学（大圆角面板舞台、节号标题、渐变强调、面板进度线）；引擎支持**面板内嵌视频素材**（`HF.bindVideo` + `HF.waitVideos`，素材须 webm/VP9）；`render.py` 新增 `--wait-videos` 逐帧等待视频 seek；实测同款结构演示片（数字滚动/人物卡片/口播讲解/影视混剪榜单）。
 
 ---
 

@@ -214,6 +214,7 @@
       applyAnim(a, t);
     }
     for (i = 0; i < HF._renderers.length; i++) HF._renderers[i](t);
+    if (HF._videos.length) syncVideos(t);
     renderSubtitle(t);
 
     var fill = document.getElementById("hf-progress-fill");
@@ -254,11 +255,16 @@
       if (pr && pr.catch) pr.catch(function () { });
     }
     document.body.classList.add("hf-playing");
+    for (var vi = 0; vi < HF._videos.length; vi++) {
+      var rv = HF._videos[vi];
+      try { rv.el.currentTime = Math.max(0, (HF.t - rv.offset) / 1000); rv.el.play().catch(function () { }); } catch (e) { }
+    }
     rafId = requestAnimationFrame(loop);
   };
   HF.pause = function () {
     HF.playing = false;
     if (audioEl) audioEl.pause();
+    for (var vi = 0; vi < HF._videos.length; vi++) { try { HF._videos[vi].el.pause(); } catch (e) { } }
     if (rafId) cancelAnimationFrame(rafId);
     document.body.classList.remove("hf-playing");
   };
@@ -266,6 +272,42 @@
   HF.nudge = function (dMs) { HF.pause(); HF.seek(HF.t + dMs); };
 
   HF.on = function (fn) { HF._renderers.push(fn); };   // 自定义逐帧渲染
+
+  // ---------- 面板内嵌视频素材(确定性 seek 同步) ----------
+  HF._videos = [];
+  // HF.bindVideo("#id 或元素", 场景相对偏移毫秒): 注册后每次 seek 会把视频 currentTime
+  // 精确对到 (t-offset)/1000; 渲染器每帧前会等 HF.waitVideos() 确认 seek 完成。
+  HF.bindVideo = function (el, offsetMs) {
+    var v = typeof el === "string" ? document.querySelector(el) : el;
+    if (!v || v.tagName !== "VIDEO") return null;
+    v.muted = true; v.playsInline = true; v.preload = "auto";
+    var rec = { el: v, offset: +offsetMs || 0 };
+    HF._videos.push(rec);
+    return v;
+  };
+  HF.waitVideos = function () {
+    var raf2 = function () { return new Promise(function (res) { requestAnimationFrame(function () { requestAnimationFrame(function () { res(); }); }); }); };
+    return Promise.all(HF._videos.map(function (r) {
+      var v = r.el;
+      var p = (!v.seeking && v.readyState >= 2) ? Promise.resolve() : new Promise(function (res) {
+        var done = function () { v.removeEventListener("seeked", done); res(); };
+        v.addEventListener("seeked", done);
+        setTimeout(done, 1500);
+      });
+      return p.then(raf2);   // seeked 事件后仍需等合成器上帧, 否则截到黑帧
+    }));
+  };
+  function syncVideos(t) {
+    for (var i = 0; i < HF._videos.length; i++) {
+      var r = HF._videos[i], v = r.el;
+      if (HF.playing && !v.paused) continue;      // 播放态交给媒体时钟自走
+      var target = Math.max(0, (t - r.offset) / 1000);
+      if (isFinite(v.duration) && target > v.duration) target = v.duration;
+      if (Math.abs(v.currentTime - target) > 0.034 && !v.seeking) {
+        try { v.currentTime = target; } catch (e) { /* 未加载完时忽略 */ }
+      }
+    }
+  }
   HF.setDuration = function (ms) {
     HF.durationMs = +ms || Infinity;
     for (var i = 0; i < HF.scenes.length; i++) {

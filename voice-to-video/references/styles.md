@@ -94,6 +94,13 @@
 - 序号用 ★/▸/关卡徽章；结尾可做 "PRESS START / STAGE CLEAR" 式谢幕
 - 动效签名：pop 硬弹(dur 250-350 无缓出拖尾)、fade 瞬切(120-180)；全部 mono 字体
 
+### stage 深蓝舞台风 —— Remotion 同美学发布会
+- 每个能力的画面装进一张**大圆角深蓝面板**(`.panel`, 约 1660×720 居中)；深夜蓝底 + 极淡网格 + 中心暗角
+- 三件套布局：左上节号标题(`.secno` 渐变数字 + 标题/副标题) / 底部居中面包屑(`01 · 数字滚动`) / **面板底部细进度线**(`.pline`，随本场景进度生长，用 HF.on 闭包驱动)
+- 强调 = 浅蓝→紫渐变(`.gtext` 渐变大词、`.pill.on` 药丸切换、`.big-num` 发光数字)；影视/数据段切换金色(`.hl-coral` `.gtext-gold`)
+- **面板内嵌视频**：`HF.bindVideo("#vid", 场景start)` + render.py `--wait-videos`，素材**必须 webm(VP9/VP8)**——无头 Chromium 无 H.264 解码器
+- 动效签名：fade/up 从容(dur 400-600)、count 上滚是招牌；场景间黑场过渡自然发生(面板内容切换即可)
+
 ## 各风格注意点
 
 - **dark-hud**：发光用 text-shadow/box-shadow 实现，纯 CSS 无粒子图；深底上正文对比度足够（#E6F1FF on #0A0F1E）。
@@ -103,6 +110,7 @@
 - **swiss**：无边框圆角（0）、无阴影；强调红一屏一处；编号用 CSS counters（`01 / 02 /`）。
 - **ink**：楷体标题/宋体正文（Windows 自带 KaiTi/SimSun，无需装字体）；kicker 是印章样式；`#stage::after` 画界格内框。
 - 全部风格：字幕条/进度条/播放提示都有对应皮肤，逐词卡拉OK高亮色随风格走。
+- stage：内嵌视频素材**必须转 webm(VP9/VP8)**（`ffmpeg -c:v libvpx-vp9`）——Playwright 的 Chromium 无 H.264 解码器，mp4 会 readyState=0 黑屏；渲染时加 `--wait-videos`；预览时 `HF.bindVideo` 注册的片段会跟随音频时钟播放。
 - glass：磨砂用 `backdrop-filter: blur()`，无头 Chromium 支持且确定性可截图；色场背景是静态渐变，不引入图片。
 - clay：立体感全靠 box-shadow 双层(外投影+inset 高光)，无渐变图片；文字对比度已调足。
 - blueprint：卡片图号用 `data-fig="1 "` 属性显示；强调色只有琥珀黄，其余全白线。

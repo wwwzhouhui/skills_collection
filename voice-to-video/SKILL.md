@@ -63,7 +63,7 @@ python <skill>/scripts/tts.py --script script.txt --out build --voice xiaoxiao
 
 ## Step 3 · 编写合成页 composition.html
 
-0. **选画面风格**：先读 `references/styles.md`（风格目录+版式 DNA+选择规则）。用户指定了风格就用对应的 kit（`assets/kits/` 下有 dark-hud / editorial / terminal / whiteboard / swiss / ink / glass / clay / blueprint / pixel），没指定就按题材自动匹配，拿不准用默认 `assets/kit.css`（BlockFrame 积木风）。
+0. **选画面风格**：先读 `references/styles.md`（风格目录+版式 DNA+选择规则）。用户指定了风格就用对应的 kit（`assets/kits/` 下有 dark-hud / editorial / terminal / whiteboard / swiss / ink / glass / clay / blueprint / pixel / stage），没指定就按题材自动匹配，拿不准用默认 `assets/kit.css`（BlockFrame 积木风）。画面需要内嵌视频素材时用 stage 风格 + `HF.bindVideo`，素材转 webm，渲染加 `--wait-videos`。
 1. 拷贝 `assets/engine.js`、`assets/template.html`（改名 composition.html）和**选中的 kit**（如 `assets/kits/ink.css`）到视频目录，composition.html 的 `<link rel="stylesheet">` 指向该 kit 文件名。注意：安全钩子会拦截用 Bash `cp` 复制源码文件，用 Read + Write 工具完成拷贝（engine.js / kit 内容原样写入）。
 2. **先读 `references/composition-guide.md`**（对齐规则、动画属性、场景类型、自检清单都在里面），要点：
    - 一句口播 = 一个 `.scene`，`data-start` = 句子 `start`，`data-end` = 句子 `hold_end`；

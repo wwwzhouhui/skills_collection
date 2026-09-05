@@ -60,6 +60,8 @@ def main():
     ap.add_argument("--fast", action="store_true", help="草稿模式: crf 23 + veryfast")
     ap.add_argument("--style-kit", default=None,
                     help="渲染时注入的 kit CSS 路径(覆盖合成页 <link> 的样式, 免复制切换风格)")
+    ap.add_argument("--wait-videos", action="store_true",
+                    help="每帧等待合成页内嵌 <video> seek 完成(画面含视频素材时必开, 略慢)")
     ap.add_argument("--frames-dir", default=None)
     ap.add_argument("--keep-frames", action="store_true")
     ap.add_argument("--from-frame", type=int, default=0, help="跳过此帧之前(断点续渲)")
@@ -119,6 +121,8 @@ def main():
                 continue
             t_ms = i * 1000.0 / args.fps
             page.evaluate("t => HF.seek(t)", t_ms)
+            if args.wait_videos:
+                page.evaluate("() => (window.HF && HF.waitVideos) ? HF.waitVideos() : null")
             page.screenshot(path=str(fpath), type="jpeg", quality=args.quality)
             if i % 60 == 0:
                 done, el = i + 1, time.time() - t0
