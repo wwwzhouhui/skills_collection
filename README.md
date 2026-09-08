@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.26-green.svg)
-![Skills](https://img.shields.io/badge/skills-23-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.27-green.svg)
+![Skills](https://img.shields.io/badge/skills-24-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -37,6 +37,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| remotion-video-factory | 视觉优先的程序化视频生产流水线：Remotion + React 代码渲染精确图形动画（矩阵/连线/图表/数字滚动/流程图解），edge-tts 中文配音自动测长并重建时间线，三层音频（配音/BGM/SFX 钉帧表），确定性渲染，双版本成片交付 | TypeScript、React、Remotion、edge-tts、ffmpeg | 2026年9月7日 | wwwzhouhui | 1.1.0 |
 | photo-homework-a4 | 将拍照上传的手写作业清单识别、按科目整理并分类打标，基于固定模板生成一页 A4 纸即可打印的 HTML 作业清单，包含科目卡片、统计条、温馨提示和学生/家长签名区 | HTML/CSS、模板生成、图像识别、A4 打印 | 2026年9月5日 | wwwzhouhui | 1.0.0 |
 | voice-to-video | 口播文字稿一键成片技能包：Edge TTS 配音（逐词时间戳）→ 一句口播一个场景的 HTML 动画合成 → 无头浏览器逐帧确定性渲染 MP4，文字稿/语音/画面逐词对应；13 套画面风格（每套含独立版式 DNA） | Python、edge-tts、Playwright、HTML/CSS/JS、ffmpeg | 2026年9月5日 | wwwzhouhui | 1.4.0 |
 | video-agent-kit | 自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片，37 个 MCP 工具（抽帧理解/时间线/渲染/QC），TTS 默认 Edge TTS 免费开箱即用 | Python、MCP、ffmpeg、OpenCV、Edge TTS | 2026年8月29日 | wwwzhouhui | 0.4.3 |
@@ -62,6 +63,25 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎬 Remotion Video Factory（视觉优先的程序化视频工厂）
+
+**核心功能：**
+
+- ✅ **精确图形动画**：注意力矩阵、拓扑连线、数据图表、数字滚动、流程图解全部由 Remotion + React 代码绘制，文字零乱码、结构可参数化
+- ✅ **AI 配音自动对齐**：edge-tts 分段生成 + ffprobe 实测时长，build-timeline.mjs 按实测重建时间线（场景 = max(视觉最短, 配音+40f)），旁白永不被画面切走
+- ✅ **三层音频**：配音 + BGM（淡入出，可开关）+ SFX 钉帧表（相对帧表达式，时间线平移自动跟随）
+- ✅ **确定性渲染与双版本交付**：同样输入永远渲出同样的帧；带 BGM / 无 BGM 双版本 + 逐句 SRT 字幕
+
+**工作流程：**
+
+简报与分镜 → 拷贝模板工程 → tts.py 生成配音并测长 → build-timeline.mjs 重建时间线 → 逐镜头实现场景组件（8 种动画模式词汇表）→ 声音设计 → 双版本渲染交付
+
+**适用场景：** 技术讲解/科普动画视频；把概念、数据、架构、算法做成动画演示（矩阵、连线、图表、公式、流程为主角的内容）
+
+**🎬 演示视频（示例成片）：**
+
+[▶ 点击播放：edge-tts 配音 · 三层音频 · 确定性渲染成片（MP4）](https://obsidian.duckcloud.fun/files/final-a96bf69c66dc90f4c03e5bf691d232ecb27d92d0.mp4)
 
 ### 📝 Photo Homework A4（拍照作业 → A4 打印清单）
 
@@ -2214,10 +2234,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 22
+- **总技能数**: 24
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
 - **AI 多模态**: 6 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit)
+- **视频生成**: 2 (voice-to-video, remotion-video-factory)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2226,6 +2247,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **remotion-video-factory**: v1.1.0 (2026-09-07) - 审查修复版：tts.py 剥离旁白稿 Markdown 结构行、时间线/字幕/短场景淡入淡出健壮性加固，并新增 check-env.mjs 一键环境自检；视觉优先的程序化视频生产流水线（Remotion + React 代码绘制图形动画 · edge-tts 自动测长配音 · 三层音频 · 确定性渲染 · 双版本交付）
 - **video-agent-kit**: v0.4.3 (2026-08-29) - 初始版本，自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片；37 个 MCP 工具（抽帧理解/时间线/渲染/QC）；TTS 默认 Edge TTS 免费开箱即用
 - **grok-imagine-image**: v1.0.0 (2026-07-26) - 初始版本，通过兼容 Grok2API / OpenAI 风格的 `/v1/images/generations` 调用 `grok-imagine-image` 文生图；内置本地脚本，支持环境变量覆盖、媒体 URL 改写下载与 JSON 输出
 - **ai-teaching-media**: v1.0.0 (2026-07-19) - 初始版本，AI 教学媒体一体化技能包，串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路
@@ -2281,6 +2303,16 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 9 月 8 日 - version 0.0.27
+
+- ✅ 新增 **remotion-video-factory** Skill v1.1.0（视觉优先的程序化视频工厂）
+- ✅ Remotion + React 代码绘制精确图形动画（注意力矩阵/连线拓扑/数据图表/数字滚动/流程图解），文字零乱码、结构可参数化、改数据自动重排
+- ✅ edge-tts 中文配音分段生成 + ffprobe 实测时长自动重建时间线（场景 = max(视觉最短, 配音+40f)），旁白永不被画面切走
+- ✅ 三层音频：配音 + BGM（淡入出，可开关）+ SFX 钉帧表（相对帧表达式）；确定性渲染，同样输入永远渲出同样的帧
+- ✅ 双版本交付：带 BGM / 无 BGM + 逐句 SRT 字幕；配套 5 个脚本（check-env / selftest / tts.py / build-timeline / render.mjs）
+- ✅ 配套文档：SKILL.md + README.md（含项目统计与更新说明）+ references（八步工作流 · 8 种动画模式 · 声音设计）+ examples 实战案例复盘（《1M 上下文的秘密》125s）
+- ✅ 项目统计：技能包 ≈285 KB、文本文件 28 个、代码 ≈1,063 行（ts/tsx ≈403 · mjs 518 · py 142）、1920×1080@30fps、8 种动画模式
 
 ### 2026 年 9 月 5 日 - version 0.0.26
 
@@ -2639,4 +2671,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 9 月 5 日 (v0.0.26)
+**文档生成时间**: 2026 年 9 月 8 日 (v0.0.27)

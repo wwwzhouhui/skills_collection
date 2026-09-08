@@ -1,0 +1,5 @@
+node_modules/
+out/
+build/*
+!build/scenes.json
+!build/subtitles.srt
