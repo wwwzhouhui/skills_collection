@@ -56,11 +56,41 @@ python3 <skill>/scripts/tts.py --script VOICEOVER_ZH.md --out . --voice yunyang
 
 产出 `public/vo/scene{N}.mp3` + `build/durations.json`（实测每段秒数与帧数）。
 
-音色：yunyang 播报（技术讲解默认）/ yunjian 沉稳 / yunxi 阳光 / xiaoxiao 女声通用。
+edge 引擎音色：yunyang 播报（技术讲解默认）/ yunjian 沉稳 / yunxi 阳光 / xiaoxiao 女声通用。
 429 限流：脚本已内置 3 次退避重试；仍失败换网络或稍后再跑（幂等，重跑覆盖）。
 
 **审听点**：技术名词读音（GQA/Q/KV 是否别扭）、断句是否破坏语义。
 不满意 → 改稿子重跑本步，成本 1 分钟。
+
+### 克隆音色引擎（--engine clone，更真实的人声）
+
+默认 edge-tts 是微软神经音色；要"听起来像真人"（克隆自己的声音或任意参考音色），
+给 tts.py 加 `--engine clone`，走自定义克隆服务（OmniVoice，默认地址
+`https://omnivoice.duckcloud.fun`，可用 `--base-url` 覆盖；依赖 `pip install requests`）：
+
+```bash
+# 首次：给 5–15s 干净人声参考音频 + 逐字文稿，建立克隆音色
+#（voice_id 自动存到 build/clone-voice-id.txt，之后免传参考音频）
+python <skill>/scripts/tts.py --engine clone --script VOICEOVER_ZH.md --out . `
+    --ref-audio my-voice.wav --ref-text "参考音频的逐字文稿"
+
+# 之后：自动复用 build/clone-voice-id.txt 里的 voice_id
+python <skill>/scripts/tts.py --engine clone --script VOICEOVER_ZH.md --out .
+```
+
+参数与行为：
+- `--num-steps 32`（默认，质量优先）→ `--num-steps 16` 提速（质量略降）
+- `--seed` 默认 42 固定种子：同稿重跑得到同样音频，满足确定性铁律；换 `--seed N` 可换一批演绎
+- 服务返回 WAV，脚本自动用 ffmpeg 转 MP3 → 产物仍是 `public/vo/sceneN.mp3`，
+  durations.json 多记 `engine/numSteps/seed` 字段，**§5/§8 完全不用改**
+- `--clone-concurrency N` 并发请求数（默认 1）：**实测当前服务为单 worker 排队，并发不提速反慢约 25%**
+  （服务端的 X-Generation-Seconds 不含排队时间），故默认串行；服务端扩容后可调 2–4
+- 生成比 edge-tts 慢（约 0.4×～0.8× 实时时长/段，段越多越久）；
+  已内置 3 次重试；失败排查：服务可达性 → voice_id 是否有效（重传 --ref-audio 重建）→ --timeout 调大
+- 克隆引擎暂不支持 `--rate` 语速（传了会警告并忽略），要调节奏就改稿句长
+- 缓存键含 voice_id + num_steps + seed + 文本：只改其中一项，其余段自动复用
+
+**审听点**：克隆音色的多音字/专有名词读音、句尾气息是否自然；不理想 → 换 `--seed` 或换参考音频重跑。
 
 ---
 
@@ -131,8 +161,9 @@ ffmpeg -y -v error -i out/final.mp4 -vf "select='not(mod(n,150))',scale=480:270,
 
 ```bash
 npx tsc --noEmit          # 先过类型
-npx remotion render src/index.ts Video out/final.mp4 --concurrency=4
-npx remotion render src/index.ts Video out/final-nobgm.mp4 --props=props-nobgm.json
+# 推荐：画面只渲一次；先生成无 BGM 母版，再用 FFmpeg 复制视频流并混入 BGM
+node <skill>/scripts/render.mjs --mode both --concurrency 8
+# 改画面/VO/SFX 后追加 --force；只换 BGM 时删除 final.mp4 后重跑，无需重渲画面
 # props-nobgm.json 模板已预置；Windows 勿用 echo > 生成（PowerShell 会写 UTF-16 导致解析失败）
 ```
 

@@ -1,130 +1,77 @@
 ---
 name: remotion-video-factory
-description: 视觉优先的程序化视频生产流水线：Remotion + React 代码渲染精确图形动画（注意力矩阵/连线拓扑/数据图表/数字滚动/流程图解），edge-tts 中文配音自动测长并重建时间线，三层音频（配音/BGM/SFX 钉帧表），确定性渲染，双版本成片交付。Use whenever the user wants to 用代码或 AI 制作技术讲解/科普动画视频、把概念、数据、架构、算法做成动画演示, mentions Remotion、程序化视频、动画图解、技术科普视频、animated explainer、code-rendered video, or asks for a video whose core is 图表/矩阵/连线/数据可视化/公式动画 — even if they just say "帮我做个视频" and the content is technical, data-driven, or diagram-heavy.
+description: 视觉从代码生长的技术讲解视频工厂：给一个主题，产出一条"图解动画 + AI 配音"的 MP4——结构图/矩阵/连线拓扑/图表/数字滚动全部用 Remotion + React/SVG 代码精确绘制（不用 AI 视频模型，杜绝公式乱码与连线漂移，可参数化、改数据自动重排），旁白由 TTS 逐段生成 + ffprobe 实测时长（默认 edge-tts 神经音色；`--engine clone` 支持自定义克隆音色服务，上传参考音频即可用真人音色配音，人声更真实），build-timeline.mjs 按实测时长自动重建时间线（场景 = max(视觉最短, 配音+40帧尾巴），画面永远跟着配音走、绝不被切断），三层音频混音（配音 + 可开关 BGM + 音效钉帧表），确定性渲染（禁随机数/当前时间），双版本交付（带 BGM + 无 BGM 供后期自配乐 + 逐句 SRT）。Use whenever the user wants 技术讲解视频、图解动画视频、科普/架构动画 + AI 配音、克隆声音/克隆音色做视频配音、矩阵/连线/图表动画视频、"给我一个主题做个会动的技术动画"、Remotion 视频、或强调"画面要精确/可改/文字不能乱码"的程序化视频 — 视觉主体是代码绘制的矢量图解（非实拍、非数字人、非产品界面复刻）时选本 skill。
 ---
 
-# Remotion 视频工厂（视觉优先）
+# remotion-video-factory · 图解动画 + AI 配音 技术讲解视频工厂
 
-把一个主题变成一条**图解动画 + AI 配音**的 MP4：技术结构图（矩阵/连线/流程/图表）
-全部由代码绘制——精确、可参数化、改数据自动重排；配音由 edge-tts 生成并**自动测长**，
-时间线由脚本重建，保证旁白永不被画面切走。
+给一个主题，产出 MP4：**画面 100% 由 Remotion + React/SVG 代码绘制**（精确、可参数化、改数据自动重排），**配音由 TTS 生成并按实测时长驱动时间线**（旁白永不被画面切走；默认 edge-tts 神经音色，`--engine clone` 可切换自定义克隆音色，人声更真实），三层音频混音，确定性渲染，双版本交付。
 
-```
-主题简报 ──▶ DESIGN.md（分镜表） + VOICEOVER_ZH.md（一段=一场景）
-                          │
-                          ▼ scripts/tts.py（edge-tts，逐段生成+ffprobe测长）
-              public/vo/sceneN.mp3 + build/durations.json
-                          │
-                          ▼ scripts/build-timeline.mjs（时长=max(视觉最短, 配音+40f)）
-              src/timeline.ts + src/types.ts + build/subtitles.srt
-                          │
-                          ▼ 场景组件（React，按 references/animation-vocabulary.md）
-                          ▼ remotion still 逐镜头 QA ──▶ remotion render
-              final.mp4（带BGM） + final-nobgm.mp4 + SRT + QA 静帧
-```
-
-## 何时用 / 不用本 skill
+## 与其他视频 skill 的边界
 
 | 内容特征 | 用哪个 |
 |---|---|
-| 图解、数据、结构是主角（矩阵/连线/图表/公式/流程） | **本 skill** |
-| 精确的技术动画（Token、注意力、架构、算法可视化） | **本 skill** |
-| 口播稿为主、要 12 套风格快速切换、卡拉OK逐词字幕 | voice-to-video |
-| 复刻真实产品页面（截图 + 2.5D 运镜） | video-shotcraft |
-| 真人出镜 / 实拍素材剪辑 | 都不适合 |
+| 图解/数据/结构是主角（矩阵、连线、图表、公式、流程） | **本 skill** |
+| 口播稿为主、要 12 套风格快切、卡拉 OK 逐词字幕 | voice-to-video |
+| 行业大会演讲视频（HTML PPT + 数字人 + 口型） | talk-video-studio |
+| 复刻真实产品页面（截图 + 2.5D 运镜）/ 真人出镜 | 本 skill 不适合 |
 
-## 核心理念（四条铁律）
+> 模板按 **1920×1080 横屏**设计；竖屏需改 Composition 尺寸并自行重排布局。
 
-1. **视觉从代码生长**：结构图/数据图由 React + SVG 代码绘制，不让 AI 视频模型画公式和连线（文字必乱码、关系必漂移）。素材只在"真实性值钱"的地方使用（产品截图、Logo、真实数据）。
-2. **句级音画对齐**：一段旁白 = 一个场景。场景时长 = `max(visualMin, 配音帧数 + 40f 尾巴)`，由 `build-timeline.mjs` 自动计算——改稿/换语速只需重跑两个脚本，时间线自动重排。
-3. **三层音频**：VO（1.0）+ BGM（~0.34，首尾淡入淡出，`bgm` inputProp 控制可出无 BGM 版）+ SFX 钉帧表（`from` 一律写 `SHOTS.x.from + offset` 相对表达式，时间线平移自动跟随）。
-4. **确定性渲染**：禁 `Date.now()` / `Math.random()` / 无参 `new Date()`；一切伪随机用固定种子。同样输入永远渲出同样的帧。
+## 铁律（每次都要遵守）
 
-## 环境自检（首次使用）
+1. **视觉从代码生长**：一切图形用 React/SVG 组件绘制，参数来自数据；**禁止**截图当动画、禁止 AI 视频模型生成画面（公式必乱码、连线必漂移）。
+2. **一段旁白 = 一个场景**；场景时长 = `max(visualMin, 配音实测帧数 + tail(默认40f))`，由 `build-timeline.mjs` 自动重建时间线——**改稿/换语速不手调任何一镜**，画面出点（`fade(frame, D)`）自动跟随。
+3. **确定性渲染**：禁 `Date.now()` / `Math.random()` / 网络/环境变量依赖；伪随机一律 `mulberry32(seed)`。同样输入必须渲出同样的帧——这是可回归、可迭代的前提。
+4. **三层音频独立可验证**：VO（主）+ BGM（`bgm` inputProp 开关，产出无 BGM 版供后期自配乐）+ SFX 钉帧表（`from: SHOTS.x.from + offset` 相对帧表达式，时间线平移自动跟随）。
+5. **每镜头完成即 QA 静帧**（`npx remotion still --frame=...`），不攒到最后；全片渲完再抽帧回看关键镜头 + ffprobe/volumedetect 验收音轨。
+6. **`src/timeline.ts` 与 `src/types.ts` 由脚本生成，勿手改**；手改数据只碰 `VOICEOVER_ZH.md`、`build/scenes.json`、`DESIGN.md` 三处。
 
-```bash
-node <skill>/scripts/check-env.mjs   # 一键自检：Node / ffmpeg / ffprobe / Python / edge-tts
-```
-
-手动检查（Windows 用户注意：命令是 `python` 不是 `python3`，PowerShell 没有 `head`）：
-
-```bash
-node --version          # ≥18（实测 24 可用）
-ffmpeg -version         # PowerShell 下不要接 | head -1
-python -c "import edge_tts" || python -m pip install edge-tts   # Unix 用 python3 / pip3
-```
-
-网络需能访问 Microsoft TTS 服务（配音步骤）。渲染无需网络。
-
-## 工作目录约定
+## 八步流水线
 
 ```
-<video_dir>/                  # 每条视频一个独立 Remotion 工程（从 assets/template-project 拷贝）
-├── DESIGN.md                 # 简报 + 分镜表（含每镜 visualMin）
-├── VOICEOVER_ZH.md           # 旁白稿：一段 = 一个场景，段落间空行分隔
-├── build/
-│   ├── durations.json        # tts.py 产出：逐段配音实测时长
-│   ├── scenes.json           # 手写：[{id, visualMin, tail?, vo?}]，与分镜一一对应（进 git）
-│   └── subtitles.srt         # build-timeline.mjs 产出：逐句外挂字幕
-├── public/
-│   ├── vo/sceneN.mp3         # tts.py 产出的分段配音
-│   ├── sfx/*.mp3             # 音效素材（免费商用库拷入，见 references/sound-design.md）
-│   └── bgm/bgm.mp3           # 背景音乐（可选）
-├── src/
-│   ├── timeline.ts           # build-timeline.mjs 生成（含 FPS），勿手改
-│   ├── types.ts              # build-timeline.mjs 生成（SceneId 联合类型），勿手改
-│   ├── Video.tsx             # 场景组件 + SFX 钉帧表 + 组装
-│   └── lib/                  # theme / primitives / audio 三件套（模板自带）
-└── out/                      # 渲染产物 + qa/ 静帧
+0 环境自检     node scripts/check-env.mjs        （Node/ffmpeg/ffprobe/Python/edge-tts）
+1 简报         写 DESIGN.md 头部：主题/观众/时长/风格/渠道
+2 旁白+分镜    VOICEOVER_ZH.md（一段=一场景，单段≤120字）
+               + DESIGN.md 分镜表（id/画面/动画模式/visualMin/SFX 计划）
+3 搭工程       Copy-Item -Recurse assets\template-project → my-video
+               npm install && npx tsc --noEmit     （模板自带静音占位，开箱可渲）
+4 配音         python scripts\tts.py --script VOICEOVER_ZH.md --out . --voice yunyang
+               → public/vo/sceneN.mp3 + build/durations.json（ffprobe 实测）
+               要真实人声：加 --engine clone --ref-audio 参考音频 --ref-text 逐字稿
+               （voice_id 自动存档复用；详见 workflow.md §4）
+5 时间线       手写 build/scenes.json（id + visualMin）
+               node scripts/build-timeline.mjs → timeline.ts + types.ts + SRT
+6 场景实现     src/Video.tsx 每场景一个组件；逐镜头仍帧 QA
+7 声音设计     SFX 钉帧表 + BGM；规则见 references/sound-design.md
+8 渲染交付     node scripts/render.mjs --mode both --concurrency 8
+               → final.mp4 + final-nobgm.mp4 + subtitles.srt + out/qa 静帧
 ```
 
-## 八步工作流
+每步的操作细节、产出与已知坑：**先读 `references/workflow.md`** 再动手。
 
-| 步 | 做什么 | 产出 / 命令 | 细节 |
-|---|---|---|---|
-| 1 | 明确简报：主题、观众、时长、风格、品牌 | DESIGN.md 头部 | workflow.md §1 |
-| 2 | 写旁白稿（一段=一场景）+ 分镜表（含 visualMin） | VOICEOVER_ZH.md + DESIGN.md 表格 | workflow.md §2 |
-| 3 | 拷贝模板工程并装依赖 | `cp -r <skill>/assets/template-project ./ && npm install` | workflow.md §3 |
-| 4 | 生成配音并测长 | `python3 <skill>/scripts/tts.py --script VOICEOVER_ZH.md --out . --voice yunyang` | workflow.md §4 |
-| 5 | 写 build/scenes.json，生成时间线 | `node <skill>/scripts/build-timeline.mjs` | workflow.md §5 |
-| 6 | 逐镜头实现场景组件，每镜头渲 2 张静帧自检 | `npx remotion still src/index.ts Video out/qa/x.png --frame=N` | animation-vocabulary.md |
-| 7 | 声音设计：SFX 钉帧表 + BGM | Video.tsx 的 SFX 数组 | sound-design.md |
-| 8 | 渲染双版本 + 音画抽查 + 交付 | 见下 | workflow.md §8 |
+## 文件地图
 
-**渲染命令（第 8 步）：**
-
-```bash
-# 推荐：顺序渲染并复用已有成片，避免两个完整渲染任务互相争用 CPU/内存
-node <skill>/scripts/render.mjs --mode both --concurrency 8
-# 强制重渲：追加 --force；只渲染一个版本：--mode final 或 --mode nobgm
-# 手动命令时，带 BGM 必须使用 props-bgm.json；无 BGM 使用 props-nobgm.json
-# 音画抽查（成片音量应 mean ≈ -20dB、max ≤ -2dB 无削波）
-ffmpeg -i out/final.mp4 -map 0:a -af volumedetect -f null - 2>&1 | grep -E "mean_volume|max_volume"
+```
+SKILL.md                        本入口
+references/workflow.md          八步流程细节与坑（执行前必读）
+references/animation-vocabulary.md   8 种动画模式 + 代码（矩阵点亮/连线生长/数字滚动/弹簧卡片…）
+references/sound-design.md      三层音频 + 钉帧规则 + 混音验收
+scripts/check-env.mjs           环境一键自检（跨平台）
+scripts/tts.py                  旁白 → 分段配音 + durations.json（edge-tts / --engine clone 克隆音色双引擎；增量缓存/限流重试）
+scripts/build-timeline.mjs      durations + scenes.json → timeline.ts + types.ts + SRT
+scripts/render.mjs              单次渲染 + FFmpeg 派生双版本
+scripts/selftest.mjs            回归自测（解析/校验/时间线/字幕，无需网络）
+assets/template-project/        可直接拷贝的 Remotion 工程骨架（lib/theme/primitives/audio）
+examples/case-study-long-context.md   实战复盘：《1M 上下文的秘密》125s 成片
 ```
 
-## 文件导航（何时读哪个）
+## 改稿成本对照（向用户报告时按此说明）
 
-| 时机 | 读 |
-|---|---|
-| 开始一条新视频 | 本文件 + `references/workflow.md`（全流程细节与坑） |
-| 写场景组件 / 设计动画 | `references/animation-vocabulary.md`（8 种动画模式 + 代码） |
-| 铺音频 / 选音效 / 混音 | `references/sound-design.md`（三层结构 + 钉帧规则 + 音量判例） |
-| 搭工程 | 拷贝 `assets/template-project/`（含 theme/primitives/audio 三件套与示例场景） |
-| 想看真实成片长什么样 | `examples/case-study-long-context.md`（2 分钟技术讲解片全程复盘） |
-| 改了脚本想回归验证 | `node <skill>/scripts/selftest.mjs`（无需网络，覆盖解析/校验/时间线/字幕全部关键行为） |
+- 改旁白 → 重跑 §4（tts.py）+ §5（build-timeline.mjs）+ 重渲；场景时长自动重建
+- 改画面 → 改 Video.tsx 组件 + 逐镜 QA + 重渲
+- 换 BGM → 换 `public/bgm/bgm.mp3` + 重渲（画面不必重渲，见 render.mjs `--force` 语义）
 
-## 硬规则（前人踩过的坑）
+## 交付物（每次必须齐）
 
-- **Root.tsx 必须渲染 `<MyComposition />`**（Composition 注册器），不是场景组件本身——否则报 "No video config found"。
-- 场景组件的 fade 出点一律用 `D` prop（`fade(frame, D)`），不写死数字；时间线重建后自动正确。
-- **长音效（>1.5s）必须给 `durationInFrames`**（SFX 表的 `d` 字段），否则声音拖到后续镜头。
-- **fps 唯一来源是 timeline.ts 的 `FPS`**：Composition 的 `fps={FPS}`、spring 的 `fps: FPS` 都引用它；
-  tts.py 的 `--fps` 改帧率后整条链自动一致，任何地方写死 30 都会失同步。
-- VOICEOVER_ZH.md 里的 Markdown 标题（#）、引用（>）、代码块由 tts.py 自动剥离，
-  只有正文段落进入配音——可放心用 `## 1 · hook` 组织稿子。
-- `build/scenes.json` 与 DESIGN.md 分镜表是同一信息的两份拷贝，改分镜时两处同步（id / visualMin / tail / vo）。
-- Windows：`--props` 一律走文件（shell 剥内联 JSON 引号），勿用 `echo >` 生成 props 文件
-  （PowerShell 重定向写 UTF-16）——模板已预置 props-nobgm.json；命令用 `python`（无 `python3`），
-  PowerShell 无 `head`/`cp`（拷贝用 `Copy-Item -Recurse`）。
-- 音效目录只放确认过版权的免费商用素材；成片商用前自查。
-- Remotion 对 >3 人公司需商业许可（个人与小团队免费）；edge-tts 免费但服务端可能限流（429 → 等几秒重试，脚本已内置 3 次重试）。
+`final.mp4`（带 BGM）+ `final-nobgm.mp4`（后期自配乐用）+ `build/subtitles.srt`（逐句字幕）+ `out/qa/` 静帧；并向用户报告：成片路径、时长、两版差异、改稿/改画面各自重跑哪步。

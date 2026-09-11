@@ -44,12 +44,14 @@ const run = (command, commandArgs) => new Promise((resolve, reject) => {
 
 // The base includes VO + SFX. It is the only pass that runs Chromium for every frame.
 if (!existsSync(base) || force) {
-  const cli = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-  console.log(`render visual master ${base} (concurrency=${concurrency})`);
-  await run(cli, [
+  // Node ≥18.20/20.12 起直接 spawn 'npx.cmd'（shell:false）会 EINVAL，须走 cmd /c
+  const isWin = process.platform === 'win32';
+  const cliArgs = [
     'remotion', 'render', 'src/index.ts', composition, base,
     `--props=props-nobgm.json`, `--concurrency=${concurrency}`,
-  ]);
+  ];
+  console.log(`render visual master ${base} (concurrency=${concurrency})`);
+  await run(isWin ? 'cmd.exe' : 'npx', isWin ? ['/c', 'npx', ...cliArgs] : cliArgs);
 } else {
   console.log(`reuse visual master ${base} (use --force after visual/VO/SFX changes)`);
 }

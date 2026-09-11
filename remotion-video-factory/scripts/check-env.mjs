@@ -56,8 +56,13 @@ if (!pyCmd) {
   const m = v.match(/(\d+)\.(\d+)/);
   const [maj, min] = m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : [0, 0];
   console.log(ok(`${v}（命令: ${pyCmd}${maj === 3 && min < 10 ? " —— 建议 3.10+" : ""}）`));
-  if (run(pyCmd, ["-c", "import edge_tts"])) console.log(ok("edge-tts 已安装"));
+  // import 成功时 stdout 为空字符串，必须按退出码判断（否则永远误报"未安装"）
+  const imp = spawnSync(pyCmd, ["-c", "import edge_tts"], {encoding: "utf8", timeout: 20000, windowsHide: true});
+  if (!imp.error && imp.status === 0) console.log(ok("edge-tts 已安装"));
   else console.log(warn(`edge-tts 未安装 —— ${pyCmd} -m pip install edge-tts 后重跑本检查`));
+  const impReq = spawnSync(pyCmd, ["-c", "import requests"], {encoding: "utf8", timeout: 20000, windowsHide: true});
+  if (!impReq.error && impReq.status === 0) console.log(ok("requests 已安装（--engine clone 克隆配音可用）"));
+  else console.log(warn(`requests 未安装 —— 克隆音色引擎需要：${pyCmd} -m pip install requests（edge 引擎不受影响）`));
 }
 
 console.log(
