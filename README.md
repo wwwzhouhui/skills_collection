@@ -119,7 +119,11 @@ python scripts/video.py run --plan video-plan.json --workspace out/video
 
 **🎬 演示视频（示例成片）：**
 
-[▶ 点击播放：edge-tts 配音 · 三层音频 · 确定性渲染成片（MP4）](https://obsidian.duckcloud.fun/files/final-a96bf69c66dc90f4c03e5bf691d232ecb27d92d0.mp4)
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/a9d6086a-b423-47f1-af17-d698485dc942" controls muted playsinline width="100%"></video>
+</p>
+
+> **▶️ 下载原片**：[备用直链](https://obsidian.duckcloud.fun/files/final-a96bf69c66dc90f4c03e5bf691d232ecb27d92d0.mp4)
 
 ### 📝 Photo Homework A4（拍照作业 → A4 打印清单）
 
