@@ -1,0 +1,4 @@
+interface:
+  display_name: "沉浸式诗词页面"
+  short_description: "Create cinematic scroll pages from classical Chinese poetry"
+  default_prompt: "Use $poetry-cinema-page to turn this Chinese poem into an immersive visual webpage."

@@ -1,0 +1,716 @@
+/* ============================================================
+   《将进酒》沉浸式解读页
+   视觉基调：松墨底 / 月白正文 / 烛金强调 / 黄河赭辅助
+   ============================================================ */
+
+:root {
+  --ink: #0d0f10;
+  --ink-2: #14181a;
+  --moon: #e6e2d6;
+  --moon-dim: rgba(230, 226, 214, 0.7);
+  --gold: #d9a84e;
+  --amber: #a8641f;
+  --ochre: #b8763a;
+  --hairline: rgba(217, 168, 78, 0.16);
+  --card: rgba(9, 12, 13, 0.74);
+  --font: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", "KaiTi", serif;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--moon);
+  background: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ------------------------------------------------------------
+   固定图像舞台
+   ------------------------------------------------------------ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--ink);
+  overflow: hidden;
+}
+
+.stage img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 移动端底衬：把主图裁切掉的区域用模糊的同图补上 */
+.stage-blur {
+  object-fit: cover;
+  transform: scale(1.2);
+  filter: blur(38px) saturate(0.75) brightness(0.42);
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.stage-back,
+.stage-front { object-fit: cover; }
+
+.stage-front {
+  opacity: 0;
+  transition: opacity 1100ms ease;
+  will-change: opacity;
+}
+
+/* 文案在右侧，因此右侧压暗、左侧尽量保留画面 */
+.stage-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(270deg,
+      rgba(5, 7, 8, 0.9) 0%,
+      rgba(5, 7, 8, 0.66) 32%,
+      rgba(5, 7, 8, 0.14) 60%,
+      rgba(5, 7, 8, 0) 76%),
+    linear-gradient(0deg,
+      rgba(5, 7, 8, 0.6) 0%,
+      rgba(5, 7, 8, 0) 34%),
+    linear-gradient(180deg,
+      rgba(5, 7, 8, 0.45) 0%,
+      rgba(5, 7, 8, 0) 22%);
+}
+
+/* ------------------------------------------------------------
+   阅读进度 / 章节导航 / 工具栏
+   ------------------------------------------------------------ */
+
+.progress {
+  position: fixed;
+  z-index: 6;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(230, 226, 214, 0.08);
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--amber), var(--gold));
+}
+
+.chapters {
+  position: fixed;
+  z-index: 5;
+  left: max(18px, env(safe-area-inset-left));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chapters a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(230, 226, 214, 0.34);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  transition: color 320ms ease;
+}
+
+.chapters a::before {
+  content: "";
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+  transition: width 320ms ease;
+}
+
+.chapters a:hover,
+.chapters a:focus-visible { color: var(--moon); }
+
+.chapters a[aria-current="true"] {
+  color: var(--gold);
+}
+
+.chapters a[aria-current="true"]::before { width: 30px; }
+
+.tools {
+  position: fixed;
+  z-index: 6;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+}
+
+.narration {
+  min-height: 42px;
+  padding: 9px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--moon);
+  background: rgba(9, 12, 13, 0.7);
+  border: 1px solid rgba(230, 226, 214, 0.22);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 260ms ease, color 260ms ease, border-color 260ms ease;
+}
+
+.narration:hover { border-color: rgba(217, 168, 78, 0.55); }
+
+.narration.playing {
+  color: #1a1206;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.narration:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   版面骨架
+   ------------------------------------------------------------ */
+
+main {
+  position: relative;
+  z-index: 2;
+}
+
+.poem-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 112vh;
+  padding: 16vh 7vw;
+}
+
+.poem-section.hero {
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: 124vh;
+  padding-top: 19vh;
+}
+
+.hero-copy,
+.card {
+  width: min(560px, 46vw);
+}
+
+/* 入场：轻微上浮 + 淡入 */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 900ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.poem-section.active .reveal,
+.hero .reveal,
+.closing .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------
+   序
+   ------------------------------------------------------------ */
+
+.kicker {
+  margin: 0 0 22px;
+  font-size: 13px;
+  letter-spacing: 0.36em;
+  color: var(--gold);
+  text-transform: none;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(62px, 9.5vw, 168px);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: 0.03em;
+}
+
+.byline {
+  margin: 24px 0 0;
+  font-size: clamp(15px, 1.3vw, 18px);
+  letter-spacing: 0.16em;
+  color: var(--moon-dim);
+}
+
+.byline .sep {
+  margin: 0 10px;
+  color: var(--amber);
+}
+
+.hero blockquote {
+  margin: 40px 0 0;
+  padding-left: 22px;
+  border-left: 1px solid var(--hairline);
+  font-size: clamp(19px, 2vw, 27px);
+  line-height: 1.85;
+  color: var(--moon);
+}
+
+.invite {
+  margin: 30px 0 0;
+  max-width: 34em;
+  font-size: clamp(15px, 1.25vw, 17px);
+  line-height: 2.05;
+  color: var(--moon-dim);
+}
+
+.scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 46px;
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.scroll-cue .cue-line {
+  display: block;
+  width: 54px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left center;
+  animation: cue 2600ms ease-in-out infinite;
+}
+
+@keyframes cue {
+  0%, 100% { transform: scaleX(0.35); opacity: 0.5; }
+  50%      { transform: scaleX(1);    opacity: 1; }
+}
+
+.scroll-cue:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* ------------------------------------------------------------
+   段落卡片
+   ------------------------------------------------------------ */
+
+.card {
+  position: relative;
+  padding: clamp(30px, 3.5vw, 54px);
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  backdrop-filter: blur(16px) saturate(1.08);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+}
+
+.card-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 26px;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+}
+
+.card-eyebrow .numeral {
+  font-size: clamp(34px, 3.6vw, 50px);
+  line-height: 1;
+  letter-spacing: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(217, 168, 78, 0.62);
+}
+
+.card h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.4vw, 46px);
+  font-weight: 500;
+  line-height: 1.66;
+  letter-spacing: 0.055em;
+  white-space: pre-line;
+}
+
+.literal {
+  margin: 26px 0 0;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 2;
+  color: var(--gold);
+  opacity: 0.92;
+}
+
+.analysis {
+  margin: 18px 0 0;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.95;
+  color: var(--moon-dim);
+}
+
+/* ------------------------------------------------------------
+   微型视觉组件
+   ------------------------------------------------------------ */
+
+.micro {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--hairline);
+}
+
+.micro-label {
+  margin: 0 0 18px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: rgba(230, 226, 214, 0.42);
+}
+
+.micro-note {
+  margin: 16px 0 0;
+  font-size: 13px;
+  line-height: 1.85;
+  color: rgba(230, 226, 214, 0.56);
+}
+
+/* 尺度：两端点 + 连线 */
+.micro-scale .rail {
+  position: relative;
+  height: 1px;
+  background: rgba(230, 226, 214, 0.16);
+}
+
+.micro-scale .rail::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg,
+    rgba(217, 168, 78, 0.85) 0%,
+    rgba(217, 168, 78, 0.3) 45%,
+    rgba(217, 168, 78, 0.9) 100%);
+}
+
+.micro-scale .ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: clamp(15px, 1.4vw, 19px);
+  letter-spacing: 0.1em;
+}
+
+.micro-scale .ends .right { color: var(--gold); }
+
+/* 对照：左右两侧 + 中部竖线 */
+.micro-contrast .pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.micro-contrast .side { text-align: center; }
+
+.micro-contrast .side .big {
+  display: block;
+  font-size: clamp(17px, 1.7vw, 23px);
+  letter-spacing: 0.1em;
+}
+
+.micro-contrast .side .sub {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: rgba(230, 226, 214, 0.5);
+}
+
+.micro-contrast .side.hi .big { color: var(--gold); }
+
+.micro-contrast .divider {
+  width: 1px;
+  height: 52px;
+  background: linear-gradient(180deg, transparent, rgba(217, 168, 78, 0.5), transparent);
+}
+
+/* 动词节奏 */
+.micro-verbs .beats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.micro-verbs .beat {
+  padding: 8px 15px;
+  font-size: clamp(13px, 1.15vw, 15px);
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(230, 226, 214, 0.2);
+  color: var(--moon-dim);
+}
+
+.micro-verbs .beat.high {
+  border-color: rgba(217, 168, 78, 0.62);
+  color: var(--gold);
+  background: rgba(217, 168, 78, 0.07);
+}
+
+/* 数字 */
+.micro-counter .value {
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.micro-counter .caption {
+  margin: 14px 0 0;
+  font-size: 13px;
+  line-height: 1.9;
+  color: rgba(230, 226, 214, 0.56);
+}
+
+/* 时间线 / 列表 */
+.micro-timeline .rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.micro-timeline .row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 14px;
+  align-items: baseline;
+  font-size: clamp(13px, 1.15vw, 15px);
+}
+
+.micro-timeline .tag {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(230, 226, 214, 0.44);
+}
+
+.micro-timeline .result { letter-spacing: 0.06em; }
+.micro-timeline .row.lost .result { color: rgba(230, 226, 214, 0.42); }
+.micro-timeline .row.won  .result { color: var(--gold); }
+
+/* ------------------------------------------------------------
+   结语
+   ------------------------------------------------------------ */
+
+.closing { min-height: 108vh; }
+
+.closing-card { width: min(720px, 48vw); }
+
+.closing-card h2 {
+  margin: 0 0 20px;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.closing-lead {
+  margin: 0;
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 2.05;
+  color: var(--gold);
+}
+
+.layers {
+  margin: 34px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.layers dt {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: rgba(217, 168, 78, 0.9);
+}
+
+.layers dd {
+  margin: 9px 0 0;
+  font-size: clamp(13px, 1.15vw, 15px);
+  line-height: 2.05;
+  color: var(--moon-dim);
+}
+
+.variants {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--hairline);
+}
+
+.variants h3 {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  font-weight: 500;
+  color: rgba(230, 226, 214, 0.42);
+}
+
+.variants p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 2;
+  color: rgba(230, 226, 214, 0.56);
+}
+
+.colophon {
+  margin: 34px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(230, 226, 214, 0.1);
+  font-size: 12px;
+  line-height: 2;
+  color: rgba(230, 226, 214, 0.42);
+}
+
+.colophon a {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(217, 168, 78, 0.4);
+}
+
+.colophon a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   载入层
+   ------------------------------------------------------------ */
+
+.loading {
+  position: fixed;
+  z-index: 9;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  color: var(--moon-dim);
+  background: var(--ink);
+  transition: opacity 600ms ease;
+}
+
+.loading.done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading.failed {
+  opacity: 1;
+  letter-spacing: 0.16em;
+  color: #e0a08a;
+}
+
+.noscript {
+  position: fixed;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  text-align: center;
+  color: var(--moon);
+  background: var(--ink);
+}
+
+/* ------------------------------------------------------------
+   响应式
+   ------------------------------------------------------------ */
+
+@media (max-width: 1100px) {
+  .poem-section { padding: 14vh 6vw; }
+  .hero-copy, .card { width: min(520px, 46vw); }
+  .closing-card { width: min(660px, 48vw); }
+}
+
+@media (max-width: 760px) {
+  /* 竖屏下 main 用 contain，让完整人物与构图保留；模糊底衬补满其余区域 */
+  .stage-blur { opacity: 1; }
+  .stage-back,
+  .stage-front { object-fit: contain; }
+
+  .stage-scrim {
+    background:
+      linear-gradient(0deg,
+        rgba(5, 7, 8, 0.94) 0%,
+        rgba(5, 7, 8, 0.8) 34%,
+        rgba(5, 7, 8, 0.16) 62%,
+        rgba(5, 7, 8, 0) 80%),
+      linear-gradient(180deg,
+        rgba(5, 7, 8, 0.6) 0%,
+        rgba(5, 7, 8, 0) 26%);
+  }
+
+  .chapters {
+    left: 50%;
+    top: auto;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .chapters a { font-size: 12px; gap: 0; }
+  .chapters a::before { display: none; }
+
+  .poem-section,
+  .poem-section.hero {
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 116vh;
+    padding: 16vh 20px 15vh;
+  }
+
+  .hero-copy,
+  .card,
+  .closing-card {
+    width: calc(100% - 8px);
+  }
+
+  .card { padding: 26px 22px 30px; }
+  .hero blockquote { margin-top: 30px; padding-left: 16px; }
+  .card h2 { line-height: 1.6; }
+  .micro-contrast .pair { gap: 12px; }
+}
+
+@media (max-width: 420px) {
+  .card { padding: 22px 18px 26px; }
+  .micro-timeline .row { grid-template-columns: 28px 1fr; }
+  .micro-timeline .row .result { grid-column: 2; }
+}
+
+/* ------------------------------------------------------------
+   减弱动效
+   ------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal { opacity: 1; transform: none; }
+}

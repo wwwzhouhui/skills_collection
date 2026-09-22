@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>《将进酒》图像集对照 · Ark vs gpt-2.5</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 32px; background: #0d0f10; color: #e6e2d6;
+         font-family: "Noto Serif SC", "Songti SC", serif; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0 0 6px; }
+  .lead { color: rgba(230,226,214,.62); font-size: 13px; line-height: 1.9;
+          margin: 0 0 8px; max-width: 60em; }
+  ul { color: rgba(230,226,214,.62); font-size: 13px; margin: 0 0 28px; padding-left: 1.2em; }
+  .row { margin: 0 0 34px; padding-top: 22px; border-top: 1px solid rgba(217,168,78,.16); }
+  .row h2 { font-size: 16px; font-weight: 500; letter-spacing: .06em;
+            color: #d9a84e; margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  figure { margin: 0; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.02); }
+  figure img { display: block; width: 100%; height: auto; }
+  .ph { display: grid; place-items: center; aspect-ratio: 16/9; color: rgba(230,226,214,.4);
+        font-size: 13px; }
+  figcaption { padding: 10px 12px 14px; font-size: 12px; line-height: 1.7; }
+  figcaption strong { display: block; font-size: 13px; color: #d5b98d; margin-bottom: 4px; }
+  .meta { display: block; color: rgba(230,226,214,.58); }
+  .meta.ref { color: rgba(217,168,78,.85); }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; font-size: 12px; color: rgba(230,226,214,.5); }
+  details p { font-size: 12px; line-height: 1.95; color: rgba(230,226,214,.62); }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } body { padding: 20px; } }
+</style>
+</head>
+<body>
+<h1>《将进酒》图像集对照 · Ark vs gpt-2.5</h1>
+<p class="lead">同一套提示词（逐字相同）、同一套参考链（主视觉文生图，其余七幕以主视觉为参考图生图），
+分别由火山方舟 Doubao Seedream 与 GPT-Image 网关生成。逐幕左右并列，便于直接比较人物一致性、
+光线推进、留白与「画面里有没有混进文字」。</p>
+<ul><li>Ark · Doubao Seedream：8 张</li><li>GPT-Image · gpt-2.5：8 张</li></ul>
+  <section class="row">
+    <h2>主视觉 · 月夜山居宴席（参考链起点，文生图）</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/hero.jpg" alt="hero by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · text-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 365 KB · 70.0s</span>
+          <span class="meta ref">文生图</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/hero.png" alt="hero by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · text-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×940 · 2144 KB · 194.0s</span>
+          <span class="meta ref">文生图</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>写实电影感的盛唐历史剧照，16:9 宽幅横向构图。唐玄宗天宝年间，嵩山脚下一处木构山居的庭院，月夜，一轮满月悬在松林上方，远处山谷间一条大河在月光下泛着银白的水光。庭院里一张厚重的木案，案上陈放青铜酒樽、粗陶酒碗、一只烤羊与几碟小菜。一位约五十岁、身形高瘦、长髯微白、唐式散髻束巾的诗人，穿着略显旧的月白色圆领窄袖袍，腰间革带上悬一柄长剑，正举起青铜酒樽向月。人物置于画面中央偏左，画面右侧留出大片安静的夜空与远山作为中文排版留白。清冷的月华是主光，案情一盏烛火提供暖橘反光；木案纹理、青铜的暗哑光泽与划痕、粗麻布的粗糙质感都清晰可辨，空气中有一层薄雾。Lens and color science: 24mm 广角，高动态范围，细颗粒，唐风电影调色。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感、通用游戏美术、仙侠悬浮效果或过度饱和。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>壹 · 黄河之水天上来</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-1.jpg" alt="scene-1 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 893 KB · 69.7s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-1.png" alt="scene-1 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×941 · 2401 KB · 126.6s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一个朝代、同一片地理、同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑）。现在为《将进酒》开篇：从高空俯瞰的角度，黄河在赭黄色的峡谷中奔涌而来，水势浩大，浪头翻卷，消失于远方地平线。诗人以极小的身影立在岸边高处的一块巨岩上，衣袍被风鼓起，仰头望向河水来处。16:9 宽幅横向构图，河流的走向从画面左下斜向延伸至右上，画面右侧留出大片天空与远山作为中文排版留白。正午偏后的强烈日照，河水泛金，飞沫可见。材质真实：浑浊的泥沙色河水、粗糙的黄土岩壁、被风磨蚀的石面。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感、通用游戏美术或过度饱和。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>贰 · 高堂明镜悲白发</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-2.jpg" alt="scene-2 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 388 KB · 89.9s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-2.png" alt="scene-2 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×941 · 1954 KB · 128.7s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑），同一处唐式木构建筑。现在为《将进酒》第二幕，室内：唐式厅堂，木格窗透入一片冷调日光。诗人立于一面巨大的青铜镜前，镜中映出他的面容，鬓边已有霜白；他一手按在镜缘，神情是骤然察觉时间流逝的震动。16:9 宽幅横向构图，诗人与铜镜置于画面左侧，铜镜边缘与投下的影子构成画面暗部，画面右侧留出大片素墙与窗影作为中文排版留白。冷调侧逆光，尘埃在光柱中浮动。材质真实：打磨过的青铜镜面有细微划痕与暗哑反光、旧木案、粗麻席、微旧的丝绸袍面。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感或通用游戏美术。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>叁 · 莫使金樽空对月</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-3.jpg" alt="scene-3 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 392 KB · 97.0s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-3.png" alt="scene-3 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×940 · 2237 KB · 126.5s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一处山居庭院、同一张厚重木案、同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑）。现在为《将进酒》第三幕：夜已深，诗人独对满月，将青铜酒樽高举过头，樽中酒面映着月轮；他的神情已从悲慨转为豪迈，嘴角有笑意。16:9 宽幅横向构图，人物与举起的酒樽在画面左侧，酒樽与月光构成明亮高光，画面右侧留出大片月夜天空与松枝剪影作为中文排版留白。清冷月华是主光，案情残烛提供一点暖橘补光；衣料褶皱与青铜的暗哑光泽清晰。材质真实：粗麻布、旧绢、青铜酒器。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感或通用游戏美术。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>肆 · 烹羊宰牛且为乐</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-4.jpg" alt="scene-4 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 392 KB · 110.7s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-4.png" alt="scene-4 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×940 · 2133 KB · 138.9s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一处山居庭院、同一张厚重木案、同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑）。现在为《将进酒》第四幕，宴饮正酣：庭院里架着一堆明亮炭火，火上架着整只烤羊；两名同伴围案而坐——一位中年儒生穿褐色圆领袍、面容端方（岑勋），一位道士着灰色道袍束发冠（元丹丘）。诗人已经半醉，一手持粗陶碗、一手拍案，正在劝酒；三人面前的酒碗、酒渍的麻布、散落的羊骨交代出纵饮的烈度。16:9 宽幅横向构图，人物与火光在画面左中部，画面右侧留出大片被火光照亮的墙面与黑夜作为中文排版留白。主光是炭火暖橙强光，人物面部有跳动的光影，火星在空中浮动。材质真实：粗陶碗、焦脆的烤肉表皮、粗麻衣料、被烟熏黑的木梁。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感或通用游戏美术。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>伍 · 与君歌一曲</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-5.jpg" alt="scene-5 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 361 KB · 84.9s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-5.png" alt="scene-5 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×941 · 2050 KB · 274.3s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一处山居庭院、同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑），两位同伴（褐袍中年儒生、灰袍束发冠道士）。现在为《将进酒》第五幕：诗人放下酒碗，闭目昂首，一手按在腰间长剑的剑首上，正在高声歌唱；烛台的火苗被他的气息吹得倾斜，两名同伴停下动作，侧身倾听，神情震动。16:9 宽幅横向构图，诗人立于画面左侧，烛台与倾斜火苗在他身前，画面右侧留出大片深暗的厅堂空间与一片被照亮的墙面作为中文排版留白。主光是暖黄烛光，自下方打亮面部形成戏剧性底光，背景沉入松墨般的暗部。材质真实：融化的蜡泪、青铜烛台、旧木地板、织纹清晰的衣料。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感或通用游戏美术。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>陆 · 古来圣贤皆寂寞</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-6.jpg" alt="scene-6 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 453 KB · 107.1s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-6.png" alt="scene-6 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×941 · 2166 KB · 198.2s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑），同一处唐式木构建筑，两位同伴在场。现在为《将进酒》第六幕，历史纵深的一幕：画面分两层景深——前景是已经半醉伏案的诗人与两位同伴，酒器零落；背景是一面斑驳剥落的旧壁画构成的想象空间，隐约可见古代殿堂的宴席，汉代平乐观的华宴列坐、灯烛成行，像是由酒意勾起的历史回声。16:9 宽幅横向构图，前景人物在画面左下，背景历史虚影铺展在右上方，画面最右侧留出大片暗色墙面作为中文排版留白。整体低照度的暖褐与暗金调，前景一盏将尽的油灯是唯一实光，背景虚影自发光。材质真实：剥落的壁画粉末、朽木、铜锈、陈年织物。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感或通用游戏美术。</p>
+    </details>
+  </section>
+  <section class="row">
+    <h2>柒 · 与尔同销万古愁</h2>
+    <div class="grid">
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu/scene-7.jpg" alt="scene-7 by Ark · Doubao Seedream" loading="lazy" />
+        <figcaption>
+          <strong>Ark · Doubao Seedream</strong>
+          <span class="meta">doubao-seedream-5.0-pro · image-to-image</span>
+          <span class="meta">请求 2560x1440 → 实得 2560×1440 · 286 KB · 92.4s</span>
+          <span class="meta ref">参考 hero</span>
+        </figcaption>
+      </figure>
+      <figure class="panel">
+        <img src="public/generated/jiang-jin-jiu-gpt/scene-7.png" alt="scene-7 by GPT-Image · gpt-2.5" loading="lazy" />
+        <figcaption>
+          <strong>GPT-Image · gpt-2.5</strong>
+          <span class="meta">gpt-image-2.5 · image-to-image (multipart upload)</span>
+          <span class="meta">请求 2560x1440 → 实得 1672×940 · 2254 KB · 125.0s</span>
+          <span class="meta ref">参考 hero（multipart 上传）</span>
+        </figcaption>
+      </figure>
+    </div>
+    <details><summary>提示词（两个档位完全相同，便于公平对照）</summary>
+      <p>延续参考图完全相同的世界：同一处山居庭院、同一张厚重木案、同一位诗人（同一张脸、同一种长髯与发式、同一件月白色圆领窄袖袍、同一柄腰间长剑）。现在为《将进酒》终幕：天将破晓，月色转淡，冷蓝天光开始压过残烛。诗人解下腰间长剑与身上那件华贵锦裘，一并推给蹲在石阶下的少年仆从，示意拿去换酒；案上空了的酒樽与粗陶碗见了底。他的姿态是彻底的、近乎悲壮的洒脱，眼神望向画外极远处。16:9 宽幅横向构图，人物与递出的剑、裘在画面左侧，画面右侧留出大片将明未明的冷蓝天空与远山剪影作为中文排版留白。主光是破晓前冷蓝天光，残烛只剩一点暖色余烬，空气清冷有雾。材质真实：锦裘的暗花织纹、鲨鱼皮剑鞘与铜饰、凝着夜露的石阶、粗麻衣料。无任何文字、书法、印章、落款、水印或现代物品。不要卡通、低多边形、塑料玩具感、通用游戏美术或仙侠悬浮效果。</p>
+    </details>
+  </section>
+</body>
+</html>

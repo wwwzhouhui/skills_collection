@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="description" content="李白《将进酒》沉浸式逐段解读：黄河、明镜、金樽、万古愁，七幕滚动页面与逐段直译细读。" />
+<meta name="theme-color" content="#0d0f10" />
+<title>将进酒 · 李白｜沉浸式解读</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- 固定图像舞台：两层交叉淡入 + 移动端模糊底衬 -->
+<div class="stage" aria-hidden="true">
+  <img class="stage-blur" id="stageBlur" alt="" decoding="async" />
+  <img class="stage-back" id="stageBack" alt="" decoding="async" />
+  <img class="stage-front" id="stageFront" alt="" decoding="async" />
+  <div class="stage-scrim"></div>
+</div>
+
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<!-- 朗读控件由脚本按 poem.audioSrc 决定是否注入 -->
+<div class="tools" id="tools"></div>
+
+<nav class="chapters" id="chapters" aria-label="章节导航"></nav>
+
+<main id="main">
+  <!-- 序 -->
+  <section class="poem-section hero" id="opening" data-scene="0">
+    <div class="hero-copy reveal">
+      <p class="kicker" id="heroKicker"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="byline"><span id="heroAuthor"></span><span class="sep">·</span><span id="heroEra"></span></p>
+      <blockquote id="heroLine"></blockquote>
+      <p class="invite" id="heroIntro"></p>
+      <a class="scroll-cue" href="#beat-1">
+        <span>逐幕读下去</span>
+        <span class="cue-line" aria-hidden="true"></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 七个段落由脚本注入 -->
+
+  <!-- 结语 -->
+  <section class="poem-section closing" id="closing">
+    <article class="card closing-card reveal">
+      <p class="card-eyebrow">结语</p>
+      <h2 id="closingHeading"></h2>
+      <p class="closing-lead" id="closingLead"></p>
+      <dl class="layers" id="closingLayers"></dl>
+      <aside class="variants">
+        <h3 id="variantsHeading"></h3>
+        <p id="variantsText"></p>
+      </aside>
+      <p class="colophon">
+        图像由火山引擎方舟 Doubao Seedream 5.0 生成，主视觉作为图生图参考逐幕继承同一世界。
+        <a href="public/generated/jiang-jin-jiu/contact-sheet.html">查看生成联系表</a>
+      </p>
+    </article>
+  </section>
+</main>
+
+<div class="loading" id="loading">正在进入诗境</div>
+
+<noscript>
+  <div class="noscript">本页需要 JavaScript 渲染逐段解读内容。</div>
+</noscript>
+
+<script src="poem-config.js"></script>
+<script src="page.js"></script>
+</body>
+</html>

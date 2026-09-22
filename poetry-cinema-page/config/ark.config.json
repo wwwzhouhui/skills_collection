@@ -1,0 +1,249 @@
+{
+  "_readme": [
+    "沉浸式诗词页面 —— 唯一配置入口（图像 + 语音）。",
+    "改模型、改服务商、改尺寸、改档位路由、改朗读音色，都只需要改这一个文件。",
+    "密钥不要写在这里：本文件会提交到公开仓库。",
+    "密钥读取顺序：环境变量 <api_key_env> > <local_override> 文件 > 下面的 api_key 字段。",
+    "图像有两个服务商：ark（火山方舟 Doubao Seedream）与 gpt-image（GPT-Image 网关）。"
+  ],
+
+  "image": {
+    "_readme": "provider 是默认服务商；模型条目里的 provider 字段可逐个覆盖。",
+
+    "provider": "ark",
+
+    "providers": {
+      "ark": {
+        "kind": "ark",
+        "label": "火山引擎方舟 Doubao Seedream",
+        "base_url": "https://ark.cn-beijing.volces.com/api/plan/v3",
+        "generations_path": "/images/generations",
+        "api_key": "",
+        "api_key_env": "ARK_API_KEY",
+        "local_override": "config/ark.local.json",
+        "timeout_seconds": 300,
+        "max_retries": 2,
+        "retry_backoff_seconds": 6,
+        "reference_transport": "inline",
+        "limits": {
+          "min_area_px": 3686400,
+          "max_area_px": 4624220,
+          "max_reference_images": 10,
+          "size_notes": "面积须在 min/max 之间。2560x1440 = 3686400，是 pro 与 lite 都接受的唯一 16:9 尺寸。"
+        }
+      },
+
+      "gpt-image": {
+        "kind": "openai-images",
+        "label": "GPT-Image 网关（第三方，OpenAI 兼容）",
+        "base_url": "https://image.mlgb7.com/v1",
+        "generations_path": "/images/generations",
+        "edits_path": "/images/edits",
+        "api_key": "",
+        "api_key_env": "GPT_IMAGE_API_KEY",
+        "local_override": "config/gpt-image.local.json",
+        "timeout_seconds": 600,
+        "max_retries": 5,
+        "_max_retries_note": "实测 8 张里有 2 张在 4 次尝试后被掐断，故提到 5（方舟是 2）。",
+        "retry_backoff_seconds": 5,
+        "response_format": "url",
+        "quality": "",
+        "_quality_note": "留空即不发送该字段。填 high / medium / low 会原样转发。",
+        "reference_transport": "multipart",
+        "reference_max_edge": 1536,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "_user_agent_note": "必需：该网关在 Cloudflare 后面，缺少浏览器 UA 会直接被 1010 拦掉。",
+        "_edits_note": "参考图生图只能走 multipart /images/edits（字段名 image）。generations 里的 image/image_url 字段会被静默忽略。",
+        "limits": {
+          "min_edge_px": 256,
+          "max_edge_px": 8192,
+          "max_reference_images": 4,
+          "size_notes": "接受任意 WxH（实测 2560x1440 可用），也接受 auto。response_format 仅支持 url。"
+        }
+      }
+    }
+  },
+
+  "models": {
+    "pro": { "provider": "ark", "id": "doubao-seedream-5.0-pro" },
+    "lite": { "provider": "ark", "id": "doubao-seedream-5.0-lite" },
+    "gpt-2": { "provider": "gpt-image", "id": "gpt-image-2" },
+    "gpt-2.5": { "provider": "gpt-image", "id": "gpt-image-2.5" }
+  },
+
+  "routing": {
+    "hero": "pro",
+    "beat": "pro",
+    "draft": "lite",
+    "repair": "lite"
+  },
+
+  "defaults": {
+    "role": "beat",
+    "tier": "pro",
+    "size": "2560x1440",
+    "response_format": "url",
+    "watermark": false,
+    "image_format": "jpeg"
+  },
+
+  "size_presets": {
+    "_notes": [
+      "16:9 用 2560x1440（Ark 必须用它）或 1920x1080。",
+      "注意：GPT-Image 网关保留宽高比但会把分辨率归一到自己的档位——",
+      "  实测 2560x1440 / 1920x1080 / 1536x864 都返回 1672x941（准确 16:9），",
+      "  而 1792x1024 是 7:4、auto 是 4:3；页面舞台按 16:9 设计，别拿它们做全屏背景。"
+    ],
+    "web_16_9": "2560x1440",
+    "web_16_9_1080": "1920x1080",
+    "square": "1024x1024",
+    "portrait": "1024x1536",
+    "auto": "auto"
+  },
+
+  "output": {
+    "master_dir": "public/generated",
+    "manifest_name": "prompts.json",
+    "contact_sheet_name": "contact-sheet.html",
+    "contact_sheet_columns": 3,
+    "keep_api_urls": true
+  },
+
+  "video": {
+    "_readme": [
+      "口播视频流水线（scripts/video.py）：把已生成的场景图、朗诵音轨与页面设计 tokens 合成一支成片。",
+      "素材全部复用前面几步的产物，本块只管「怎么把它们钉在一起」。",
+      "browser_executable 留空时会自动探测本机 Chrome / Edge。"
+    ],
+
+    "engine": "remotion",
+    "template_dir": "assets/video-template",
+    "workspace": "video",
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "crossfade_frames": 14,
+    "grain_opacity": 0.07,
+    "tail_seconds": 3.0,
+    "lead_seconds": 0.0,
+    "motion_gain": 1.0,
+    "handheld_px": 3.4,
+    "caption_reveal": true,
+    "default_transition": "crossfade",
+    "node_modules": null,
+    "browser_executable": null,
+    "concurrency": null,
+
+    "_notes": [
+      "tail_seconds：人声结束后留给片尾字卡的时长。直接切黑会让片子像被拔了电源。",
+      "crossfade_frames：相邻镜头的交叉溶解长度。诗词语境下超过 20 帧就开始发腻。",
+      "motion_gain：全局运镜倍率。1 是标准，1.3 更冲，0.6 更含蓄；改这一个数就能整片调性。",
+      "handheld_px：手持微抖幅度（像素）。0 关闭。3–4px 在读得出「有人在掌机」和「抖」之间。",
+      "caption_reveal：原文层是否随人声逐字点亮。释义层始终整行淡入，不受此开关影响。",
+      "default_transition：plan 里没逐镜写 transition 时的缺省值。",
+      "node_modules：离线环境的救命开关，指向任何已经 npm install 过的目录即可，",
+      "                init 会直接把它复制进工作区，不联网。留空则跑 npm install。",
+      "concurrency：留空由 Remotion 自决；低核机器报错时显式填 1。"
+    ]
+  },
+
+  "narration": {
+    "_readme": [
+      "朗诵配音。engine 决定用哪个引擎，音色在 engines.<engine>.voice 里改。",
+      "edge-tts        ：免费、本地合成、无需任何密钥，开箱即用，输出 mp3。",
+      "doubao-seed-tts ：火山引擎豆包语音，中文表现更好，复用同一把 Ark 密钥，输出 wav（脚本会转 mp3）。",
+      "拿不准选哪个音色就先跑：python scripts/narration.py audition --text \"君不见黄河之水天上来\""
+    ],
+
+    "engine": "edge-tts",
+
+    "engines": {
+      "edge-tts": {
+        "label": "edge-tts（免费 · 本地 · 无需密钥）",
+        "needs_api_key": false,
+        "voice": "zh-CN-YunxiNeural",
+        "rate": "+0%",
+        "volume": "+0%",
+        "pitch": "+0Hz",
+        "_notes": "rate 例如 -20% 更慢；pitch 例如 -8Hz 更低沉，适合古诗。"
+      },
+      "doubao-seed-tts": {
+        "label": "豆包 seed-tts-2.0（火山方舟 · 中文更好）",
+        "needs_api_key": true,
+        "voice": "zh_male_qingcang_uranus_bigtts",
+        "speed": 0,
+        "emotion": "",
+        "resource_id": "seed-tts-2.0",
+        "url": "https://openspeech.bytedance.com/api/v3/plan/tts/unidirectional",
+        "sample_rate": 24000,
+        "_notes": "speed 是整数百分比增量，范围 -50..100（-20 = 慢 20%）。emotion 留空即自然语气；可用值依音色而定。"
+      }
+    },
+
+    "audio": {
+      "dir": "public/audio",
+      "format": "mp3",
+      "bitrate": "96k",
+      "channels": 1,
+      "sample_rate": 24000,
+      "line_gap_seconds": 0.75,
+      "paragraph_gap_seconds": 1.6,
+      "normalize_loudness": true,
+      "target_loudness_lufs": -16
+    },
+
+    "script": {
+      "open_with_title": true,
+      "title_template": "《{title}》{author}",
+      "include_original": true,
+      "include_literal": false,
+      "include_analysis": false,
+      "_notes": "这些开关只在 --text-file 是结构化 .json 时生效；.txt 按行原样朗读。"
+    },
+
+    "voice_catalog": {
+      "_notes": [
+        "id 是引擎的真实音色标识；gloss 是依音色 ID 直译的提示，不是官方描述，最终请用 audition 试听决定。",
+        "doubao-seed-tts 这一栏 15 个音色全部在本机实测可用（resource_id=seed-tts-2.0）。"
+      ],
+      "edge-tts": [
+        { "id": "zh-CN-YunxiNeural", "gloss": "男声 · 云希 · 小说腔，活泼阳光（默认）" },
+        { "id": "zh-CN-YunyangNeural", "gloss": "男声 · 云扬 · 新闻腔，沉稳专业" },
+        { "id": "zh-CN-YunjianNeural", "gloss": "男声 · 云健 · 体育/小说，有激情" },
+        { "id": "zh-CN-YunxiaNeural", "gloss": "男声 · 云夏 · 少年感" },
+        { "id": "zh-CN-XiaoxiaoNeural", "gloss": "女声 · 晓晓 · 温暖（新闻/小说）" },
+        { "id": "zh-CN-XiaoyiNeural", "gloss": "女声 · 晓伊 · 明快" },
+        { "id": "zh-CN-liaoning-XiaobeiNeural", "gloss": "女声 · 辽宁话（方言）" },
+        { "id": "zh-CN-shaanxi-XiaoniNeural", "gloss": "女声 · 陕西话（方言）" }
+      ],
+      "doubao-seed-tts": [
+        { "id": "zh_male_qingcang_uranus_bigtts", "gloss": "男声 · qingcang（默认，适合古诗词）" },
+        { "id": "zh_male_shenyeboke_uranus_bigtts", "gloss": "男声 · 深夜播客" },
+        { "id": "zh_male_ruyaqingnian_uranus_bigtts", "gloss": "男声 · 儒雅青年" },
+        { "id": "zh_male_wennuanahu_uranus_bigtts", "gloss": "男声 · 温暖阿虎" },
+        { "id": "zh_male_liufei_uranus_bigtts", "gloss": "男声 · liufei" },
+        { "id": "zh_male_yuanboxiaoshu_uranus_bigtts", "gloss": "男声 · 渊博小叔" },
+        { "id": "zh_male_shaonianzixin_uranus_bigtts", "gloss": "男声 · 少年自信" },
+        { "id": "zh_male_yangguangqingnian_uranus_bigtts", "gloss": "男声 · 阳光青年" },
+        { "id": "zh_female_vv_uranus_bigtts", "gloss": "女声 · vv（通用）" },
+        { "id": "zh_female_xiaohe_uranus_bigtts", "gloss": "女声 · xiaohe" },
+        { "id": "zh_female_qingxinnvsheng_uranus_bigtts", "gloss": "女声 · 清新女声" },
+        { "id": "zh_female_gaolengyujie_uranus_bigtts", "gloss": "女声 · 高冷御姐" },
+        { "id": "zh_female_linjianvhai_uranus_bigtts", "gloss": "女声 · 邻家女孩" },
+        { "id": "zh_female_roumeinvyou_uranus_bigtts", "gloss": "女声 · 柔美女友" },
+        { "id": "zh_female_meilinvyou_uranus_bigtts", "gloss": "女声 · 魅力女友" }
+      ]
+    },
+
+    "known_rejected": [
+      {
+        "voices": [
+          "zh_male_jingqiangkanye_uranus_bigtts",
+          "zh_female_wanwanxiaohe_uranus_bigtts",
+          "zh_male_beijingxiaoye_uranus_bigtts"
+        ],
+        "reason": "resource ID is mismatched with speaker related resource（code 55000000）：这些音色不属于 seed-tts-2.0，需要各自的 resource_id，本技能不启用。"
+      }
+    ]
+  }
+}

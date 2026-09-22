@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-0.0.27-green.svg)
-![Skills](https://img.shields.io/badge/skills-24-orange.svg)
+![Skills](https://img.shields.io/badge/skills-25-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -37,6 +37,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| poetry-cinema-page | 沉浸式古诗词网页生成技能：给一首中国古典诗词，走完文学分镜 → 视觉圣经 → 双服务商逐张生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，四档位可混用，主视觉参考链）→ 联系表检查 → 朗诵配音（edge-tts / 豆包 seed-tts-2.0，23 个中文音色）→ 滚动页面 → 浏览器验收，可选 Remotion 口播视频成片 | Python、火山引擎方舟、GPT-Image 网关、edge-tts、Vite/TypeScript、Remotion、ffmpeg | 2026年9月22日 | wwwzhouhui | 1.0.0 |
 | remotion-video-factory | 视觉优先的程序化视频生产流水线：Remotion + React 代码渲染精确图形动画（矩阵/连线/图表/数字滚动/流程图解），edge-tts 中文配音自动测长并重建时间线，三层音频（配音/BGM/SFX 钉帧表），确定性渲染，双版本成片交付 | TypeScript、React、Remotion、edge-tts、ffmpeg | 2026年9月7日 | wwwzhouhui | 1.1.0 |
 | photo-homework-a4 | 将拍照上传的手写作业清单识别、按科目整理并分类打标，基于固定模板生成一页 A4 纸即可打印的 HTML 作业清单，包含科目卡片、统计条、温馨提示和学生/家长签名区 | HTML/CSS、模板生成、图像识别、A4 打印 | 2026年9月5日 | wwwzhouhui | 1.0.0 |
 | voice-to-video | 口播文字稿一键成片技能包：Edge TTS 配音（逐词时间戳）→ 一句口播一个场景的 HTML 动画合成 → 无头浏览器逐帧确定性渲染 MP4，文字稿/语音/画面逐词对应；13 套画面风格（每套含独立版式 DNA） | Python、edge-tts、Playwright、HTML/CSS/JS、ffmpeg | 2026年9月5日 | wwwzhouhui | 1.4.0 |
@@ -44,25 +45,58 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | knowledge-absorber | 深度解析链接/文档/代码，生成导师级教学笔记 + Wan 2.7 知识海报。支持 PDF/Word/Markdown/代码/图片，自动真理锚定验证，国学内容自动水墨风格，11 种海报风格可选 | Python、DashScope API、Wan 2.7、真理锚定验证、信息图设计 | 2026年4月11日 | zlu | 0.0.1 |
 | ai-teaching-media | AI 教学媒体一体化技能包：一个目录串联 6 个子能力（生图执行层、技术长文插图、学科信息图、教学动图/视频、短视频封面、文章解说视频），支持知识点/长文全套教学生产链路 | Python、HyperFrames、Minimax TTS、Nano Banana 2 / GPT Image 2 / Agnes Image 2.1 Flash | 2026年7月19日 | wwwzhouhui | 1.0.0 |
 | grok-imagine-image | 使用 grok-imagine-image 模型，通过兼容 Grok2API / OpenAI 风格接口（`/v1/images/generations`）文生图；自带本地脚本，支持环境变量/参数覆盖、URL 改写下载、JSON 输出 | Python、Grok2API、OpenAI Images API | 2026年7月26日 | hailaobao2026 | 1.0.0 |
-| github-trending-wan | GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流 | Python、DashScope API、Wan 2.7、信息图设计 | 2026年4月8日 | tdt | 1.0.0 |
-| wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026年4月5日 | tdt | 1.0.0 |
-| wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026年3月29日 | tdt | 1.0.0 |
-| obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026年3月13日 | guanyugang | 1.0.0 |
-| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成Gemini-3-Pro-Image-Preview双通道(自建API+Gemai公益站)自动配图与腾讯云COS上传功能，自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章 | Markdown、模板生成、Gemini API、Gemai API、腾讯云COS | 2026年2月23日 | zlu | 2.4.0 |
-| wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | zlu | 1.0.0 |
-| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | zlu | 1.2.0 |
-| wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | zlu | 1.0.0 |
-| github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | zlu | 1.0.0 |
-| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | zlu | 1.0.0 |
-| jimeng_mcp_skill | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI | 2025年12月14日 | zlu | 2.0.0 |
-| xiaoppt-generator-skill | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx | 2025年12月4日 | xiaopp | 1.0.0 |
-| dify-dsl-generator | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计 | 2025年11月22日 | why | 1.0.0 |
-| xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS | 2025年11月22日 | why | 1.0.0 |
-| siliconflow-api-skills | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM | 2025年11月19日 | why | 1.0.0 |
-| mp-cover-generator | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | why | 3.1.1 |
-| excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | why | 1.0.0 |
+| github-trending-wan | GitHub Trending Top 5 中文信息图海报生成器，抓取热门项目→翻译中文摘要→生成 Wan 2.7 海报 Prompt→可视化海报，支持 10 种视觉风格，3 步引导式工作流 | Python、DashScope API、Wan 2.7、信息图设计 | 2026年4月8日 | hailaobao2026 | 1.0.0 |
+| wan-cover-plus | 使用 Wan2.7-image 生成公众号封面图、小红书封面图、种草图和海报改版视觉稿，并支持文生视频、静态图转丝滑动态视频、参考图/参考视频转视频，以及为视频自动补 Edge TTS 配音与字幕烧录 | Bash、Python、Wan API、Edge TTS | 2026年4月5日 | hailaobao2026 | 1.0.0 |
+| wechat-compliance-reviewer | 微信公众号文章合规审查专家，根据微信公众平台运营规范审查文章内容，识别违规风险点并给出修改建议，支持诱导分享/欺诈信息/营销推广/版权侵权等 9 大类违规检测 | Markdown、模板系统、合规审查 | 2026年3月29日 | hailaobao2026 | 1.0.0 |
+| obsidian-search | Obsidian CLI 查询助手，根据自然语言检索需求生成合适的 Obsidian CLI 查询命令，支持搜索笔记、查找上下文、筛选任务、标签、属性、反链、文件列表等 | Bash、Obsidian CLI | 2026年3月13日 | hailaobao2026 | 1.0.0 |
+| xiaohuihui-tech-article | 专为技术实战教程设计的公众号文章生成器，遵循小灰灰公众号写作规范，集成Gemini-3-Pro-Image-Preview双通道(自建API+Gemai公益站)自动配图与腾讯云COS上传功能，自动生成包含公众号卡片、前言、项目介绍、部署实战、总结、往期推荐的完整技术文章 | Markdown、模板生成、Gemini API、Gemai API、腾讯云COS | 2026年2月23日 | hailaobao2026 | 2.4.0 |
+| wechat-article-aggregator | 微信公众号文章聚合器，通过 mptext.top API 批量获取指定公众号博主的最新文章，支持按名称或 fakeid 获取，预置 8 个热门 AI 技术公众号，输出 Markdown/HTML/Text/JSON 格式 | Python、requests、BeautifulSoup、html2text、mptext API | 2026年2月23日 | hailaobao2026 | 1.0.0 |
+| seedance-video-creator | Seedance 2.0 分镜视频创作工具，三阶段工作流（分镜提示词→文生图首帧→图片+提示词生成视频），默认使用 seedance-2.0-fast 模型，支持多图参考、6 套分镜模板，自动生成首帧参考图，一键生成视频并自动下载 | Bash、curl、即梦 API、Seedance 2.0 | 2026年2月22日 | hailaobao2026 | 1.2.0 |
+| wechat-article-fetcher | 微信公众号文章获取器，支持单篇和批量下载，自动提取标题、作者、公众号名称、正文、图片等元数据，支持转换为 Markdown 格式，自动下载文章图片到本地 | Python、requests、BeautifulSoup、html2text | 2026年2月22日 | hailaobao2026 | 1.0.0 |
+| github-readme-generator | 专业的 GitHub 项目 README.md 生成器，自动生成符合开源社区规范的文档结构，支持 6 种项目模板（basic/full/library/webapp/cli/api），交互式生成和自动识别项目类型 | Markdown、文档生成、模板系统 | 2026年1月23日 | hailaobao2026 | 1.0.0 |
+| github-trending | 获取 GitHub Trending 前五项目 README 与摘要，并发送企业微信消息，适用于热门项目跟踪、技术趋势简报与团队分享 | Python、GitHub Trending、企业微信机器人 | 2026年1月22日 | hailaobao2026 | 1.0.0 |
+| jimeng_mcp_skill | AI 图像和视频生成技能，升级至 jimeng-4.5 模型，支持 ratio/resolution 新参数系统，文生图、图像合成、文生视频、图生视频四大核心能力 | MCP、Python、Docker、即梦 AI | 2025年12月14日 | hailaobao2026 | 2.0.0 |
+| xiaoppt-generator-skill | 基于商务模板的专业 PPT 生成器，支持固定 25 页结构（封面→目录→4章节→结束），提供暖色调、商务简约、莫兰迪色系三种主题风格，支持 JSON 配置和代码调用 | Python、python-pptx | 2025年12月4日 | hailaobao2026 | 1.0.0 |
+| dify-dsl-generator | 专业的 Dify 工作流 DSL/YML 文件生成器，根据用户业务需求自动生成完整的 Dify 工作流配置文件，支持各种节点类型和复杂工作流逻辑 | YAML、Dify DSL、工作流设计 | 2025年11月22日 | hailaobao2026 | 1.0.0 |
+| xiaohuihui-dify-tech-article | 专为 Dify 工作流案例分享设计的公众号文章生成器，遵循小灰灰公众号写作规范，自动生成包含前言、工作流制作、总结的完整 Dify 案例文章 | Markdown、Dify、腾讯云 COS | 2025年11月22日 | hailaobao2026 | 1.0.0 |
+| siliconflow-api-skills | 硅基流动（SiliconFlow）云服务平台文档技能，提供大语言模型 API 调用、图片生成、向量模型、Chat Completions API、Stream 模式等完整文档和最佳实践 | API、Python、REST、LLM | 2025年11月19日 | hailaobao2026 | 1.0.0 |
+| mp-cover-generator | 公众号封面生成器，根据主题和标题生成现代风格的公众号封面图，支持描边卡通字体、垂直居中布局，可输出 HTML 和高清图片（PNG/JPG），使用 Playwright 实现完整页面截图 | MCP、HTML/CSS、Node.js、Playwright、即梦 AI | 2025年11月15日 | hailaobao2026 | 3.1.1 |
+| excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🏮 Poetry Cinema Page（沉浸式古诗词网页生成）
+
+**核心功能：**
+
+- ✅ **文学分镜**：按空间/时间/人物/动作/修辞/情绪转折拆 5–8 个视觉段落，不是机械地每两句配一张图
+- ✅ **统一视觉圣经 + 参考链**：主视觉文生图定调，后续每张图都以它作图生图参考，人物、地理、服饰、色彩与镜头语言整套锁死
+- ✅ **双服务商四档位**：火山引擎方舟 Doubao Seedream 5.0（`pro`/`lite`）与 GPT-Image 网关（`gpt-2`/`gpt-2.5`），可按段落混用，参考链跨服务商不断
+- ✅ **沉浸式滚动页面**：固定图片舞台、双层交叉淡入、克制视差、章节导航；桌面卡片不超半屏，移动端 contain 主图 + 模糊背景
+- ✅ **内置朗诵配音**：edge-tts（免费本地）与豆包 seed-tts-2.0 双引擎、23 个中文音色，输出音轨 + 逐行时间轴 + SRT
+- ✅ **口播视频（可选）**：Remotion 渲染 1920×1080/30fps，每段一镜的克制运镜、硬切双层级字幕、片头尾字卡、胶片颗粒与暗角，确定性渲染
+- ✅ **完整工程验收**：生产构建 + 真实浏览器 QA（桌面/移动端/音频/控制台/prefers-reduced-motion），生成图必须过联系表才允许进页面
+
+**工作流程：**
+
+核对原文与分镜 → 建立视觉圣经 → 文生图出主视觉 → 逐段图生图（带 `ref`）→ 联系表检查 → 生成朗诵音轨 → 实现滚动页面 → 生产构建与浏览器 QA →（可选）video-plan → Remotion 成片
+
+**关键命令：**
+
+```bash
+python scripts/ark_image.py probe                  # 免费验证密钥与地址
+python scripts/ark_image.py batch --plan plan.json # 整首诗一次跑完，重跑跳过已完成
+python scripts/narration.py audition               # 23 个音色试听后再定音色
+python scripts/video.py run --plan video-plan.json --workspace out/video
+```
+
+**适用场景：** 古典诗词电影感网页、面向学生的教学解读页、已有诗词站扩页与互链、把已生成语料再做成朗诵/讲解视频、复用「主视觉 → 参考链」一致性方法论
+
+ **示例作品（讲解版口播视频）：** 李白《将进酒》讲解版成片（1920×1080 MP4）
+
+ <p align="center">
+   <a href="https://github.com/wwwzhouhui/skills_collection/releases/download/poetry-cinema-demo/jiang-jin-jiu-with-meaning.mp4"><img alt="▶ 点击播放：将进酒讲解版视频" src="https://img.shields.io/badge/%E2%96%B6%20%E7%82%B9%E5%87%BB%E6%92%AD%E6%94%BE%20%C2%B7%20%E5%B0%86%E8%BF%9B%E9%85%92%E8%AE%B2%E8%A7%A3%E7%89%88-MP4-181717?style=for-the-badge&logo=github&logoColor=white"></a>
+ </p>
 
 ### 🎬 Remotion Video Factory（视觉优先的程序化视频工厂）
 
@@ -1643,6 +1677,7 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 | ffmpeg | Latest | 视频处理/渲染（video-agent-kit） | https://ffmpeg.org |
 | OpenCV | 4.8+ | 视频抽帧/画面分析（video-agent-kit） | https://opencv.org |
 | Edge TTS | Latest | 免费中文语音合成（video-agent-kit） | https://github.com/rany2/edge-tts |
+| Remotion | 4.x | 口播视频确定性渲染（poetry-cinema-page、remotion-video-factory） | https://www.remotion.dev |
 
 ### 技术架构
 
@@ -1669,6 +1704,7 @@ skills_collection/
 │   ├── ai-teaching-media/
 │   ├── grok-imagine-image/
 │   ├── video-agent-kit/
+│   ├── poetry-cinema-page/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1679,6 +1715,15 @@ skills_collection/
 
 ```
 skills_collection/
+├── poetry-cinema-page/           # 沉浸式古诗词网页生成技能
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── agents/
+│   ├── config/
+│   ├── references/
+│   ├── assets/
+│   ├── scripts/
+│   └── examples/
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
@@ -2234,10 +2279,10 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 24
+- **总技能数**: 25
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
-- **AI 多模态**: 6 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit)
+- **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
 - **视频生成**: 2 (voice-to-video, remotion-video-factory)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
@@ -2247,6 +2292,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **poetry-cinema-page**: v1.0.0 (2026-09-22) - 初始版本，沉浸式古诗词网页生成：文学分镜 + 视觉圣经 + 双服务商四档位生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，主视觉参考链跨服务商）+ edge-tts / 豆包 seed-tts 双引擎 23 音色配音 + 滚动页面 + 浏览器验收，可选 Remotion 口播视频成片
 - **remotion-video-factory**: v1.1.0 (2026-09-07) - 审查修复版：tts.py 剥离旁白稿 Markdown 结构行、时间线/字幕/短场景淡入淡出健壮性加固，并新增 check-env.mjs 一键环境自检；视觉优先的程序化视频生产流水线（Remotion + React 代码绘制图形动画 · edge-tts 自动测长配音 · 三层音频 · 确定性渲染 · 双版本交付）
 - **video-agent-kit**: v0.4.3 (2026-08-29) - 初始版本，自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片；37 个 MCP 工具（抽帧理解/时间线/渲染/QC）；TTS 默认 Edge TTS 免费开箱即用
 - **grok-imagine-image**: v1.0.0 (2026-07-26) - 初始版本，通过兼容 Grok2API / OpenAI 风格的 `/v1/images/generations` 调用 `grok-imagine-image` 文生图；内置本地脚本，支持环境变量覆盖、媒体 URL 改写下载与 JSON 输出
@@ -2303,6 +2349,17 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 9 月 22 日 - version 0.0.28
+
+- ✅ 新增 **poetry-cinema-page** Skill v1.0.0（沉浸式古诗词网页生成）
+- ✅ 文学分镜 + 视觉圣经：按戏剧功能拆 5–8 个视觉段落，主视觉文生图定调，后续每张图以它作图生图参考，人物与地理不漂移
+- ✅ 图像双服务商四档位：火山引擎方舟 Doubao Seedream 5.0（pro/lite）与 GPT-Image 网关（gpt-2/gpt-2.5），可按段落混用，参考链跨服务商成立；batch 计划一次跑完整首诗，重跑自动跳过已完成
+- ✅ 配音双引擎 23 个中文音色：edge-tts（免费本地）与豆包 seed-tts-2.0，输出音轨 + 逐行时间轴 sidecar + SRT，附整目录试听页
+- ✅ 沉浸式滚动页面：固定图片舞台、双层交叉淡入、克制视差、章节导航，桌面卡片不超半屏、移动端 contain 主图 + 模糊背景，内置可访问的朗读开关
+- ✅ 口播视频（可选）：Remotion 渲染 1920×1080/30fps，确定性运镜、双层级硬切字幕、片头尾字卡、胶片颗粒与暗角
+- ✅ 完整示例《将进酒》：分镜文档、方舟与网关两套生图计划、朗诵稿、朗诵版与讲解版两支视频计划
+- ✅ 项目统计：技能包 30 个文本文件，Python 2,915 行（ark_image 1,429 · narration 765 · video 678 · extract 43），TypeScript/TSX 1,257 行，6 篇参考文档
 
 ### 2026 年 9 月 8 日 - version 0.0.27
 
@@ -2671,4 +2728,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 9 月 8 日 (v0.0.27)
+**文档生成时间**: 2026 年 9 月 22 日 (v0.0.28)

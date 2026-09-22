@@ -1,0 +1,27 @@
+:root { font-family: "Noto Serif SC", "Songti SC", serif; color: #f2eadf; background: #101416; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; }
+.image-stage { position: fixed; inset: 0; background: #101416; }
+.image-stage::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,8,10,.72), transparent 65%), linear-gradient(0deg, rgba(5,8,10,.5), transparent 45%); pointer-events: none; }
+.image-stage canvas { display: block; width: 100%; height: 100%; }
+.poetry-tools { position: fixed; z-index: 4; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
+.narration { min-height: 40px; border: 1px solid rgba(255,255,255,.24); border-radius: 999px; padding: 8px 13px; color: #f2eadf; background: rgba(10,15,18,.68); cursor: pointer; }
+.narration.playing { color: #182124; background: #d5b98d; }
+.narration:focus-visible { outline: 2px solid #d5b98d; outline-offset: 3px; }
+main { position: relative; z-index: 2; }
+.poetry-section { display: flex; min-height: 115vh; align-items: center; padding: 14vh 7vw; pointer-events: none; }
+.poetry-section.right { justify-content: flex-end; }
+.hero { min-height: 125vh; align-items: flex-start; padding-top: 20vh; }
+.hero-copy, .poetry-card { width: min(550px, 48vw); pointer-events: auto; }
+h1 { margin: 0; font-size: clamp(58px, 8vw, 118px); font-weight: 500; line-height: .95; }
+blockquote { margin: 32px 0; font-size: clamp(24px, 3vw, 40px); }
+.poetry-card { padding: clamp(28px, 4vw, 52px); border: 1px solid rgba(255,255,255,.15); background: rgba(10,15,18,.76); opacity: .4; transform: translateY(24px); transition: .7s ease; backdrop-filter: blur(14px); }
+.poetry-section.active .poetry-card { opacity: 1; transform: none; }
+.poetry-card h2 { font-size: clamp(34px, 4.5vw, 62px); line-height: 1.35; }
+.literal { color: #d5b98d; line-height: 1.9; }
+.analysis { color: rgba(242,234,223,.7); line-height: 2; }
+.loading { position: fixed; z-index: 9; inset: 0; display: grid; place-items: center; background: #101416; transition: opacity .5s; }
+.loading.done { opacity: 0; pointer-events: none; }
+@media (max-width: 760px) { .poetry-section { align-items: flex-end; padding: 16vh 22px 10vh; } .hero { align-items: flex-start; } .hero-copy, .poetry-card { width: calc(100% - 28px); } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } }

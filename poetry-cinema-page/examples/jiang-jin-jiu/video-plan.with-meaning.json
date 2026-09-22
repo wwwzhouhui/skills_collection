@@ -1,0 +1,96 @@
+{
+  "_readme": [
+    "《将进酒》讲解版口播视频：原文 + 白话释义一起念，152 秒。",
+    "这份 plan 故意省略 lines 字段，用来验证自动分组——讲解稿正好是 8 个自然段、",
+    "每段就是「原文 + 释义」两句，和 8 张场景图 1:1 对齐，",
+    "所以流水线自己按 paragraph 切出来的结果就是对的，不需要手写。",
+    "",
+    "转场与气层的编排跟朗诵版一致——同一首诗的情绪弧线不该因为加了讲解就换一套。",
+    "两处刻意的差别：",
+    "  1. motion_gain 调到 0.9：讲解版每镜要塞原文+释义两行字，画面动得小一点，",
+    "     才不会和字幕抢注意力。这正是 motion_gain 这个旋钮存在的理由。",
+    "  2. crossfade_frames 16（朗诵版 14）：镜头更长，溶解也要相应放长一点，",
+    "     否则 16–27 秒的镜头之间那半秒溶解会显得仓促。"
+  ],
+
+  "slug": "jiang-jin-jiu-with-meaning",
+  "title": "将进酒",
+  "author": "李白",
+  "era": "唐 · 天宝",
+  "genre": "乐府歌行",
+  "closing": "沉浸式古诗词页面 · 图像与朗诵由 AI 生成",
+
+  "audio": "public/audio/jiang-jin-jiu-with-meaning.mp3",
+  "timing": "public/audio/jiang-jin-jiu-with-meaning.mp3.json",
+  "images_dir": "public/generated/jiang-jin-jiu",
+  "workspace": "video",
+
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "crossfade_frames": 16,
+  "tail_seconds": 3.4,
+  "grain_opacity": 0.07,
+  "motion_gain": 0.9,
+  "handheld_px": 3.0,
+  "caption_reveal": true,
+
+  "palette": {
+    "ink": "#0d0f10",
+    "moon": "#e6e2d6",
+    "gold": "#d9a84e",
+    "amber": "#a8641f",
+    "ochre": "#b8763a"
+  },
+
+  "font": {
+    "serif": "\"Noto Serif SC\", \"Source Han Serif SC\", \"Songti SC\", \"STSong\", \"SimSun\", \"KaiTi\", serif",
+    "sans": "\"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+  },
+
+  "_classification_note": "讲解稿里原文行与释义行交替出现；靠 original_lines 判定谁是大号衬线（原文）、谁是小一号释义。",
+  "original_lines": [
+    "君不见，黄河之水天上来，奔流到海不复回。",
+    "君不见，高堂明镜悲白发，朝如青丝暮成雪。",
+    "人生得意须尽欢，莫使金樽空对月。天生我材必有用，千金散尽还复来。",
+    "烹羊宰牛且为乐，会须一饮三百杯。岑夫子，丹丘生，将进酒，杯莫停。",
+    "与君歌一曲，请君为我倾耳听。钟鼓馔玉不足贵，但愿长醉不复醒。",
+    "古来圣贤皆寂寞，惟有饮者留其名。陈王昔时宴平乐，斗酒十千恣欢谑。",
+    "主人何为言少钱，径须沽取对君酌。五花马，千金裘，呼儿将出换美酒，与尔同销万古愁。"
+  ],
+
+  "shots": [
+    {
+      "image": "hero.jpg", "role": "title", "move": "settle", "fx": "quiet", "transition": "crossfade",
+      "_note": "片头字卡底。气层压到最低，不跟标题抢。"
+    },
+    {
+      "image": "scene-1.jpg", "move": "pull-out", "fx": "mist", "transition": "push-through",
+      "_note": "黄河峡谷大远景，镜头一头扎进河谷；水汽给水面一层空气。"
+    },
+    {
+      "image": "scene-2.jpg", "move": "push-in", "fx": "dust", "transition": "dip-black",
+      "_note": "天地之阔收进一面铜镜。压黑把「起兴」和「悲」切成两段。"
+    },
+    {
+      "image": "scene-3.jpg", "move": "rise", "fx": "ember", "transition": "flash-warm",
+      "_note": "由悲转豪。宣言句要一记暖光，火星接住这份豪气。"
+    },
+    {
+      "image": "scene-4.jpg", "move": "drift-left", "fx": "ember", "transition": "crossfade",
+      "_note": "独酌转群饮。同一口气里，用最轻的溶解。"
+    },
+    {
+      "image": "scene-5.jpg", "move": "push-in", "fx": "dust", "transition": "light-leak",
+      "_note": "由饮转歌，推近到高歌的面孔；歌起，暖光渗边。"
+    },
+    {
+      "image": "scene-6.jpg", "move": "drift-right", "fx": "mist", "transition": "crossfade",
+      "_note": "双层景深扫出历史层，雾配「古来圣贤皆寂寞」的远。"
+    },
+    {
+      "image": "scene-7.jpg", "move": "settle", "fx": "snow", "transition": "dip-black",
+      "_note": "破晓冷蓝。压黑后再见天光，霜雪落在最后的万古愁上。"
+    }
+  ]
+}
