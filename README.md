@@ -92,11 +92,15 @@ python scripts/video.py run --plan video-plan.json --workspace out/video
 
 **适用场景：** 古典诗词电影感网页、面向学生的教学解读页、已有诗词站扩页与互链、把已生成语料再做成朗诵/讲解视频、复用「主视觉 → 参考链」一致性方法论
 
- **示例作品（讲解版口播视频）：** 李白《将进酒》讲解版成片（1920×1080 MP4）
+**示例作品（讲解版口播视频）：** 李白《将进酒》讲解版成片（1920×1080 / 30fps），点击下方播放器直接在线观看
 
- <p align="center">
-   <a href="https://github.com/wwwzhouhui/skills_collection/releases/download/poetry-cinema-demo/jiang-jin-jiu-with-meaning.mp4"><img alt="▶ 点击播放：将进酒讲解版视频" src="https://img.shields.io/badge/%E2%96%B6%20%E7%82%B9%E5%87%BB%E6%92%AD%E6%94%BE%20%C2%B7%20%E5%B0%86%E8%BF%9B%E9%85%92%E8%AE%B2%E8%A7%A3%E7%89%88-MP4-181717?style=for-the-badge&logo=github&logoColor=white"></a>
- </p>
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/598b5cd5-ffe9-47be-b858-0182c92a204a" controls muted playsinline width="100%"></video>
+</p>
+
+<p align="center">
+  <a href="https://github.com/wwwzhouhui/skills_collection/releases/download/poetry-cinema-demo/jiang-jin-jiu-with-meaning.mp4"><img alt="下载 1080p 高清版（MP4）" src="https://img.shields.io/badge/%E2%AC%87%20%E4%B8%8B%E8%BD%BD%201080p%20%E9%AB%98%E6%B8%85%E7%89%88-MP4-181717?style=for-the-badge&logo=github&logoColor=white"></a>
+</p>
 
 ### 🎬 Remotion Video Factory（视觉优先的程序化视频工厂）
 
