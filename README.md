@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.27-green.svg)
-![Skills](https://img.shields.io/badge/skills-25-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.30-green.svg)
+![Skills](https://img.shields.io/badge/skills-27-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -18,9 +18,11 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 - **自动化工具**: Excel 报表生成、PPT 生成、GitHub Trending 追踪
 - **内容生成**: 技术文章、公众号封面、README 文档生成
+- **公众号排版**: Markdown 一键排成公众号可粘贴 HTML（hailaobao-gzh-design）——7 套排版风格、AI 按规则改写、页面上一键复制、粘进编辑器样式全保留，零 npm 依赖
 - **AI 多模态**: 即梦 AI 图像和视频生成、Seedance 2.0 分镜视频创作、AI 教学媒体一体化（插图/信息图/教学视频/封面/解说视频）、Grok Imagine 文生图
 - **视频剪辑**: 自动化视频剪辑与解说（video-agent-kit）——通用剪辑、电影解说、足球/篮球/电竞集锦、口播配音成片（Edge TTS 免费配音）
 - **视频生成**: 口播文字稿一键成片（voice-to-video）——TTS 词级时间戳 + HTML 动画引擎 + 确定性逐帧渲染，画面/字幕/语音逐词对应，13 套画面风格
+- **动画视频**: 声明式分镜动画（hyperframes-10s-video）——一段文字 → 横屏动画视频 + 同名 SRT 字幕，时长（任意秒）/配色（10 套皮肤）/画幅（横竖屏）/配音（AI 口播）全部参数化，无头 Chromium 逐帧确定性渲染
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -37,6 +39,8 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| hyperframes-10s-video | HyperFrames 声明式分镜动画视频技能：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——① 时长任意（`--total=` 或 `duration` 字段，各幕按比例精确归一，长片靠加幕）；② 配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，附可视化画廊 + 预览页实时换肤）；③ 音频可选（默认无声无音轨，edge-tts 配音一键混音）。含 9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏可切换 | Node.js、GSAP、无头 Chromium、ffmpeg、Python（edge-tts） | 2026年9月24日 | wwwzhouhui | 2.0.0 |
+| hailaobao-gzh-design | 公众号排版技能：AI 按改写规则把 Markdown 文章重排为编辑部风格（序号竖线标题、kicker 语义匹配、金句引用、摘要/信息卡片），**7 套内置风格**（玉石商务、暖色编辑部、极客单色、香槟品牌、雾霾笔记、午夜研究报告、森绿演示），一键生成带「复制到公众号」按钮的自包含 HTML，粘贴到公众号编辑器样式全保留；原始 Markdown 不改、总改动 ≤30%、代码块一字不动 | Node.js（≥16，ESM）、零 npm 依赖 | 2026年9月24日 | hailaobao2026 | 1.0.0 |
 | poetry-cinema-page | 沉浸式古诗词网页生成技能：给一首中国古典诗词，走完文学分镜 → 视觉圣经 → 双服务商逐张生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，四档位可混用，主视觉参考链）→ 联系表检查 → 朗诵配音（edge-tts / 豆包 seed-tts-2.0，23 个中文音色）→ 滚动页面 → 浏览器验收，可选 Remotion 口播视频成片 | Python、火山引擎方舟、GPT-Image 网关、edge-tts、Vite/TypeScript、Remotion、ffmpeg | 2026年9月22日 | wwwzhouhui | 1.0.0 |
 | remotion-video-factory | 视觉优先的程序化视频生产流水线：Remotion + React 代码渲染精确图形动画（矩阵/连线/图表/数字滚动/流程图解），edge-tts 中文配音自动测长并重建时间线，三层音频（配音/BGM/SFX 钉帧表），确定性渲染，双版本成片交付 | TypeScript、React、Remotion、edge-tts、ffmpeg | 2026年9月7日 | wwwzhouhui | 1.1.0 |
 | photo-homework-a4 | 将拍照上传的手写作业清单识别、按科目整理并分类打标，基于固定模板生成一页 A4 纸即可打印的 HTML 作业清单，包含科目卡片、统计条、温馨提示和学生/家长签名区 | HTML/CSS、模板生成、图像识别、A4 打印 | 2026年9月5日 | wwwzhouhui | 1.0.0 |
@@ -64,6 +68,111 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎞️ HyperFrames Kinetic Video（声明式分镜动画视频）
+
+**核心功能：**
+
+- ✅ **声明式分镜**：`scenes.json` 描述「结构 + 每幕动作」，GSAP 按时间轴执行；内置 9 种场景类型（`title` / `end` / `bigword` / `quote` / `flow` / `points` / `bars` / `typewriter` / `free`）
+- ✅ **时长全参数化**：默认 10 秒，`--total=20` 或顶层 `"duration": 15` 可产任意时长——各幕 `dur` 按比例归一、末幕吸收舍入漂移，总和**精确等于目标**（0.01s 级）；长片靠「加幕」而非拉长单幕，避免画面长久静止
+- ✅ **10 套配色皮肤**：`tech` / `wuding` / `aurora` / `sunset` / `ocean` / `forest` / `midnight` / `gold` / `candy` / `paper`（含浅底深字），同一分镜换肤即换风格；附可视化挑色画廊，预览页控制条下拉框可实时切换
+- ✅ **音频可选、不写死**：默认无声（无音轨）；要求「带语音」即写 `script.json` → edge-tts 生成整轨配音 → `--keep-dur` 让配音贴合每幕时长 → 混音为 `<slug>-...-a.mp4`
+- ✅ **字幕自动生成（不手写）**：`make_srt.mjs` 按分镜或语音时间轴切分，时间轴与画面同源（`--eff` / `--timing`），长片也不会错位；某幕可用 `"srt"` 字段精确覆盖
+- ✅ **逐帧确定性渲染**：渲染走 `window.__KINETIC__.seek(t)`（GSAP timeline pause + seek），与机器快慢无关——不掉帧、同输入同输出
+- ✅ **画幅与帧率可切**：`--orient=portrait` 出竖屏 1080×1920，`--fps=60` 改帧数不改时长
+- ✅ **先抽帧后全量**：全量渲染前必看 `_preview` 静帧或跑 `check_overflow.mjs`，程序化拦截文字溢出与页面报错
+
+**工作流程：**
+
+内容拆幕 → 写 `scenes.json`（定皮肤、定目标时长）→ `build_html.mjs` 生成自包含动画页（顺带产出 `*.effective.json` 生效分镜）→ 抽帧核验 → 全量逐帧渲染 → `encode.mjs` 编码 H.264 →（可选）TTS 生成配音并混音 → `make_srt.mjs` 出字幕 → ffmpeg 复核 Duration / 码流 → 交付
+
+**关键命令：**
+
+```bash
+SK="~/.workbuddy/skills/hyperframes-10s-video"
+
+# 构建：20 秒 + candy 配色（同时产出 out.effective.json）
+node "$SK/scripts/build_html.mjs" scenes.json out.html --total=20 --skin=candy
+
+# 抽帧核验 → 全量渲染 → 编码成片
+node "$SK/scripts/render.mjs"  out.html _preview --only=60,240,500
+node "$SK/scripts/render.mjs"  out.html _frames
+node "$SK/scripts/encode.mjs"  _frames out-1920x1080-30fps.mp4
+
+# 自动字幕（务必用 build 产出的生效分镜，保证与画面同源）
+node "$SK/scripts/make_srt.mjs" scenes.json out-1920x1080-30fps.srt --eff=out.effective.json
+
+# 带 AI 配音：先写 script.json（每幕一句口播），再 TTS + 混音
+python "$SK/scripts/tts_scenes.py" script.json scenes.json . --keep-dur --rate=+15%
+ffmpeg -y -i out-1920x1080-30fps.mp4 -i voice.mp3 -c:v copy -c:a aac -b:a 192k -shortest out-1920x1080-30fps-a.mp4
+```
+
+**参数速查：**
+
+| 维度 | 怎么给 | 默认 |
+| --- | --- | --- |
+| 时长 | `--total=20` 或 `scenes.json` 顶层 `"duration": 15` | 10 秒 |
+| 配色 | `--skin=candy` 或 `"skin":"candy"`（10 选 1，未知值回退 `tech`） | `tech` |
+| 音频 | 说「带语音」或 `"audio":true` | 无声 |
+| 画幅 / 帧率 | `--orient=portrait` / `--fps=60` | 横屏 1920×1080 / 30fps |
+| 角标 / 页脚 | `--badge=` / `--foot=` | `海老豹666` / 空 |
+
+**目录要点：** `assets/template.html`（动画模板 + 10 套皮肤 + 控制条）、`scripts/`（7 个可独立运行的脚本）、`references/scenes_schema.md`（分镜字段完整定义）、`references/prompt-template.md`（对话用标准提示词模板）、`references/skin-gallery.html`（10 套配色实拍帧画廊）、`references/example-rsi/`（完整可复现范例：分镜 + 字幕）
+
+**适用场景：** 概念/观点的动画讲解短视频、公众号与视频号配套动画、产品与数据要点可视化、需要批量换配色出多版本的投放素材；与 `remotion-video-factory`（代码级精确图形动画）、`voice-to-video`（口播逐词成片）互补，覆盖三种不同的视频生产方式
+
+**🎬 演示视频（示例成片）：** AI 自我进化（RSI）主题动画讲解片（1920×1080 / 30fps，含 AI 配音），即由本技能「一句话 → 分镜 → 渲染 → 混音」全流程产出，点击下方播放器直接在线观看
+
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/398430c5-7277-4382-8d2d-feff8727ff9f" controls muted playsinline width="100%"></video>
+</p>
+
+### 📐 Hailaobao GZH Design（公众号排版 —— Markdown 一键变可粘贴 HTML）
+
+**核心功能：**
+
+- ✅ **Markdown → 公众号可粘贴 HTML**：产物是自包含 HTML 页面，顶栏一个 **[ 复制到公众号 ]** 按钮，点一下把带内联样式的正文写进剪贴板（`text/html`），粘进公众号后台样式全保留 —— 不经过任何第三方排版网站，不丢格式
+- ✅ **7 套排版风格**：`jade-business`（玉石商务）/ `warm-editorial`（暖色编辑部）/ `mono-tech`（极客单色）/ `champagne-brand`（香槟品牌）/ `mist-notebook`（雾霾笔记）/ `midnight-report`（午夜研究报告）/ `forest-demo`（森绿演示）；每套是「主题色 + 版式 + 强调样式 + 组件皮肤」的整套预设，传未知 id 会直接报错并列出可用值
+- ✅ **AI 按规则改写，不生成新事实**：标题加「序号 | 主标题 | 小字副标题」竖线语法；kicker 语义匹配（顺序动作用 `STEP`、并列要点用纯数字 `01/02`、案例 `CASE`、章节 `PART A`、问答 `Q1`、误区 `AVOID`、数据 `FACT`…不一律甩 `STEP`）；关键短语加粗、金句转引用、`---` 控制视觉呼吸、按需插 `<SummaryCard>` / `<InfoCard>` 卡片
+- ✅ **原文零损伤**：改写结果写到临时文件，原始 Markdown 一个字不动；总改动 ≤ 30%，代码块一字不改，不加原文没有的观点与事实
+- ✅ **先问风格再动手**：风格是编辑决策，默认必须让用户挑 —— 给出「首选（附理由）+ 同类型备选 + 反差款」三选一；用户点名了 scheme 或说了「你决定 / auto」才自动选
+- ✅ **零依赖、跨 agent**：只需 Node.js ≥ 16（ESM），脚本仅用内置 `fs` / `path`，无 npm 包、无需联网；Claude Code 读 `SKILL.md` 的 YAML frontmatter 自动挂载，Codex / WorkBuddy / Cursor / Cline / 手动 Prompt 走同目录 `AGENTS.md` 对等入口，产物完全一致
+
+**工作流程：**
+
+读文章并判定体裁（方法论 / 教程 / 评测 / 心得 / 资讯）→ 问用户挑 scheme → AI 按改写规则产出临时 Markdown → `typeset.mjs` 渲染带复制按钮的 HTML → 交付（说清用了哪套风格、改了哪 3–5 处、产物绝对路径）
+
+**关键命令：**
+
+```bash
+node ~/.workbuddy/skills/hailaobao-gzh-design/scripts/typeset.mjs \
+  --input article.rewritten.md \
+  --scheme forest-demo \
+  --title "文章标题" \
+  --out article.html
+```
+
+**参数速查：**
+
+| 参数 | 说明 | 默认 |
+| --- | --- | --- |
+| `--input` | 改写后的 Markdown 路径 | 必填 |
+| `--scheme` | 7 选 1 的风格 id（未知值 exit 1 并列出可用 id） | `jade-business` |
+| `--title` | HTML 顶栏显示的文章名 | `公众号排版` |
+| `--out` | 产物 HTML 路径 | 与 `--input` 同目录同名 `.html` |
+
+**体裁 → 风格匹配（速查）：** 方法论 / AI 观点 → `jade-business`；教程 / 命令行 / bug 复盘 → `mono-tech`；工具教程 / 案例演示 → `forest-demo`；心得 / 复盘 / 阅读 → `warm-editorial`；品牌 / 活动 / 产品发布 → `champagne-brand`；学习笔记 / 干货清单 → `mist-notebook`；行业分析 / 数据 / 财经 → `midnight-report`；拿不准默认 `jade-business` 兜底
+
+**目录要点：** `SKILL.md` + `AGENTS.md`（双入口）、`references/style-schemes.md`（7 套 scheme 目录 + 匹配决策表）、`references/formatting-rules.md`（改写方法论 + before/after）、`references/typesetting-syntax.md`（扩展 Markdown 语法）、`references/demo-article-patterns.md`（工具教程/演示型文章排版模式）、`scripts/schemes.mjs`（风格样式生成）+ `scripts/typeset.mjs`（主渲染脚本）、`examples/`（demo 与 remotion-demo 两组样例输入输出）
+
+**适用场景：** 公众号长文/技术文/复盘文一键排版；同一篇稿换多套风格出 A/B 版本；从 Markdown 工作流（Obsidian 等）直通公众号后台；与 `xiaohuihui-tech-article`（写稿 + 配图 + COS 图床）、`wechat-compliance-reviewer`（发布前合规审查）串成「写稿 → 排版 → 合规 → 发布」链路 —— 本 skill 只负责其中「排版」一环，不改文字内容
+
+**使用示例：**
+
+```
+帮我排版这篇文章，用森绿演示风格：E:\notes\remotion-article.md
+把这篇 md 排成公众号能直接粘贴的样式，风格你决定
+```
 
 ### 🏮 Poetry Cinema Page（沉浸式古诗词网页生成）
 
@@ -1715,6 +1824,8 @@ skills_collection/
 │   ├── grok-imagine-image/
 │   ├── video-agent-kit/
 │   ├── poetry-cinema-page/
+│   ├── hailaobao-gzh-design/
+│   ├── hyperframes-10s-video/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1734,6 +1845,18 @@ skills_collection/
 │   ├── assets/
 │   ├── scripts/
 │   └── examples/
+├── hailaobao-gzh-design/         # 公众号排版技能（Markdown → 可粘贴 HTML，7 套风格）
+│   ├── SKILL.md                  # Claude Code 入口（YAML frontmatter 触发）
+│   ├── AGENTS.md                 # 其他 agent（Codex/WorkBuddy/Cursor）对等入口
+│   ├── references/               # 7 套 scheme 目录 / 改写规则 / 扩展语法 / 演示文排版模式
+│   ├── scripts/                  # schemes.mjs（风格样式生成）+ typeset.mjs（主渲染脚本）
+│   └── examples/                 # demo 与 remotion-demo 两组样例输入输出
+├── hyperframes-10s-video/        # HyperFrames 声明式分镜动画视频技能
+│   ├── SKILL.md                  # 完整 SOP 与 8 条铁律
+│   ├── README.md                 # 使用说明（时长/配色/音频三开关）
+│   ├── assets/template.html      # 动画模板 + 10 套皮肤 + 控制条
+│   ├── scripts/                  # build_html / render / encode / make_srt / tts_scenes 等 7 个脚本
+│   └── references/               # 分镜字段定义 / 提示词模板 / 配色画廊 / 可复现范例
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
@@ -2289,11 +2412,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 25
+- **总技能数**: 27
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
-- **内容生成**: 4 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber)
+- **内容生成**: 5 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber, hailaobao-gzh-design)
 - **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
-- **视频生成**: 2 (voice-to-video, remotion-video-factory)
+- **视频生成**: 3 (voice-to-video, remotion-video-factory, hyperframes-10s-video)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2302,6 +2425,8 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **hailaobao-gzh-design**: v1.0.0 (2026-09-24) - 初始版本，公众号排版：Markdown → 带「复制到公众号」按钮的自包含 HTML，粘进公众号编辑器样式全保留；7 套排版风格（玉石商务 / 暖色编辑部 / 极客单色 / 香槟品牌 / 雾霾笔记 / 午夜研究报告 / 森绿演示）、AI 按规则改写（序号竖线标题 · kicker 语义匹配 · 金句引用 · SummaryCard/InfoCard 卡片 · 总改动 ≤30%）；原始 Markdown 不改动，零 npm 依赖，只需 Node.js ≥ 16
+- **hyperframes-10s-video**: v2.0.0 (2026-09-24) - 初始版本，HyperFrames 声明式分镜动画视频：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——时长任意（`--total=` / `duration` 字段，各幕比例归一、精确到 0.01s，长片靠加幕）、配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，含可视化画廊 + 预览页实时换肤）、音频可选（默认无声无音轨，edge-tts 配音可一键混音）；9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏与帧率可切，无头 Chromium 逐帧确定性渲染
 - **poetry-cinema-page**: v1.0.0 (2026-09-22) - 初始版本，沉浸式古诗词网页生成：文学分镜 + 视觉圣经 + 双服务商四档位生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，主视觉参考链跨服务商）+ edge-tts / 豆包 seed-tts 双引擎 23 音色配音 + 滚动页面 + 浏览器验收，可选 Remotion 口播视频成片
 - **remotion-video-factory**: v1.1.0 (2026-09-07) - 审查修复版：tts.py 剥离旁白稿 Markdown 结构行、时间线/字幕/短场景淡入淡出健壮性加固，并新增 check-env.mjs 一键环境自检；视觉优先的程序化视频生产流水线（Remotion + React 代码绘制图形动画 · edge-tts 自动测长配音 · 三层音频 · 确定性渲染 · 双版本交付）
 - **video-agent-kit**: v0.4.3 (2026-08-29) - 初始版本，自动化视频剪辑与解说视频技能包：通用剪辑、电影解说（几分钟看完）、足球/篮球集锦、LOL 电竞集锦、口播配音成片；37 个 MCP 工具（抽帧理解/时间线/渲染/QC）；TTS 默认 Edge TTS 免费开箱即用
@@ -2323,6 +2448,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ### 开发语言
 
 - Python: 6
+- Node.js/JavaScript: 3
 - Markdown: 3
 - MCP: 2
 - YAML/DSL: 1
@@ -2359,6 +2485,33 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 9 月 24 日 - version 0.0.30
+
+- ✅ 新增 **hailaobao-gzh-design** Skill v1.0.0（公众号排版：Markdown → 可直接粘贴的公众号 HTML）
+- ✅ 一键复制：产物是自包含 HTML，顶栏「复制到公众号」按钮把带内联样式的正文写进剪贴板（`text/html`），粘进公众号编辑器样式全保留，不依赖任何第三方排版网站
+- ✅ 7 套排版风格：玉石商务 `jade-business` / 暖色编辑部 `warm-editorial` / 极客单色 `mono-tech` / 香槟品牌 `champagne-brand` / 雾霾笔记 `mist-notebook` / 午夜研究报告 `midnight-report` / 森绿演示 `forest-demo`；每套是「主题色 + 版式 + 强调样式 + 组件皮肤」的整套预设，未知 id 直接报错并列出可用值
+- ✅ AI 按规则改写、不生成新事实：标题「序号 | 主标题 | 小字副标题」竖线语法、kicker 语义匹配（STEP / 纯数字 / CASE / Q1 / AVOID / FACT …，不一律甩 STEP）、关键短语加粗、金句转引用、`---` 控呼吸、`<SummaryCard>` / `<InfoCard>` 插卡片
+- ✅ 原文零损伤：改写结果落临时文件，原始 Markdown 一个字不动；总改动 ≤ 30%，代码块一字不改，不加原文没有的观点与事实
+- ✅ 先问风格再动手：默认必须让用户三选一（首选附理由 + 同类型备选 + 反差款），用户点名 scheme 或授权 auto 才自动选
+- ✅ 零依赖、跨 agent 通用：只需 Node.js ≥ 16（ESM），脚本仅用内置 `fs` / `path`，无 npm 包、无需联网；Claude Code 走 `SKILL.md` frontmatter 自动挂载，Codex / WorkBuddy / Cursor / Cline 等走同目录 `AGENTS.md` 对等入口，产物一致
+- ✅ 交付物：自包含 HTML（复制按钮 + 正文预览）+ 改写后的临时 Markdown；附 `references/` 四份规则文档（scheme 目录 / 改写规则 / 扩展语法 / 演示文模式）与 `examples/`（demo、remotion-demo）两组样例输入输出
+- ✅ 项目统计：技能包 13 个文件（含 `.pi` 任务记录），Node.js 脚本 2 个，零 npm 依赖
+- ✅ 文档：**HyperFrames Kinetic Video** 章节补上在线演示视频（README 内联播放器，AI 自我进化 RSI 主题成片：1920×1080 / 30fps，含 AI 配音），读者不必下载即可直接观看
+
+### 2026 年 9 月 24 日 - version 0.0.29
+
+- ✅ 新增 **hyperframes-10s-video** Skill v2.0.0（声明式分镜动画视频）
+- ✅ 声明式分镜：`scenes.json` 描述「结构 + 每幕动作」，GSAP 按时间轴执行，内置 9 种场景类型（title/end/bigword/quote/flow/points/bars/typewriter/free）
+- ✅ 时长全参数化：默认 10 秒，`--total=20` 或顶层 `"duration": 15` 可产任意时长——各幕 `dur` 按比例归一、末幕吸收舍入漂移，总和精确等于目标（0.01s 级）；长片靠「加幕」而非拉长单幕
+- ✅ 配色 10 套皮肤：tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper（含 paper 浅底深字），同一分镜换肤即换风格；附可视化挑色画廊与预览页控制条实时切换下拉框
+- ✅ 音频可选、不写死：默认无声无音轨；要求「带语音」时写 `script.json` → edge-tts 生成整轨配音 → `--keep-dur` 让配音贴合每幕时长 → 混音为 `-a.mp4`
+- ✅ 字幕自动生成、不手写：`make_srt.mjs` 按分镜或语音时间轴切分，时间轴与画面同源（`--eff` / `--timing`），长片也不会错位；某幕可用 `"srt"` 字段精确覆盖
+- ✅ 逐帧确定性渲染：走 `window.__KINETIC__.seek(t)`（timeline pause + seek），与机器快慢无关，同输入同输出；全量渲染前强制抽帧核验或跑 `check_overflow`
+- ✅ 画幅与帧率可切：`--orient=portrait` 出竖屏 1080×1920，`--fps=60` 改帧数不改时长
+- ✅ 交付物：MP4（+ 有声版 `-a.mp4`）+ 同名 SRT + 可实时换肤的交互预览页 + 生效分镜 `effective.json` + `gen-log.txt` 生成时间记录
+- ✅ 配套文档：SKILL.md（完整 SOP 与 8 条铁律）+ README.md（使用说明）+ references（分镜字段定义 / 提示词模板 / 10 套配色画廊 / 可复现范例）
+- ✅ 项目统计：技能包 16 个文件、约 3.6 MB，Node.js 脚本 7 个，输出 1920×1080@30fps
 
 ### 2026 年 9 月 22 日 - version 0.0.28
 
@@ -2738,4 +2891,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 9 月 22 日 (v0.0.28)
+**文档生成时间**: 2026 年 9 月 24 日 (v0.0.29)

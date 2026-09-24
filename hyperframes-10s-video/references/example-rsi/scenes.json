@@ -1,0 +1,12 @@
+{
+  "skin": "tech",
+  "badge": "AI进化 · RSI",
+  "foot": "AI自我进化 RSI｜产物 · 框架 · 模型 三位一体",
+  "orient": "landscape",
+  "duration": 10,
+  "scenes": [
+    {"type":"title","dur":2.5,"eyebrow":"AI SELF-EVOLUTION","brand":"AI自我进化 · RSI","title":"自主进化三引擎","sub":"产物 · 框架 · 模型，一起转","srt":"AI自我进化 · RSI\n自主进化三引擎\n产物 · 框架 · 模型，一起转"},
+    {"type":"free","dur":5,"srt":"三个核心方向，一起转\n产物进化：改代码、写论文\n框架进化：优化提示词、工具、记忆\n模型进化：自主训练迭代模型参数","html":"<h2 class=\"h\">三个核心方向，一起转</h2><div style=\"display:flex;gap:30px;margin-top:22px\"><div class=\"card\" style=\"flex:1\"><div class=\"ic\"><svg viewBox=\"0 0 24 24\"><path d=\"M21 8 12 3 3 8v8l9 5 9-5V8Z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/></svg></div><div><div class=\"ct\">产物进化</div><div class=\"cd\">改代码、写论文<br>产出物越做越强</div></div></div><div class=\"card\" style=\"flex:1\"><div class=\"ic\"><svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 20 11a2 2 0 1 1 0 4Z\"/></svg></div><div><div class=\"ct\">框架进化</div><div class=\"cd\">优化提示词、工具、记忆<br>智能脚手架持续升级</div></div></div><div class=\"card\" style=\"flex:1\"><div class=\"ic\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 2 4 14h6l-1 8 9-12h-6l1-8Z\"/></svg></div><div><div class=\"ct\">模型进化</div><div class=\"cd\">自主训练迭代<br>模型参数自我完善</div></div></div></div>"},
+    {"type":"end","dur":2.5,"eyebrow":"AI SELF-EVOLUTION","brand":"三位一体","title":"AI自主进化体系","sub":"产物 + 框架 + 模型，闭环驱动","cta":"关注 AI进化 · RSI","srt":"三位一体 · AI自主进化体系\n产物 + 框架 + 模型，闭环驱动"}
+  ]
+}
