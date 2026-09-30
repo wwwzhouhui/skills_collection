@@ -1,0 +1,92 @@
+#!/bin/bash
+# 白板讲解视频工作台 CLI —— 每期内容在 config.json dirs.projects，中间产物与成片在 dirs.build
+#   wb new "<标题>"            新建一期：<projects>/<今天日期> <标题>/scenes.js（从模板复制）
+#   wb list                    列出所有期
+#   wb scenes <期>             生成 Excalidraw 场景 + script.json + 旁白稿.md
+#   wb stills <期>             导出每个 beat 的静帧到 <后台>/<期>/work/frames/（检查排版）
+#   wb image <期> name="英文描述" [最多4个]   codex 出白板贴纸 → <期>/assets/<name>.png
+#   wb logo <期> name="Commons 文件名.svg|搜索词" [--vs=a,b]   真实 Logo → <期>/assets/<name>.png（--search="词" 只列候选）
+#   wb tts <期> [scene]        火山引擎(豆包)语音合成配旁白（config tts.engine 可切 edge-tts 免费备胎）
+#   wb voice                  配音自检：回显 engine/端点域/资源/音色，并真跑一句 → build/_voice-check.wav
+#   wb render <期> [scene]     渲染 → <后台>/<期>/work/out/master.mp4
+#   wb captions <期>           核对字幕：每条的时间、文本，以及高亮分段（[a·b·c] 就是色块依次跳的位置）
+#   wb mix <期> [gain]         混 BGM → <后台>/<期>/outputs/final.mp4
+#   wb cover <期>              出封面 → <期>/封面-4x3.png、封面-3x4.png、封面-9x16.png（画幅 config cover.ratios；scenes.js 里 build 第三参 cover）
+#   wb build <期>              scenes + tts + render + mix + cover 一条龙，出片后自动 clean
+#   wb clean <期>              清中间产物：work/frames 静帧、work/out 里已不在场景表的旧分段（分段与 master 保留）
+#   wb open <期>               在 Finder 里打开期目录与后台目录
+#   <期> 可以是目录名、标题或日期的任意子串，如 wb build 薄肌
+set -e
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+# 生成到 scenes.js 里的 require 路径是交给 Node 的，必须用 Node 认得的绝对路径：
+# Git Bash 的 /c/Users/x 会被 Windows 版 Node 解析成 C:\c\Users\x → 用 cygpath -m 取 C:/Users/x。
+ROOT_JS="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then ROOT_JS=$(cygpath -m "$ROOT"); fi
+PROJECTS=$(node -p "require('./lib/paths.cjs').PROJECTS_DIR")
+resolve() { node -p "require('./lib/paths.cjs').resolveProject(process.argv[1])" "$1"; }
+finalOf() { node -p "require('./lib/paths.cjs').projectPaths(process.argv[1]).final" "$1"; }
+studioOf() { node -p "require('./lib/paths.cjs').projectPaths(process.argv[1]).studio" "$1"; }
+
+# 配音引擎：config.json tts.engine（volc=火山 / mi=小米 MiMo，都走 lib/tts-volc.mjs；
+# edge=本机 edge-tts 免费备胎，走 python）
+ENGINE=$(node -p "require('./lib/paths.cjs').cfg.tts.engine||'volc'")
+EDGE_PY=$(node -p "(require('./lib/paths.cjs').cfg.tts.edge||{}).python||''")
+do_tts() {
+  if [ "$ENGINE" = "edge" ]; then
+    PY="$EDGE_PY"
+    case "$PY" in "~/"*) PY="$HOME/${PY#\~/}" ;; esac
+    if [ -z "$PY" ]; then PY=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true); fi
+    if [ -z "$PY" ]; then echo "tts.engine=edge 但没有可用的 python（在 config.json tts.edge.python 指定解释器）"; exit 1; fi
+    "$PY" lib/tts-edge.py "$@"
+  else
+    node lib/tts-volc.mjs "$@" 2>&1 | grep -vE "^\s+at "
+  fi
+}
+open_dir() {
+  if command -v open >/dev/null 2>&1; then open "$1"
+  elif command -v explorer.exe >/dev/null 2>&1; then explorer.exe "$(cygpath -w "$1" 2>/dev/null || echo "$1")"
+  elif command -v xdg-open >/dev/null 2>&1; then xdg-open "$1"
+  else echo "$1"; fi
+}
+
+cmd="$1"; shift || true
+case "$cmd" in
+  new)
+    [ -z "$1" ] && { echo "用法: wb new \"<标题>\""; exit 1; }
+    dir="$PROJECTS/$(date +%Y-%m-%d) $1"
+    [ -e "$dir" ] && { echo "已存在 $dir"; exit 1; }
+    mkdir -p "$dir"
+    sed -e "s/__TITLE__/$1/g" -e "s#__WB_ROOT__#$ROOT_JS#g" templates/scenes.js > "$dir/scenes.js"
+    sed "s/__TITLE__/$1/g" templates/发布.md > "$dir/发布.md"
+    echo "已创建：$dir/scenes.js 与 发布.md"
+    echo "下一步：编辑 scenes.js → wb stills \"$1\""
+    ;;
+  list) node -p "require('./lib/paths.cjs').listProjects().join('\n')" ;;
+  scenes) P=$(resolve "$1"); node "$P/scenes.js" ;;
+  stills) P=$(resolve "$1"); node "$P/scenes.js" >/dev/null; shift; node lib/render.js "$P" --stills "$@"; echo "静帧在 $(studioOf "$P")/work/frames/" ;;
+  image) P=$(resolve "$1"); shift; node lib/gen-image.mjs "$P" "$@" ;;
+  logo)
+    if [[ "$1" == --search=* ]]; then node lib/fetch-logo.mjs _ "$1"; exit; fi
+    P=$(resolve "$1"); shift; node lib/fetch-logo.mjs "$P" "$@" ;;
+  tts) P=$(resolve "$1"); shift; do_tts "$P" "$@" ;;
+  voice) node lib/tts-check.mjs ;;
+  render) P=$(resolve "$1"); shift; node lib/render.js "$P" "$@" ;;
+  captions) P=$(resolve "$1"); node lib/captions.cjs "$P" --dump ;;
+  clean) P=$(resolve "$1"); node lib/render.js "$P" --clean ;;
+  cover) P=$(resolve "$1"); node "$P/scenes.js" >/dev/null; node lib/render.js "$P" --cover ;;
+  mix) P=$(resolve "$1"); shift; node lib/mix-bgm.mjs "$P" "$@"; node "$P/scenes.js" >/dev/null ;;
+  build)
+    P=$(resolve "$1")
+    node "$P/scenes.js"
+    do_tts "$P"
+    node lib/render.js "$P"
+    node lib/mix-bgm.mjs "$P"
+    node "$P/scenes.js" >/dev/null   # 刷新旁白稿里的时长与成片链接
+    [ -f "$P/scenes/cover.json" ] && node lib/render.js "$P" --cover || echo "（没定义封面，跳过；见 wb cover）"
+    node lib/render.js "$P" --clean
+    echo "成片：$(finalOf "$P")"
+    ;;
+  open) P=$(resolve "$1"); open_dir "$P"; S=$(studioOf "$P"); [ -d "$S" ] && open_dir "$S" ;;
+  *) sed -n '2,17p' "$0" ;;
+esac

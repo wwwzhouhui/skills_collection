@@ -1,0 +1,125 @@
+{
+  "dirs": {
+    "projects": "./episodes",
+    "build": "./build",
+    "_note": "projects = 每期内容目录（人看、人改的：scenes.js、场景图、贴纸、旁白稿、字幕、封面、README、发布.md），可以指到 Obsidian 仓库里；build = 后台目录，每期 <期>/work/ 放中间产物（音频/逐帧/分段 mp4），<期>/outputs/final.mp4 是成片。相对路径以本仓库根目录为准，~ 表示家目录"
+  },
+  "tts": {
+    "engine": "mi",
+    "voice": "zh_male_liufei_uranus_bigtts",
+    "resourceId": "seed-tts-2.0",
+    "endpoint": "plan",
+    "speed": 1.2,
+    "loudness": 1,
+    "style": "",
+    "mi": {
+      "baseUrl": "https://token-plan-cn.xiaomimimo.com/v1",
+      "model": "mimo-v2.5-tts",
+      "voice": "冰糖",
+      "style": "",
+      "_note": "小米 MiMo 通道（engine=\"mi\" 时生效，凭证 MI_TTS_API_KEY 填 .env）。走 OpenAI 形态的 {baseUrl}/chat/completions，正文必须放在 assistant 角色消息里（本仓库已按此实现）。voice 只有九个：mimo_default / 冰糖 / 茉莉 / 苏打 / 白桦 / Mia / Chloe / Milo / Dean —— 写错会在报错里列出全部可选值。style=自然语言风格指令，会作为 user 消息一起发（如「语速偏快、语气轻松」），留空则不发。⚠️这个接口没有语速参数：config 的 tts.speed 对小米通道是**本地 ffmpeg atempo 后处理**（接口自己忽略 speed，实测传 0.5 与不传返回字节完全相同）。⚠️也**不返回逐字时间戳**，句子级时间由静音检测估算（见 lib/tts/mi.mjs），字幕后验精度略低于火山。参数速查见 references/voices-mi.md。"
+    },
+    "edge": {
+      "voice": "zh-CN-YunxiNeural",
+      "python": "C:/Users/wwwzh/.workbuddy/binaries/python/envs/default/Scripts/python.exe",
+      "rate": "",
+      "volume": "+0%",
+      "pitch": "+0Hz",
+      "_note": "本机备胎通道（edge-tts，免费、无需付费凭证）。voice 常用：zh-CN-YunxiNeural（云希·男·讲解）、zh-CN-XiaoxiaoNeural（晓晓·女）、zh-CN-YunjianNeural（云健·男·有力）、zh-CN-YunyangNeural（云扬·男·新闻）。python 指向已装 edge_tts 的解释器。rate 留空则按 tts.speed 换算（1.2 → +20%）。改 voice/speed 会自动重配（缓存键含音色与语速），强制重配 FORCE_TTS=1。"
+    },
+    "_note": "engine 三选一：volc=火山（默认，音色最好、返回逐字时间戳、字幕最准）｜mi=小米 MiMo mimo-v2.5-tts（走 tp- 开头的 token-plan Key，**无逐字时间戳**，句子时间靠静音检测估算）｜edge=本机 edge-tts 免费备胎。三个引擎各自有音色字段，不要混填：火山 voice（本层）/ 小米 mi.voice / edge.edge.voice。speed=语速倍率（1=原速，1.2 推荐），loudness=音量倍率，style=风格描述（火山仅 2.0 音色响应；小米走 user 消息）。⚠️speed 在两边的落点不同：火山是原生 speech_rate，小米是本地 ffmpeg atempo 后处理。火山专属：endpoint=调用域（\"plan\" 方舟套餐域，控制台发的 ark- 开头 Key 只认这个 | \"standard\" | 留空按 Key 前缀自动判定 —— 打错域报 45000010 Invalid X-Api-Key，不是额度问题）；resourceId 与音色必须配套（2.0 音色 *_uranus_bigtts→seed-tts-2.0，1.0→seed-tts-1.0，声音复刻 S_ 开头→volc.megatts.default，可用音色见 references/voices-volc.md）。改了 voice/speed/style/endpoint 会自动重配对应场景（缓存键含这些），强制重配 FORCE_TTS=1。先跑 `wb voice` 自检凭证/域/音色是否对得上。"
+  },
+  "bgm": {
+    "file": "assets/bgm.mp3",
+    "playlist": [],
+    "trim": [],
+    "gain": 0.5,
+    "speak": 0.1,
+    "gap": 0.22,
+    "rampSeconds": 0.35,
+    "tailFadeSeconds": 3.5,
+    "_note": "配乐不随仓库附带：放一首无版权音乐到 assets/bgm.mp3（或改 file 指到别处），没有就出无配乐成片。trim=[起, 止] 秒截一段循环，留空用整首。**长片（>5 分钟）建议改用 playlist**：一首 2~3 分钟的曲子配 20 分钟的片子要循环十几次，一听就出戏；playlist 里几首按顺序拼成一整段再整体循环，重复感立刻降下来。条目形如 {\"file\":\"assets/bgm-1.mp3\",\"trim\":[0,90],\"gain\":0.9}（file 相对仓库根、支持 ~，trim 省略即整首，gain 可逐首配平响度）；playlist 非空时 file/trim 被忽略，临时换曲仍可用 BGM=路径 或 BGM_PLAYLIST='[{...}]'。说话时音量 ×speak、停顿 ×gap，rampSeconds 缓坡，tailFadeSeconds 尾部淡出；gain 总音量，嫌吵就调小，临时试听 wb mix <期> 0.4"
+  },
+  "render": {
+    "fps": 30,
+    "leadSeconds": 0.3,
+    "holdSeconds": 0.7,
+    "workers": 4,
+    "_note": "workers=并行出帧的页面数（每页一个 Chromium 渲染进程，交错截图，成片逐帧一致）；1=老的单页串行",
+    "pen": {
+      "speed": 1450,
+      "fillSpeed": 13000,
+      "minSeconds": 0.24,
+      "gapSeconds": 0.09,
+      "charSeconds": [
+        0.05,
+        0.14
+      ],
+      "overflow": 0,
+      "travelMax": 1.1,
+      "_note": "speed=描边像素/秒；fillSpeed=斜线填充像素/秒；minSeconds=每个元素最短绘制时长；gapSeconds=两笔之间抬笔间隙；charSeconds=[最小,最大] 每个汉字的书写秒数（按字号/700 取，拉丁字母减半）；overflow=一个 beat 画不完时最多溢出到下一段的比例；travelMax=抬笔移动最长秒数，超过就中途藏笔；fillMaxSeconds=单个图形填充（斜线/实底）最长秒数。⚠️这几个值直接决定「画面跟不跟得上旁白」：overflow 越大、speed 越小，一拍画不完就越拖，且延迟会累积到后面每一拍（实测 overflow=0.35/speed=1000 时最差落后旁白 3 秒）。改完用 node lib/diag-schedule.mjs <期目录绝对路径> 逐拍核对起笔偏移，目标 ≤0.35s",
+      "fillMaxSeconds": 0.8
+    }
+  },
+  "captions": {
+    "enabled": true,
+    "fontSize": 46,
+    "baselineY": 1022,
+    "safeTop": 960,
+    "minChars": 6,
+    "maxChars": 26,
+    "leadSeconds": 0.08,
+    "tailSeconds": 0.25,
+    "highlight": {
+      "enabled": true,
+      "color": "",
+      "textColor": "#fffdf7",
+      "keepHalo": false,
+      "opacity": 1,
+      "radius": 12,
+      "padX": 10,
+      "padY": 5,
+      "minUnitChars": 2,
+      "maxUnitChars": 4
+    },
+    "_note": "烧录字幕：小赖字体、墨色 + 纸色描边，居中于底部；safeTop 以下 110px 留给字幕，场景元素别越界（wb scenes 会警告）。SRT 另存期目录 字幕.srt。highlight=跟读高亮：语音念到哪个高亮单元，就在那一段背后套一个色块、文字转反白（color 留空 = 用品牌色 brand.accent；textColor 高亮时的字色；keepHalo=true 保留纸色描边、字仍用原色，想要「半透明马克笔划过」就把 opacity 调到 0.3 左右、keepHalo 设 true；radius/padX/padY 色块圆角与四周留白）。粒度：minUnitChars 是每段最少几个字（不够就并给相邻段，免得色块一秒跳五六次），maxUnitChars 是上限（超了按比例再切；切点会避开英文单词，不把 MiMo 拦腰截断）。文字层、SRT 都不受影响，高亮只烧进画面"
+  },
+  "brand": {
+    "name": "海老豹666",
+    "slogan": "AI 工具实测 · 讲人话",
+    "accent": "#2f9e44",
+    "ink": "#1e1e1e",
+    "logo": "",
+    "watermark": {
+      "enabled": true,
+      "position": "top-right",
+      "opacity": 0.72,
+      "size": 36,
+      "margin": 56,
+      "drawInSeconds": 1.2,
+      "sparkle": true,
+      "underline": true
+    },
+    "endCard": {
+      "enabled": true,
+      "seconds": 5.5,
+      "cta": "点赞 · 关注 · 评论区聊聊",
+      "holdSeconds": 1.5
+    },
+    "pen": {
+      "color": "#f5b942"
+    },
+    "_note": "品牌层。name=水印/片尾的手写字（小赖字体）；accent=品牌绿（水印下划线、星号、片尾划线，DSL 里 C.brand）；logo=可选透明底 png 路径（~ 可用），给了就代替手写名；watermark.position=top-right|top-left|bottom-right|bottom-left，drawInSeconds=第一场景开头逐笔画出水印的时长（0 则直接出现）；endCard=片尾品牌卡（名字+划线+slogan+CTA，静音，BGM 继续；seconds 总长，最后 holdSeconds 静止展示）；pen.color=铅笔笔身颜色"
+  },
+  "cover": {
+    "ratios": [
+      "4:3",
+      "3:4",
+      "9:16"
+    ],
+    "seriesTag": "白板讲清楚",
+    "frame": true,
+    "frameColor": "#1e1e1e",
+    "_note": "封面：ratios 出几种画幅（4:3=1440×1080 公众号/横版，3:4=1080×1440 视频号竖版/小红书，9:16=1080×1920 抖音/快手竖版；也支持 16:9=1920×1080、1:1=1080×1080）；seriesTag=左上角系列标签默认文案（scenes.js 里 tag 可覆盖）。**别在标签里写死时长**：片子可长可短，写了「3 分钟」做长片就自相矛盾；要强调时长就在 scenes.js 的 cover 里按本期实际时长传 tag。frame=四周手绘粗边框。封面内容在 scenes.js 的 cover 函数里写，wb cover 按 ratios 出 <期>/封面-4x3.png、封面-3x4.png、封面-9x16.png。9:16 版式把标题与贴纸压在中央安全区，因为抖音封面上下会被裁掉一部分（1080×1920 实际展示约 1080×1464）"
+  }
+}

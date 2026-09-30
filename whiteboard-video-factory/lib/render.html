@@ -1,0 +1,532 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'Xiaolai'; src: url('../assets/fonts/Xiaolai-Regular.ttf'); }
+  html, body { margin: 0; padding: 0; background: #fffdf7; width: 1920px; height: 1080px; overflow: hidden; }
+  svg { display: block; }
+  text { font-family: 'Xiaolai', 'Chalkboard SE', 'PingFang SC', sans-serif; white-space: pre; }
+  #warm { font-family: 'Xiaolai'; position: absolute; opacity: 0; }
+</style>
+<script src="../node_modules/roughjs/bundled/rough.js"></script>
+</head>
+<body>
+<div id="warm">预热字体 Grok Brand</div>
+<svg id="stage" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <pattern id="dots" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.6" fill="#d9d4c7" />
+    </pattern>
+  </defs>
+  <rect id="bg1" width="1920" height="1080" fill="#fffdf7" />
+  <rect id="bg2" width="1920" height="1080" fill="url(#dots)" />
+  <g id="layer"></g>
+  <g id="brand"></g>
+  <g id="caption" style="display:none">
+    <rect id="capBox" x="0" y="0" width="0" height="0" rx="10" ry="10" fill="#2f9e44" style="display:none"></rect>
+    <text id="capText" x="960" y="1022" text-anchor="middle" font-size="46" fill="#1e1e1e" stroke="#fffdf7" stroke-width="10" stroke-linejoin="round" paint-order="stroke"></text>
+  </g>
+  <g id="pen" style="display:none">
+    <ellipse cx="6" cy="6" rx="9" ry="4" fill="#000" opacity="0.10" />
+    <g transform="rotate(40)">
+      <rect id="penBody" x="-9" y="-70" width="18" height="60" rx="3" fill="#f5b942" stroke="#1e1e1e" stroke-width="2" />
+      <polygon points="-9,-10 9,-10 0,4" fill="#f1d9b5" stroke="#1e1e1e" stroke-width="2" />
+      <polygon points="-3,-4 3,-4 0,4" fill="#1e1e1e" />
+      <rect x="-9" y="-80" width="18" height="12" rx="3" fill="#e57373" stroke="#1e1e1e" stroke-width="2" />
+    </g>
+  </g>
+</svg>
+<script>
+// 逐笔动画渲染器。要点：
+//  1. rough.js 默认每条边描两遍（multi-stroke），toPaths 出来的 d 里子路径交替是「第一遍/第二遍」。
+//     以前整条路径用 dashoffset 顺序描，视觉上就是"同一个框飞快画两次"。现在拆成 A/B 两层：
+//     A 层跟笔尖走，B 层滞后一点点同步浮现 → 一遍画完、线条有手绘的双线质感。
+//  2. 时间不再按 beat 内权重硬挤：每个元素有自然时长（文字按字数、线按长度、贴纸按宽度）与下限，
+//     元素之间有抬笔间隙，笔尖在间隙里从上一笔末端移动到下一笔起点；一个 beat 画不完可以溢出到下一段前 35%。
+//  3. 品牌水印（#brand）与片尾品牌卡由 render.js 通过 setBrand / loadScene 传入。
+const NS = 'http://www.w3.org/2000/svg';
+const gen = rough.generator();
+const layer = document.getElementById('layer');
+const brandLayer = document.getElementById('brand');
+const pen = document.getElementById('pen');
+let items = [];        // 场景元素 {kind, start, end, startPt, endPt, ...}
+let brandItems = [];   // 水印元素（同结构）
+let PEN = { speed: 1000, fillSpeed: 4000, minSeconds: 0.35, gapSeconds: 0.12, charSeconds: [0.06, 0.2], overflow: 0.35, travelMax: 1.6 };
+
+const isCJK = (ch) => /[　-鿿＀-￯]/.test(ch);
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const ease = (v) => v < 0.5 ? 2 * v * v : 1 - Math.pow(-2 * v + 2, 2) / 2;
+
+function mk(tag, attrs) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; }
+
+function roughOpts(el) {
+  const o = {
+    seed: el.seed, roughness: el.roughness, stroke: el.strokeColor, strokeWidth: el.strokeWidth,
+    hachureAngle: -41, hachureGap: el.strokeWidth * 4, fillWeight: el.strokeWidth * 0.7, curveFitting: 1,
+    preserveVertices: true, disableMultiStrokeFill: true,
+  };
+  if (el.backgroundColor && el.backgroundColor !== 'transparent') { o.fill = el.backgroundColor; o.fillStyle = el.fillStyle; }
+  if (el.strokeStyle === 'dashed') { o.strokeLineDash = [10, 8]; o.disableMultiStroke = true; }
+  if (el.strokeStyle === 'dotted') { o.strokeLineDash = [2, 6]; o.disableMultiStroke = true; }
+  return o;
+}
+
+function roundRectPath(x, y, w, h, r) {
+  return `M ${x + r} ${y} L ${x + w - r} ${y} Q ${x + w} ${y} ${x + w} ${y + r} L ${x + w} ${y + h - r} Q ${x + w} ${y + h} ${x + w - r} ${y + h} L ${x + r} ${y + h} Q ${x} ${y + h} ${x} ${y + h - r} L ${x} ${y + r} Q ${x} ${y} ${x + r} ${y} Z`;
+}
+
+function arrowheadDrawables(pts, el, atStart) {
+  const n = pts.length;
+  const [x2, y2] = atStart ? pts[0] : pts[n - 1];
+  const [x1, y1] = atStart ? pts[1] : pts[n - 2];
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const size = 24 + el.strokeWidth * 2;
+  const o = roughOpts(el); delete o.fill;
+  const out = [];
+  for (const d of [-1, 1]) {
+    const a = ang + Math.PI + d * (Math.PI / 7);
+    out.push(gen.line(x2, y2, x2 + Math.cos(a) * size, y2 + Math.sin(a) * size, o));
+  }
+  return out;
+}
+
+function drawablesFor(el) {
+  const o = roughOpts(el);
+  const { x, y, width: w, height: h } = el;
+  switch (el.type) {
+    case 'rectangle':
+      if (el.roundness) { const r = Math.min(32, Math.min(w, h) * 0.25); return [gen.path(roundRectPath(x, y, w, h, r), o)]; }
+      return [gen.rectangle(x, y, w, h, o)];
+    case 'ellipse': return [gen.ellipse(x + w / 2, y + h / 2, w, h, o)];
+    case 'diamond': return [gen.polygon([[x + w / 2, y], [x + w, y + h / 2], [x + w / 2, y + h], [x, y + h / 2]], o)];
+    case 'line': case 'arrow': {
+      const pts = el.points.map((p) => [x + p[0], y + p[1]]);
+      const out = [];
+      if (o.fill) out.push(gen.polygon(pts, o));
+      else if (el.roundness) out.push(gen.curve(pts, o));
+      else out.push(gen.linearPath(pts, o));
+      if (el.endArrowhead) out.push(...arrowheadDrawables(pts, el, false));
+      if (el.startArrowhead) out.push(...arrowheadDrawables(pts, el, true));
+      return out;
+    }
+  }
+  return [];
+}
+
+// SVG 的 dash 会在每个子路径（M）处重新起算，一条含多个子路径的 path 用 dashoffset 会"所有边同时长出来"。
+// 所以每个子路径单独一个 <path> 节点、按顺序逐段描。rough.js 默认每条边描两遍，子路径交替是「第一遍/第二遍」，
+// 成对拆成 A/B：A 跟笔尖走，B 滞后一点点同步浮现，一遍画完又有手绘双线质感。
+function subpaths(d) { return d.split(/(?=M)/).map((s) => s.trim()).filter(Boolean); }
+
+function strokeNode(d, p) {
+  return mk('path', { d, fill: 'none', stroke: p.stroke, 'stroke-width': p.strokeWidth || 0, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+}
+
+function buildShape(el, into) {
+  const g = mk('g', { opacity: el.opacity / 100 });
+  const parts = [];
+  for (const d of drawablesFor(el)) {
+    for (const p of gen.toPaths(d)) {
+      const isFillPath = p.fill && p.fill !== 'none' && (!p.stroke || p.stroke === 'none');
+      if (isFillPath) {
+        const node = mk('path', { d: p.d, fill: p.fill, stroke: 'none' });
+        g.appendChild(node); parts.push({ node, type: 'fill', len: 0 });
+        continue;
+      }
+      const dashed = (el.strokeStyle === 'dashed' || el.strokeStyle === 'dotted') && p.stroke === el.strokeColor;
+      const isFillStroke = p.stroke === el.backgroundColor && el.backgroundColor !== el.strokeColor;
+      if (dashed) {
+        const node = strokeNode(p.d, p);
+        node.setAttribute('stroke-dasharray', el.strokeStyle === 'dashed' ? '14 10' : '3 8');
+        g.appendChild(node); parts.push({ node, type: 'fade', len: node.getTotalLength(), isFillStroke });
+        continue;
+      }
+      const subs = subpaths(p.d);
+      const paired = !isFillStroke && subs.length >= 2 && subs.length % 2 === 0;
+      for (let i = 0; i < subs.length; i += paired ? 2 : 1) {
+        const node = strokeNode(subs[i], p); g.appendChild(node);
+        let nodeB = null;
+        if (paired) { nodeB = strokeNode(subs[i + 1], p); nodeB.style.opacity = 0; g.appendChild(nodeB); }
+        const len = node.getTotalLength();
+        if (len < 0.5 && !nodeB) continue;
+        parts.push({ node, nodeB, type: 'stroke', len, lenB: nodeB ? nodeB.getTotalLength() : 0, isFillStroke });
+      }
+    }
+  }
+  into.appendChild(g);
+  const outline = parts.filter((p) => p.type === 'stroke' && !p.isFillStroke);
+  const fills = parts.filter((p) => !(p.type === 'stroke' && !p.isFillStroke));
+  const outLen = outline.reduce((s, p) => s + p.len, 0);
+  const fillLen = fills.reduce((s, p) => s + (p.len || 300), 0);
+  const first = outline[0] || fills.find((p) => p.len);
+  const last = outline[outline.length - 1] || first;
+  const startPt = first ? ptOf(first.node, 0) : [el.x, el.y];
+  const endPt = last ? ptOf(last.node, last.len) : [el.x + el.width, el.y + el.height];
+  const natural = outLen / PEN.speed + Math.min(PEN.fillMaxSeconds || 1.2, fillLen / PEN.fillSpeed) + 0.1;
+  return { g, outline, fills, natural, startPt, endPt };
+}
+function ptOf(node, L) { try { const p = node.getPointAtLength(L); return [p.x, p.y]; } catch (e) { return [0, 0]; } }
+
+// 文字：按行 clip 左→右擦出；每行时长按字数（中文按字号定每字时长，拉丁/数字减半）。
+function textSeconds(line, fontSize) {
+  const [lo, hi] = PEN.charSeconds;
+  const per = Math.max(lo, Math.min(hi, fontSize / 700));
+  let s = 0;
+  for (const ch of line) { if (ch === ' ') s += per * 0.2; else s += isCJK(ch) ? per : per * 0.5; }
+  return s;
+}
+function buildText(el, into, idPrefix) {
+  const g = mk('g', {});
+  const lines = el.text.split('\n');
+  const lh = el.fontSize * el.lineHeight;
+  const parts = [];
+  lines.forEach((line, i) => {
+    let ax = el.x, anchor = 'start';
+    if (el.textAlign === 'center') { ax = el.x + el.width / 2; anchor = 'middle'; }
+    if (el.textAlign === 'right') { ax = el.x + el.width; anchor = 'end'; }
+    const clipId = idPrefix + 'c' + el.id + '_' + i;
+    const clip = mk('clipPath', { id: clipId });
+    const cr = mk('rect', { x: 0, y: el.y + i * lh - 10, width: 0, height: lh + 20 });
+    clip.appendChild(cr);
+    g.appendChild(clip);
+    const t = mk('text', { x: ax, y: el.y + i * lh + el.fontSize * 0.92, 'font-size': el.fontSize, fill: el.strokeColor, 'text-anchor': anchor, 'clip-path': `url(#${clipId})` });
+    t.textContent = line;
+    g.appendChild(t);
+    parts.push({ text: t, clipRect: cr, line, seconds: textSeconds(line, el.fontSize) });
+  });
+  into.appendChild(g);
+  return { g, parts };
+}
+function measureText(b) {
+  for (const p of b.parts) {
+    const bb = p.text.getBBox();
+    p.width = p.text.getComputedTextLength(); p.x0 = bb.x;
+    p.clipRect.setAttribute('x', p.x0 - 4);
+  }
+  const total = b.parts.reduce((s, p) => s + p.seconds, 0) || 0.2;
+  let acc = 0;
+  for (const p of b.parts) { p.f0 = acc / total; acc += p.seconds; p.f1 = acc / total; }
+  b.natural = total + 0.1;
+  const fs = b.el.fontSize, p0 = b.parts[0], p1 = b.parts[b.parts.length - 1];
+  b.startPt = [p0.x0, parseFloat(p0.text.getAttribute('y')) - fs * 0.35];
+  b.endPt = [p1.x0 + p1.width, parseFloat(p1.text.getAttribute('y')) - fs * 0.35];
+}
+
+function buildImage(el, files, into, idPrefix) {
+  const f = files[el.fileId];
+  const g = mk('g', { opacity: el.opacity / 100 });
+  const clipId = idPrefix + 'ci' + el.id;
+  const clip = mk('clipPath', { id: clipId });
+  const cr = mk('rect', { x: el.x - 4, y: el.y - 4, width: 0, height: el.height + 8 });
+  clip.appendChild(cr); g.appendChild(clip);
+  const im = mk('image', { x: el.x, y: el.y, width: el.width, height: el.height, preserveAspectRatio: 'none', 'clip-path': `url(#${clipId})` });
+  if (f) im.setAttributeNS('http://www.w3.org/1999/xlink', 'href', f.dataURL);
+  g.appendChild(im);
+  into.appendChild(g);
+  return { g, clipRect: cr, natural: Math.max(0.8, el.width / 900 + 0.3), startPt: [el.x - 4, el.y + el.height * 0.5], endPt: [el.x + el.width + 4, el.y + el.height * 0.5] };
+}
+
+function buildAll(elements, files, into, idPrefix) {
+  const built = elements.map((el) => {
+    if (el.type === 'image') return { el, kind: 'image', ...buildImage(el, files, into, idPrefix) };
+    if (el.type === 'text') return { el, kind: 'text', ...buildText(el, into, idPrefix) };
+    return { el, kind: 'shape', ...buildShape(el, into) };
+  });
+  for (const b of built) if (b.kind === 'text') measureText(b);
+  return built;
+}
+
+// 排期：每个 beat 的元素从 max(beat 起点, 上一笔结束) 顺序开始；自然时长放不下时按比例压缩，但允许溢出到下一 beat 的前 overflow 段。
+function schedule(built, beatOf, beats, sceneEnd) {
+  const gap = PEN.gapSeconds;
+  let cursor = -Infinity;
+  for (let bi = 0; bi < beats.length; bi++) {
+    const [t0, t1] = beats[bi];
+    const list = built.filter((b, i) => beatOf[i] === bi);
+    if (!list.length) continue;
+    const start = Math.max(t0 + 0.05, cursor);
+    const last = bi + 1 >= beats.length;
+    const limit = last ? Math.max(t1, sceneEnd - 0.45) : t1 + PEN.overflow * (beats[bi + 1][1] - beats[bi + 1][0]);
+    for (const b of list) b.dur = Math.max(PEN.minSeconds, b.natural);
+    const natural = list.reduce((s, b) => s + b.dur, 0) + gap * (list.length - 1);
+    const avail = limit - start;
+    const scale = avail < natural ? Math.max(0.3, avail / natural) : 1;
+    let t = start;
+    for (const b of list) { b.start = t; b.end = t + b.dur * scale; t = b.end + gap * scale; }
+    cursor = t;
+  }
+  const sched = built.filter((b) => b.start != null).sort((a, b) => a.start - b.start);
+  // 兜底：整体仍超出场景末尾就线性压缩
+  if (sched.length) {
+    const first = sched[0].start, lastEnd = sched[sched.length - 1].end, cap = sceneEnd - 0.1;
+    if (lastEnd > cap && lastEnd > first) {
+      const k = (cap - first) / (lastEnd - first);
+      for (const b of sched) { b.start = first + (b.start - first) * k; b.end = first + (b.end - first) * k; }
+    }
+  }
+  return sched;
+}
+
+// 画布尺寸（封面用 1080×1440 等）；render.js 同时 setViewportSize
+window.setCanvas = function (w, h) {
+  const svg = document.getElementById('stage');
+  svg.setAttribute('width', w); svg.setAttribute('height', h); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  document.body.style.width = w + 'px'; document.body.style.height = h + 'px';
+  for (const id of ['bg1', 'bg2']) { const r = document.getElementById(id); r.setAttribute('width', w); r.setAttribute('height', h); }
+};
+window.setPen = function (opts) { Object.assign(PEN, opts || {}); if (opts && opts.color) document.getElementById('penBody').setAttribute('fill', opts.color); };
+
+// 贴纸/Logo 解码完再截图：并行渲染时每页各自装场景，第一帧可能落在图片已露出的时刻
+window.imagesReady = () => Promise.all([...document.querySelectorAll('#layer image, #brand image')].map((im) => im.decode().catch(() => {})));
+
+window.loadScene = function (elements, beatOf, beats, files, sceneEnd) {
+  layer.innerHTML = '';
+  const built = buildAll(elements, files || {}, layer, '');
+  items = schedule(built, beatOf, beats, sceneEnd || (beats.length ? beats[beats.length - 1][1] + 0.7 : 5));
+  pen.style.display = 'none';
+  return items.length;
+};
+
+// ---- 品牌水印 ----
+// brand: {name, accent, logo?: dataURL, watermark:{position, opacity, size, margin, underline, sparkle}}; window=[t0,t1] 时逐笔画入，否则静态
+window.setBrand = function (brand, drawWindow) {
+  brandLayer.innerHTML = ''; brandItems = [];
+  if (!brand || !brand.watermark || brand.watermark.enabled === false) return 0;
+  const wm = brand.watermark;
+  const size = wm.size || 36, margin = wm.margin || 56, pos = wm.position || 'top-right';
+  brandLayer.setAttribute('opacity', wm.opacity == null ? 0.75 : wm.opacity);
+  const els = []; const files = {};
+  let w, h;
+  if (brand.logo) {
+    h = wm.logoHeight || size * 1.6; w = Math.round(h * (brand.logoAspect || 1));
+  } else {
+    // 估宽：CJK 每字 size，其它 0.55
+    w = 0; for (const ch of brand.name) w += isCJK(ch) ? size : size * 0.55; h = size * 1.25;
+  }
+  const x = pos.endsWith('left') ? margin : 1920 - margin - w;
+  const y = pos.startsWith('bottom') ? 940 - h : margin;
+  const ink = brand.ink || '#1e1e1e', accent = brand.accent || '#2f9e44';
+  const baseEl = (type, o) => ({ id: 'wm' + els.length, type, angle: 0, strokeColor: ink, backgroundColor: 'transparent', fillStyle: 'solid', strokeWidth: 2, strokeStyle: 'solid', roughness: 1, opacity: 100, seed: 4242 + els.length, roundness: null, ...o });
+  if (wm.sparkle !== false) {
+    const r = size * 0.32, cx = x - r * 0.9, cy = y + r * 0.6;
+    const star = [[cx, cy - r], [cx + r * 0.28, cy - r * 0.28], [cx + r, cy], [cx + r * 0.28, cy + r * 0.28], [cx, cy + r], [cx - r * 0.28, cy + r * 0.28], [cx - r, cy], [cx - r * 0.28, cy - r * 0.28], [cx, cy - r]];
+    const xs = star.map((p) => p[0]), ys = star.map((p) => p[1]); const mx = Math.min(...xs), my = Math.min(...ys);
+    els.push(baseEl('line', { x: mx, y: my, width: Math.max(...xs) - mx, height: Math.max(...ys) - my, points: star.map((p) => [p[0] - mx, p[1] - my]), strokeColor: accent, backgroundColor: accent, strokeWidth: 2, roughness: 0.8 }));
+  }
+  if (brand.logo) {
+    els.push(baseEl('image', { x, y, width: w, height: h, fileId: 'wmlogo', roughness: 0 }));
+    files.wmlogo = { dataURL: brand.logo };
+  } else {
+    els.push(baseEl('text', { x, y, width: w, height: h, text: brand.name, fontSize: size, lineHeight: 1.25, textAlign: 'left', roughness: 0 }));
+  }
+  if (wm.underline !== false) {
+    const uy = y + h + 2;
+    els.push(baseEl('line', { x, y: uy, width: w, height: 10, points: [[0, 6], [w * 0.55, 10], [w, 0]], strokeColor: accent, strokeWidth: Math.max(4, size * 0.13), roughness: 1.3, roundness: { type: 2 } }));
+  }
+  const built = buildAll(els, files, brandLayer, 'b');
+  // 文字实际宽度可能与估算不同：靠右时整体平移对齐右边距
+  if (!brand.logo && !pos.endsWith('left')) {
+    const tb = built.find((b) => b.kind === 'text');
+    const dx = (x + w) - (tb.parts[0].x0 + tb.parts[0].width);
+    if (Math.abs(dx) > 1) brandLayer.setAttribute('transform', `translate(${dx.toFixed(1)},0)`);
+    else brandLayer.removeAttribute('transform');
+  } else brandLayer.removeAttribute('transform');
+  const total = built.reduce((s, b) => s + Math.max(0.25, b.natural), 0);
+  let t = drawWindow ? drawWindow[0] : -10;
+  const span = drawWindow ? (drawWindow[1] - drawWindow[0]) : 1;
+  for (const b of built) { const d = Math.max(0.25, b.natural) / total * span; b.start = t; b.end = t + d; t = b.end; }
+  brandItems = built;
+  return built.length;
+};
+
+function setStrokeProgress(p, f) {
+  const n = p.node;
+  if (p.type === 'fill') { n.style.opacity = f <= 0 ? 0 : clamp01(f); return null; }
+  if (p.type === 'fade') { n.style.opacity = f <= 0 ? 0 : clamp01(f * 1.5); return null; }
+  n.setAttribute('stroke-dasharray', p.len);
+  n.setAttribute('stroke-dashoffset', p.len * (1 - clamp01(f)));
+  n.style.opacity = f <= 0 ? 0 : 1;
+  if (p.nodeB) {
+    const fb = clamp01((f - 0.06) / 0.94);
+    p.nodeB.setAttribute('stroke-dasharray', p.lenB);
+    p.nodeB.setAttribute('stroke-dashoffset', p.lenB * (1 - fb));
+    p.nodeB.style.opacity = fb <= 0 ? 0 : 1;
+  }
+  if (f > 0 && f < 1) { const pt = n.getPointAtLength(p.len * f); return [pt.x, pt.y]; }
+  return null;
+}
+
+// 推进一个元素到进度 f，返回笔尖坐标（画完/没开始返回 null）
+function progressItem(b, f) {
+  let tip = null;
+  if (b.kind === 'image') {
+    const w = clamp01(f) * (b.el.width + 8);
+    b.clipRect.setAttribute('width', w);
+    if (f > 0 && f < 1) tip = [b.el.x - 4 + w, b.el.y + b.el.height * (0.5 + 0.4 * Math.sin(f * Math.PI * 7))];
+  } else if (b.kind === 'text') {
+    for (const p of b.parts) {
+      const lf = (f - p.f0) / (p.f1 - p.f0 || 1);
+      const w = clamp01(lf) * (p.width + 8);
+      p.clipRect.setAttribute('width', w);
+      if (lf > 0 && lf < 1) tip = [p.x0 - 4 + w, parseFloat(p.text.getAttribute('y')) - b.el.fontSize * 0.35];
+    }
+  } else {
+    const no = b.outline.length, nf = b.fills.length;
+    const split = no && nf ? 0.7 : (no ? 1 : 0);
+    const fo = no ? f / split : 0;
+    const ff = nf ? (f - split) / (1 - split || 1) : 0;
+    const totalLen = b.outline.reduce((s, p) => s + p.len, 0) || 1;
+    let acc = 0;
+    for (const p of b.outline) {
+      const s0 = acc / totalLen, s1 = (acc + p.len) / totalLen; acc += p.len;
+      const tp = setStrokeProgress(p, (fo - s0) / (s1 - s0)); if (tp) tip = tp;
+    }
+    const totalF = b.fills.reduce((s, p) => s + (p.len || 300), 0) || 1;
+    acc = 0;
+    for (const p of b.fills) {
+      const L = p.len || 300;
+      const s0 = acc / totalF, s1 = (acc + L) / totalF; acc += L;
+      const tp = setStrokeProgress(p, (ff - s0) / (s1 - s0)); if (tp) tip = tp;
+    }
+  }
+  return tip;
+}
+
+// 笔尖在两笔之间的移动（抬笔）；间隙太长就中途藏笔
+function travelTip(list, t) {
+  for (let i = 0; i < list.length; i++) {
+    const b = list[i];
+    if (t < b.start) {
+      const prev = list[i - 1];
+      if (!prev) return t > b.start - 0.25 ? b.startPt : null;
+      const gapLen = b.start - prev.end;
+      if (gapLen <= 0) return null;
+      if (gapLen > PEN.travelMax) {
+        if (t < prev.end + 0.35 || t > b.start - 0.3) return t < prev.end + 0.35 ? prev.endPt : b.startPt;
+        return null;
+      }
+      const k = ease(clamp01((t - prev.end) / gapLen));
+      return [prev.endPt[0] + (b.startPt[0] - prev.endPt[0]) * k, prev.endPt[1] + (b.startPt[1] - prev.endPt[1]) * k];
+    }
+    if (t >= b.start && t < b.end) return null;
+  }
+  const last = list[list.length - 1];
+  if (last && t >= last.end && t < last.end + 0.3) return last.endPt;
+  return null;
+}
+
+// —— 字幕与"跟读高亮" ——
+// 一条字幕 = 排在 #capText 里的若干 <tspan>，每一段对应一个字幕高亮单元（captions.cjs 算好的 units）。
+// 语音念到哪一段，就在那一段背后放一个色块（#capBox）、并把该段文字换成反白色。
+// 两个坑：
+//  1. 别靠 text-anchor=middle 让 tspan 自动居中——跨段居中在 Chromium 上不稳，而且色块要按段量包围盒，
+//     x 得先定死。所以这里自己量各段宽度、算出起始 x，逐段写 x（text-anchor 切成 start）。
+//  2. 逐帧只改颜色/挪色块，**不重建 tspan**：重建会让文字重排，几千帧下来既慢又可能抖。
+const captionG = document.getElementById('caption');
+const capText = document.getElementById('capText');
+const capBox = document.getElementById('capBox');
+const INK = '#1e1e1e', PAPER = '#fffdf7';
+let cues = [], HL = null, capCue = null, hlIdx = -2;
+
+window.setCaptions = function (list, style) {
+  cues = list || []; capCue = null; hlIdx = -2;
+  if (!style) return;
+  capText.setAttribute('font-size', style.fontSize);
+  capText.setAttribute('y', style.baselineY);
+  HL = style.highlight && style.highlight.enabled !== false ? style.highlight : null;
+};
+
+function buildCaption(c) {
+  capText.textContent = '';
+  const units = HL && c.units && c.units.length ? c.units : null;
+  if (!units) {                                   // 没有 unit（老缓存/未开高亮）：整条居中，不画色块
+    capText.setAttribute('text-anchor', 'middle');
+    capText.setAttribute('x', '960');
+    capText.textContent = c.text;
+    capBox.style.display = 'none';
+  } else {
+    capText.setAttribute('text-anchor', 'start');
+    capText.removeAttribute('x');
+    const spans = units.map((u) => { const t = document.createElementNS(NS, 'tspan'); t.textContent = u.text; capText.appendChild(t); return t; });
+    const w = spans.map((t) => t.getComputedTextLength());
+    let x = 960 - w.reduce((a, b) => a + b, 0) / 2;
+    spans.forEach((t, i) => { t.setAttribute('x', x.toFixed(2)); x += w[i]; });
+  }
+  capCue = c; hlIdx = -2;
+}
+
+function paintHighlight(i) {
+  const spans = [...capText.children];
+  const on = spans[i];
+  spans.forEach((s, k) => {
+    s.setAttribute('fill', k === i ? (HL.textColor || PAPER) : INK);
+    // 高亮那段不要再描纸色边：描边是给"压在画面上的墨字"垫底的，进了色块只会糊成一圈白边
+    if (k === i && HL.keepHalo !== true) s.setAttribute('stroke', 'none');
+    else { s.setAttribute('stroke', HL.haloColor || PAPER); s.setAttribute('stroke-width', HL.haloWidth == null ? 10 : HL.haloWidth); }
+  });
+  // 色块按这一段的包围盒摆，用 SVG 原生的字符接口量（getExtentOfChar 返回用户坐标，本页 1:1 就是画布坐标）。
+  // ⚠️两个坑，都踩过：
+  //   ① 别用 Range.getBoundingClientRect() 量局部字符段——实测只量出第一个字的宽度（"MiMo" 只量出 "M"），
+  //      色块比文字窄一半，高亮那段剩下的字变成纸色、看起来"字丢了"。整段量倒是对的。
+  //   ② 段首尾可能带词间空格（"小米 MiMo" 断在空格边上）或标点（高亮段"但字幕、"），
+  //      按去空白、去边标点后的字符区间量，色块才会正好框住那几个字（参考图里的高亮段也不含后面那个逗号）。
+  //      下标用码点数（[...str]），与 getNumberOfChars / getExtentOfChar 同一套计数，别用 UTF-16 下标。
+  const EDGE = /[\s，。、；：！？…,.!?;:]/;
+  const chars = [...on.textContent];
+  let a0 = 0, b0 = chars.length;
+  while (a0 < b0 && EDGE.test(chars[a0])) a0++;
+  while (b0 > a0 && EDGE.test(chars[b0 - 1])) b0--;
+  const n = on.getNumberOfChars();
+  let left, right, top, hgt;
+  if (b0 > a0 && n > 1) {
+    const f = on.getExtentOfChar(Math.min(a0, n - 1));
+    const l = on.getExtentOfChar(Math.min(b0 - 1, n - 1));
+    left = f.x; right = l.x + l.width; top = f.y; hgt = f.height;
+  } else {
+    const bb = on.getBBox();
+    left = bb.x; right = bb.x + bb.width; top = bb.y; hgt = bb.height;
+  }
+  const px = HL.padX == null ? 10 : HL.padX, py = HL.padY == null ? 6 : HL.padY;
+  capBox.setAttribute('x', (left - px).toFixed(1));
+  capBox.setAttribute('y', (top - py).toFixed(1));
+  capBox.setAttribute('width', (right - left + px * 2).toFixed(1));
+  capBox.setAttribute('height', (hgt + py * 2).toFixed(1));
+  capBox.setAttribute('rx', HL.radius == null ? 10 : HL.radius);
+  capBox.setAttribute('fill', HL.color || '#2f9e44');
+  capBox.setAttribute('opacity', HL.opacity == null ? 1 : HL.opacity);
+  capBox.style.display = '';
+}
+
+function updateCaption(t) {
+  const c = cues.find((q) => t >= q.start && t < q.end);
+  if (!c) { captionG.style.display = 'none'; return; }
+  captionG.style.display = '';
+  if (c !== capCue) buildCaption(c);
+  const units = HL && c.units && c.units.length ? c.units : null;
+  if (!units) { capBox.style.display = 'none'; hlIdx = -1; return; }
+  let i = -1;
+  for (let k = 0; k < units.length && t >= units[k].start; k++) i = k;
+  if (i < 0) { capBox.style.display = 'none'; hlIdx = -1; return; }   // 还没念到第一个字：先亮整行、不套色块
+  if (i === hlIdx) return;
+  hlIdx = i;
+  paintHighlight(i);
+}
+
+const bg1 = document.getElementById('bg1');
+window.seek = function (t) {
+  // 每帧整屏重画：Chromium 默认只重画变了的区域，笔尖附近的抗锯齿会带上一帧的痕迹，帧就跟出帧顺序有关了。
+  // 底色矩形原地重插一次 = 整屏失效，每帧只由 t 决定，多页并行才能和单页逐帧一致（实测不变慢）
+  bg1.parentNode.insertBefore(bg1, bg1.nextSibling);
+  updateCaption(t);
+  let tip = null;
+  for (const b of brandItems) { const tp = progressItem(b, (t - b.start) / (b.end - b.start)); if (tp) tip = tp; }
+  for (const b of items) { const tp = progressItem(b, (t - b.start) / (b.end - b.start)); if (tp) tip = tp; }
+  if (!tip) tip = travelTip(items, t);
+  if (tip) { pen.style.display = ''; pen.setAttribute('transform', `translate(${tip[0].toFixed(1)},${tip[1].toFixed(1)})`); }
+  else pen.style.display = 'none';
+  return !!tip;
+};
+</script>
+</body>
+</html>

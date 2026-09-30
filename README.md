@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.30-green.svg)
-![Skills](https://img.shields.io/badge/skills-27-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.31-green.svg)
+![Skills](https://img.shields.io/badge/skills-28-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -23,6 +23,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **视频剪辑**: 自动化视频剪辑与解说（video-agent-kit）——通用剪辑、电影解说、足球/篮球/电竞集锦、口播配音成片（Edge TTS 免费配音）
 - **视频生成**: 口播文字稿一键成片（voice-to-video）——TTS 词级时间戳 + HTML 动画引擎 + 确定性逐帧渲染，画面/字幕/语音逐词对应，13 套画面风格
 - **动画视频**: 声明式分镜动画（hyperframes-10s-video）——一段文字 → 横屏动画视频 + 同名 SRT 字幕，时长（任意秒）/配色（10 套皮肤）/画幅（横竖屏）/配音（AI 口播）全部参数化，无头 Chromium 逐帧确定性渲染
+- **白板讲解**: 手绘白板「边画边讲」讲解视频工厂（whiteboard-video-factory）——Excalidraw 逐笔动画 + 火山/小米/edge-tts 三通道配音 + 烧录字幕（含逐段跟读高亮） + 手绘品牌层 + 三画幅封面（4:3 / 3:4 / 9:16 抖音）+ 五平台发布文案，**时长不限（2 分钟短片到 30 分钟长片同一套流水线，按场景数伸缩）**，自带查证/合规/成片验收公共工序，画面上每一笔都是代码画的，不开剪辑软件
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -39,6 +40,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| whiteboard-video-factory | 手绘白板「边画边讲」讲解视频工厂：一句话选题 → 查证、写旁白、出 Logo 与贴纸、画场景、配音对字幕、逐笔渲染、混配乐、出封面、写发布文案全链路本地完成。rough.js + SVG dashoffset 逐笔手绘动画（场景可导出 Excalidraw 回灌渲染），TTS 逐字时间戳同时驱动画面排期与字幕切句（小米通道无时间戳时用静音检测估算），字幕支持**逐段跟读高亮**（卡拉OK式，念到哪一段那一段字转反白、背后套品牌色块，火山/小米/edge 三引擎通用），4 路独立 Chromium 确定性出帧（`framemd5` 可验 0 帧差），三套配音通道（火山引擎 / 小米 MiMo / edge-tts 免费备胎），**时长不限**（渲染按场景分段出片再 concat、TTS 逐场景缓存，场景数不受限，2 分钟到 30 分钟同一套流水线；长片配 `bgm.playlist` 多首轮播避免单曲循环），三画幅封面一次出（4:3 / 3:4 / 9:16 抖音），五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号），自带事实核查、合规自查、成片验收与交付边界公共工序 | Node.js、Playwright（无头 Chromium）、rough.js、Excalidraw DSL、火山引擎 TTS / 小米 MiMo TTS / edge-tts、ffmpeg | 2026年9月29日 | wwwzhouhui | 1.0.0 |
 | hyperframes-10s-video | HyperFrames 声明式分镜动画视频技能：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——① 时长任意（`--total=` 或 `duration` 字段，各幕按比例精确归一，长片靠加幕）；② 配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，附可视化画廊 + 预览页实时换肤）；③ 音频可选（默认无声无音轨，edge-tts 配音一键混音）。含 9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏可切换 | Node.js、GSAP、无头 Chromium、ffmpeg、Python（edge-tts） | 2026年9月24日 | wwwzhouhui | 2.0.0 |
 | hailaobao-gzh-design | 公众号排版技能：AI 按改写规则把 Markdown 文章重排为编辑部风格（序号竖线标题、kicker 语义匹配、金句引用、摘要/信息卡片），**7 套内置风格**（玉石商务、暖色编辑部、极客单色、香槟品牌、雾霾笔记、午夜研究报告、森绿演示），一键生成带「复制到公众号」按钮的自包含 HTML，粘贴到公众号编辑器样式全保留；原始 Markdown 不改、总改动 ≤30%、代码块一字不动 | Node.js（≥16，ESM）、零 npm 依赖 | 2026年9月24日 | hailaobao2026 | 1.0.0 |
 | poetry-cinema-page | 沉浸式古诗词网页生成技能：给一首中国古典诗词，走完文学分镜 → 视觉圣经 → 双服务商逐张生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，四档位可混用，主视觉参考链）→ 联系表检查 → 朗诵配音（edge-tts / 豆包 seed-tts-2.0，23 个中文音色）→ 滚动页面 → 浏览器验收，可选 Remotion 口播视频成片 | Python、火山引擎方舟、GPT-Image 网关、edge-tts、Vite/TypeScript、Remotion、ffmpeg | 2026年9月22日 | wwwzhouhui | 1.0.0 |
@@ -68,6 +70,64 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🖊️ Whiteboard Video Factory（手绘白板「边画边讲」讲解视频）
+
+**核心功能：**
+
+- ✅ **一句选题 → 一条成片**：查证 → 写旁白（按 `|` 切 beat）→ 出 Logo 与贴纸 → 画场景 → 配音对字幕 → 逐笔渲染 → 混配乐 → 出封面 → 写发布文案，全链路本地跑，不开剪辑软件、不露脸
+- ✅ **逐笔手绘动画**：rough.js（Excalidraw 底层同款）生成线条，SVG `stroke-dashoffset` 按子路径顺序描边、rough.js 的「每条边描两遍」拆成 A/B 两层错时浮现，笔尖跟着走；场景同时导出 Excalidraw 格式，能在 Obsidian 里改图再回灌渲染
+- ✅ **音画同步不拍时间轴**：TTS 返回的逐字时间戳同时驱动画面排期与字幕切句（6~20 字），改一句旁白只重配那一段
+- ✅ **配音双通道**：火山引擎语音合成（官方音色或自己的声音复刻，默认 1.2 倍语速）／ 没有凭证时切 edge-tts 免费出片，两者输出同格式逐字时间戳，字幕链路不用改
+- ✅ **贴纸与真实 Logo**：贴纸走本地 codex CLI 出 2×2 四宫格（一次额度同风格，自动抠白底、去杂点、去邻格残片）；公司/产品 logo 走 Wikimedia Commons 官方 SVG，`--vs` 可拼 A VS B 对比封面图，出处自动记录
+- ✅ **确定性并行渲染**：4 路独立 Chromium 交错出帧，主进程按帧号顺序喂 ffmpeg；`workers=1` 与 `workers=4` 出的帧用 `framemd5` 比对必须 0 帧不同
+- ✅ **三画幅封面一次出**：同一个 `coverLayout` 出 4:3（1440×1080）／ 3:4（1080×1440）／ 9:16（1080×1920 抖音，内容压在中央安全区），标题 ≤2 行、钩子行自动马克笔高亮
+- ✅ **品牌层自动带**：右上角手写水印（第一幕逐笔画入）+ 片尾品牌卡 + 封面品牌标，名字 / 品牌色 / slogan 都在配置里
+- ✅ **自带公共工序（合并自 `video-common`）**：事实核查与来源台账、发布前合规自查、成片机器与目视验收、交付边界，全部收在 `references/`，装一个目录即可跑
+
+**工作流程：**
+
+选题 → 查证（数字进期目录 `README.md`）→ 写旁白（`scenes.js`）→ `wb logo` / `wb image` 出素材 → 画场景 → `wb stills` 逐 beat 静帧检查 → 写 `cover` 函数出三张封面 → `wb build` 一条龙出片（TTS + 渲染 + 混音 + 封面）→ 抽帧验收 → 写 `发布.md`（五平台文案）
+
+**关键命令：**
+
+```bash
+SK="~/.claude/skills/whiteboard-video-factory"
+W="$SK/bin/wb"
+
+$W new "为什么定了计划总是坚持不下去"          # 建期目录（scenes.js + 发布.md 模板）
+$W logo "标题" logo-claude="Claude AI symbol.svg"   # 官方 Logo → assets/
+$W image "标题" stepper="A simple side-view bicycle"  # 贴纸，一次 ≤4 张
+$W stills "计划"                                 # 每 beat 静帧，逐张查排版
+$W cover "计划"                                  # 封面-4x3 / 封面-3x4 / 封面-9x16
+$W build "计划"                                  # 出片 → build/<期>/outputs/final.mp4
+```
+
+**参数速查：**
+
+| 维度 | 在哪儿改 | 默认 |
+| --- | --- | --- |
+| 语速 | `config.json` → `tts.speed` | 1.2 倍 |
+| 配音引擎 / 音色 | `tts.engine`（`volc` / `edge`）、`tts.voice`、`.env` | 见 config |
+| 配乐音量与闪避 | `bgm.gain` / `bgm.speak` / `bgm.gap` | 0.5 / 0.1 / 0.22 |
+| 笔速与每字秒数 | `render.pen.speed` / `pen.charSeconds` | 1000 px/s / 0.06~0.2s |
+| 出帧并行度 | `render.workers` | 4 路 |
+| 字幕字号 / 基线 | `captions.fontSize` / `baselineY` | 46 / 1022 |
+| 品牌层 | `brand.name` / `accent` / `slogan` / `logo` | 见 config |
+| 封面画幅与系列标签 | `cover.ratios` / `cover.seriesTag` | 4:3 / 3:4 / 9:16 |
+| 每期内容目录 | `dirs.projects` / `dirs.build`（可指到 Obsidian 仓库） | `./episodes` / `./build` |
+
+**目录要点：** `bin/wb`（CLI 一条龙）、`lib/scene-dsl.js`（场景 DSL，一行一个元素，导出 Excalidraw + 旁白稿 + 封面）、`lib/render.html` + `lib/render.js`（逐笔渲染器与并行出帧）、`lib/tts-volc.mjs` + `lib/tts-edge.py`（双配音通道，均带内容指纹缓存）、`lib/captions.cjs`（逐字时间戳切句、烧录并导出 SRT）、`lib/gen-image.mjs`（codex 生图 + Canvas 抠图）、`lib/fetch-logo.mjs`（Commons 官方 Logo）、`lib/mix-bgm.mjs`（手写 DSP 闪避配乐）、`references/`（dsl / scene-patterns / stickers / publish / fact-check / compliance / delivery-qa 七份）、`examples/`（一期完整示例）
+
+**适用场景：** 概念与机制讲解、公司／产品／财报拆解、热点背后的原理科普、需要不露脸且能批量出片的账号内容；与 `hyperframes-10s-video`（声明式分镜动画）、`remotion-video-factory`（代码级精确图形动画）、`voice-to-video`（口播逐词成片）互补，覆盖四种不同的视频生产方式
+
+**🎬 示例成片：** 一期完整的白板讲解片（1920×1080 / 30fps，AI 配音 + 烧录字幕 + 手绘品牌层），由本技能「选题 → 查证 → 写旁白 → 画场景 → 配音对字幕 → 逐笔渲染 → 混配乐」全流程产出，点击下方播放器直接在线观看
+
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/88c6c222-7661-4a9b-ae5e-6c555de8c69e" controls muted playsinline width="100%"></video>
+</p>
+
+另有仓库内可直接播放的 [白色背景前 40 秒样片](whiteboard-video-factory/assets/sample-preview.mp4)，以及 [字幕跟读高亮字幕带特写](whiteboard-video-factory/assets/sample-highlight.gif)（色块随语音跳到当前念到的字）；完整示例工程在 `whiteboard-video-factory/examples/`
 
 ### 🎞️ HyperFrames Kinetic Video（声明式分镜动画视频）
 
@@ -1826,6 +1886,7 @@ skills_collection/
 │   ├── poetry-cinema-page/
 │   ├── hailaobao-gzh-design/
 │   ├── hyperframes-10s-video/
+│   ├── whiteboard-video-factory/
 │   └── obsidian-search/
 └── README.md         # 项目总文档
 ```
@@ -1857,6 +1918,19 @@ skills_collection/
 │   ├── assets/template.html      # 动画模板 + 10 套皮肤 + 控制条
 │   ├── scripts/                  # build_html / render / encode / make_srt / tts_scenes 等 7 个脚本
 │   └── references/               # 分镜字段定义 / 提示词模板 / 配色画廊 / 可复现范例
+├── whiteboard-video-factory/     # 手绘白板「边画边讲」讲解视频工厂（合并自 whiteboard-video + video-common）
+│   ├── SKILL.md                  # 技能入口：8 条硬规矩 + 命令表 + 七步流程 + 修改类请求对照表 + 跨平台说明
+│   ├── README.md                 # 使用说明 + 来源与合并说明（逐条差异清单）
+│   ├── bin/wb                    # CLI：new / scenes / stills / image / logo / tts / render / mix / cover / build / clean
+│   ├── lib/                      # scene-dsl（场景 DSL）· render.html + render.js（逐笔渲染器 + 4 路并行出帧）
+│   │                             # tts-volc.mjs + tts-edge.py（双配音通道）· captions.cjs（切句烧字幕）
+│   │                             # gen-image.mjs（codex 生图 + Canvas 抠图）· fetch-logo.mjs（Commons 官方 Logo）
+│   │                             # mix-bgm.mjs（手写 DSP 闪避配乐）· chromium.cjs / proxy.mjs / svg2png.mjs
+│   ├── references/               # dsl / scene-patterns / stickers / publish / fact-check / compliance / delivery-qa
+│   ├── templates/                # 每期 scenes.js 与 发布.md 模板
+│   ├── examples/                 # 一期完整示例（旁白、7 场景、4 贴纸、封面函数、资料来源、发布稿）
+│   ├── assets/                   # 小赖手写字体（OFL）+ 样片与封面示例图
+│   └── config.json               # 目录 / 语速 / 配乐 / 笔速 / 字幕 / 品牌层 / 封面画幅
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
@@ -2412,11 +2486,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 27
+- **总技能数**: 28
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 5 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber, hailaobao-gzh-design)
 - **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
-- **视频生成**: 3 (voice-to-video, remotion-video-factory, hyperframes-10s-video)
+- **视频生成**: 4 (voice-to-video, remotion-video-factory, hyperframes-10s-video, whiteboard-video-factory)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2425,6 +2499,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **whiteboard-video-factory**: v1.0.0 (2026-09-29) - 初始版本（由 `whiteboard-video` + `video-common` **合并并重命名**），手绘白板边画边讲讲解视频工厂：rough.js 逐笔手绘动画（场景可导出 Excalidraw 回灌）+ 火山/小米/edge-tts 三通道配音 + 字幕逐段跟读高亮（卡拉OK式，色块随语音跳） + TTS 逐字时间戳同时驱动画面排期与字幕切句 + 4 路独立 Chromium 确定性出帧（framemd5 可验）+ 三画幅封面一次出（4:3 / 3:4 / 9:16 抖音）+ 五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号）+ **时长不限**（按场景数伸缩，2 分钟短片到 30 分钟长片同一套流水线；长片可配 `bgm.playlist` 多首轮播，并提供 `wb tts/render <期> <场景>` 断点续跑）+ 自带事实核查 / 合规自查 / 成片验收 / 交付边界公共工序；全链路本地，不开剪辑软件
 - **hailaobao-gzh-design**: v1.0.0 (2026-09-24) - 初始版本，公众号排版：Markdown → 带「复制到公众号」按钮的自包含 HTML，粘进公众号编辑器样式全保留；7 套排版风格（玉石商务 / 暖色编辑部 / 极客单色 / 香槟品牌 / 雾霾笔记 / 午夜研究报告 / 森绿演示）、AI 按规则改写（序号竖线标题 · kicker 语义匹配 · 金句引用 · SummaryCard/InfoCard 卡片 · 总改动 ≤30%）；原始 Markdown 不改动，零 npm 依赖，只需 Node.js ≥ 16
 - **hyperframes-10s-video**: v2.0.0 (2026-09-24) - 初始版本，HyperFrames 声明式分镜动画视频：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——时长任意（`--total=` / `duration` 字段，各幕比例归一、精确到 0.01s，长片靠加幕）、配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，含可视化画廊 + 预览页实时换肤）、音频可选（默认无声无音轨，edge-tts 配音可一键混音）；9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏与帧率可切，无头 Chromium 逐帧确定性渲染
 - **poetry-cinema-page**: v1.0.0 (2026-09-22) - 初始版本，沉浸式古诗词网页生成：文学分镜 + 视觉圣经 + 双服务商四档位生图（火山方舟 Doubao Seedream 5.0 / GPT-Image 网关，主视觉参考链跨服务商）+ edge-tts / 豆包 seed-tts 双引擎 23 音色配音 + 滚动页面 + 浏览器验收，可选 Remotion 口播视频成片
@@ -2485,6 +2560,19 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 9 月 29 日 - version 0.0.31
+
+- ✅ 新增 **whiteboard-video-factory** Skill v1.0.0（手绘白板「边画边讲」讲解视频工厂）——由 `whiteboard-video` + `video-common` **两个 skill 合并并重命名**而来
+- ✅ 合并原则：白板出片全链路（DSL / 逐笔渲染器 / 双通道 TTS / 字幕 / 混音 / 封面 / 发布文案 / 示例工程）+ 原本散在公共工序里的事实核查、合规自查、成片机器与目视验收、交付边界，并为一体；装入一个目录即可跑，不再需要并列安装 `video-common`
+- ✅ 公共工序去重与改写：`platform-copy.md`（多平台文案机制）折进 `references/publish.md` 开头的「动手前先记住三条」与「口吻」；`cover-qa.md` 是用 AI 生图出封面的比例规则，白板封面由 Excalidraw 程序化生成（画幅由代码决定，不存在 AI 画错比例的问题）**不适用故未并入**，其中与画幅无关的目视验收要点折进 `references/delivery-qa.md` 的「封面验收」；原文「四条线 / 其他账号 skill 共用」的跨线表述改写为白板自己的说法
+- ✅ 文档入口本地化：`SKILL.md` 里所有 `../video-common/...` 指针改为本仓库 `references/...`，并新增七份 reference 的用途表；README 增加「来源与合并说明」章节，逐条记录取舍
+- ✅ 新增 **9:16 封面画幅**（1080×1920，抖音竖屏）：`COVER_SIZES` 加 `9:16`，`coverLayout` 新增长竖版分支，关键内容压在中央安全区（抖音封面上下会被裁到约 1080×1464）；`config.json` 的 `cover.ratios` 默认由两张变三张
+- ✅ 新增 **抖音发布规范**：`references/publish.md` 平台表加抖音行 + 新增「抖音怎么写」整节（标题即描述前 55 字、描述 100~200 字、话题 3~5 个整串排最后、不堆 `#热门 #涨粉`、AIGC 必须标注、横版成片在竖屏信息流用 9:16 封面兜底）；模板与示例发布稿同步补抖音小节
+- ✅ 修复上游遗留 bug：`lib/render.js` 的 `~` 展开仍在用 `process.env.HOME`（Windows 下会拼出 `C:\c\Users\...` 而 ENOENT），改为 `require('os').homedir()`，与 `lib/paths.cjs`、`lib/scene-dsl.js` 一致
+- ✅ 文档加固：`SKILL.md` 的「在 Windows 上跑（本机已适配）」改写为通用的「跨平台说明（Windows / macOS / Linux）」，并修正 edge-tts 缓存的过时说法（现在是缓存键对不上自动重配，不必手删 `work/audio`）；合并两处互相矛盾的渲染耗时说明
+- ✅ 冒烟验证：从新目录实跑 `wb new` / `wb scenes` / `wb cover` 全通，三张封面实测 1440×1080 / 1080×1440 / 1080×1920，无重叠越界
+- ✅ 项目统计：技能包 44 个文件、约 24 MB（含 22 MB 小赖手写字体），Node.js 脚本 13 个 + Python 1 个 + Bash CLI 1 个，直接 npm 依赖仅 3 个（playwright / roughjs / lz-string）
 
 ### 2026 年 9 月 24 日 - version 0.0.30
 

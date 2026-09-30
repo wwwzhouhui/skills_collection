@@ -1,0 +1,16 @@
+{
+  "name": "whiteboard-video-factory-skill",
+  "version": "1.0.0",
+  "description": "手绘白板风边画边讲讲解视频工厂：Excalidraw 逐笔动画 + 火山/edge-tts 配音字幕 + 品牌层 + 三画幅封面与各平台发布文案，内含查证/合规/验收公共工序，以 AI skill 形式开源",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": { "wb": "bin/wb" },
+  "scripts": {
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "lz-string": "^1.5.0",
+    "playwright": "1.58",
+    "roughjs": "^4.6.6"
+  }
+}
