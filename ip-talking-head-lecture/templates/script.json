@@ -1,0 +1,139 @@
+{
+  "title": "__TITLE__",
+  "_note": "这是 iph new 复制出来的脚本站。改 narration（要念的话）和 heading（屏上大字）就能出片；kind 决定版式，data 是各版式的专属内容。全程不需要写代码，也不需要手算时长 —— 时长由配音实际长度反推。",
+
+  "tone": "light",
+  "brand": {
+    "name": "海老豹666",
+    "slogan": "AI 工具实测 · 讲人话",
+    "accent": "#2f9e44"
+  },
+
+  "avatar": {
+    "_note": "口播形象：iph avatars 看列表（haibao=动物卡通·海老豹 / human=人物卡通·眼镜青年）。preset 留空就用 config.json 的默认；本期想换形象就填一个名字。换完必须重新 build 才会出片",
+    "preset": ""
+  },
+
+  "publish": {
+    "_note": "各平台发布文案。省略整块就不生成《发布文案.md》。youtube 段填了实质内容才会渲染成板块；某平台文案里写 {{chapters}} 会自动替换成场景级时间轴（跟随成片时长，不会过期）；en.cues 必须与中文字幕逐条一一对应（条数用 iph srt <期> 数），留空则不出英文字幕。详见 references/publish.md",
+
+    "title": "__TITLE__",
+    "titles": [],
+
+    "videoAccount": "",
+    "xiaohongshu": "",
+    "douyin": "",
+    "articleLead": "",
+
+    "tags": [],
+    "hashtags": "",
+
+    "youtube": {
+      "title": "",
+      "titleEn": "",
+      "desc": "",
+      "descEn": "",
+      "tags": [],
+      "cta": "",
+      "ctaEn": "",
+      "chapterMinSeconds": 10,
+      "chapterTitles": [],
+      "chapterTitlesEn": []
+    },
+
+    "en": {
+      "_note": "英文字幕：与中文字幕逐条一一对应，共用同一条时间轴",
+      "cues": []
+    }
+  },
+
+  "scenes": [
+    {
+      "kind": "cover",
+      "narration": "做一条视频，你可能要写脚本、找素材、配音、剪辑，折腾一整天。但用 WorkBuddy，你只要说一句话。",
+      "heading": "一句话，做一条视频",
+      "sub": "WorkBuddy 视频全流程实测",
+      "data": {
+        "eyebrow": "AI 工具实测 · 第 1 期",
+        "tags": ["脚本", "配音", "动画", "字幕", "成片"]
+      }
+    },
+
+    {
+      "kind": "idea",
+      "narration": "它把整条生产线拆成三个角色：Miora 负责创造画面，Remotion 负责精确控制，WorkBuddy 负责指挥调度。",
+      "kicker": "角色分工",
+      "heading": "三个角色，各管一段",
+      "data": {
+        "icon": "layers",
+        "center": "生产线",
+        "points": [
+          { "title": "Miora", "text": "生成角色、场景与动态素材" },
+          { "title": "Remotion", "text": "用代码控制位置、时间与转场" },
+          { "title": "WorkBuddy", "text": "分镜、调度、修改与质检" }
+        ]
+      }
+    },
+
+    {
+      "kind": "steps",
+      "narration": "第一步，给一张形象图；第二步，写一段逐字稿；第三步，让它自己拆镜头、配音、配字幕，最后直接渲染成片。",
+      "kicker": "三步走",
+      "heading": "你只需要做三件事",
+      "data": {
+        "items": [
+          { "title": "给一张形象图", "text": "你的 IP 三视图，用来锁住角色一致性", "icon": "target" },
+          { "title": "写一段逐字稿", "text": "大白话就行，不用写分镜", "icon": "book" },
+          { "title": "说一句出片", "text": "自动拆镜头、配音、字幕、渲染", "icon": "rocket" }
+        ]
+      }
+    },
+
+    {
+      "kind": "compare",
+      "narration": "传统做法是抽卡，画面不满意只能重来。换成代码驱动之后，每一帧都能改，字幕时长、动画节奏、转场方式全都可以精确控制。",
+      "kicker": "为什么可控",
+      "heading": "从抽卡到可控",
+      "data": {
+        "left": {
+          "title": "传统生成",
+          "items": ["不满意只能重新抽", "字幕与画面各走各的", "改一个字要重做全片"]
+        },
+        "right": {
+          "title": "代码驱动",
+          "items": ["逐帧可改、可反复渲染", "音画字幕共用一条时间轴", "换个脚本就换一条片"]
+        }
+      }
+    },
+
+    {
+      "kind": "numbers",
+      "narration": "一条一分钟的片子，包含六个镜头、完整配音、同步字幕和动画课件，成本不到一百积分。",
+      "kicker": "实测数据",
+      "heading": "一条片的实际消耗",
+      "data": {
+        "items": [
+          { "value": 60, "unit": "秒", "label": "成片时长" },
+          { "value": 6, "unit": "个", "label": "分镜数量" },
+          { "value": 100, "prefix": "<", "unit": "积分", "label": "消耗上限" }
+        ],
+        "note": "同一份工程还能一键出横屏和竖屏两版"
+      }
+    },
+
+    {
+      "kind": "recap",
+      "narration": "记住三件事：用形象图锁角色，用脚本管内容，用代码控节奏。剩下的交给 WorkBuddy。这套流程已经做成了技能，下一期我直接用它给你做一条。",
+      "kicker": "记住这三点",
+      "heading": "把生产线留下来",
+      "data": {
+        "items": [
+          { "title": "形象图锁角色", "text": "同一套素材，跨镜头不跑形" },
+          { "title": "脚本管内容", "text": "改旁白自动重排时间轴" },
+          { "title": "代码控节奏", "text": "字幕、动画、转场全可计算" }
+        ],
+        "cta": "一句话，就是一条片子"
+      }
+    }
+  ]
+}

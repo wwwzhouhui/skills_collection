@@ -3,8 +3,8 @@
 个人开发的 Claude Code Skills 集合，提供实用的技能工具，助力提升开发效率和内容创作。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.31-green.svg)
-![Skills](https://img.shields.io/badge/skills-28-orange.svg)
+![Version](https://img.shields.io/badge/version-0.0.32-green.svg)
+![Skills](https://img.shields.io/badge/skills-29-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -24,6 +24,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **视频生成**: 口播文字稿一键成片（voice-to-video）——TTS 词级时间戳 + HTML 动画引擎 + 确定性逐帧渲染，画面/字幕/语音逐词对应，13 套画面风格
 - **动画视频**: 声明式分镜动画（hyperframes-10s-video）——一段文字 → 横屏动画视频 + 同名 SRT 字幕，时长（任意秒）/配色（10 套皮肤）/画幅（横竖屏）/配音（AI 口播）全部参数化，无头 Chromium 逐帧确定性渲染
 - **白板讲解**: 手绘白板「边画边讲」讲解视频工厂（whiteboard-video-factory）——Excalidraw 逐笔动画 + 火山/小米/edge-tts 三通道配音 + 烧录字幕（含逐段跟读高亮） + 手绘品牌层 + 三画幅封面（4:3 / 3:4 / 9:16 抖音）+ 五平台发布文案，**时长不限（2 分钟短片到 30 分钟长片同一套流水线，按场景数伸缩）**，自带查证/合规/成片验收公共工序，画面上每一笔都是代码画的，不开剪辑软件
+- **数字人口播**: IP 卡通数字人口播动画课件视频工厂（ip-talking-head-lecture）——一段逐字稿 + 一张 IP 形象图 → Remotion 成片：右下角圆形数字人常驻讲课（待机浮动 + 口型开合 + 说话光环）、主画面六套动画课件版式、字幕烧录跟读高亮，三通道配音（小米 MiMo / 火山 / edge-tts）时长由实际音频反推、音画字幕天然对齐，一条命令同出 16:9 + 9:16，自动产出各平台发布文案（YouTube 中英双语 + 章节时间轴）与中英双语 SRT/VTT，含右上角博主角标与片尾品牌卡
 - **数据采集**: 微信公众号文章获取（单篇/批量下载、元数据提取、图片下载、Markdown转换）、公众号文章聚合（按公众号名称批量采集最新文章）
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
@@ -40,6 +41,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| ip-talking-head-lecture | IP 卡通数字人口播动画课件视频工厂：一段逐字稿 + 一张 IP 形象图 → Remotion 成片。主讲 IP 以圆形头像常驻右下角讲课（待机浮动 + 三帧口型开合 + 说话光环 + 声波条），主画面自动排版的六套动画课件版式（封面 / 概念 / 步骤 / 对比 / 数据 / 总结），底部烧录字幕并做跟读高亮，品牌水印 + 顶部进度条 + **右上角可自定义博主角标** + **片尾自动追加品牌卡**（标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA）；配音三通道（小米 MiMo / 火山引擎逐字对齐 / edge-tts 免费备胎），**时长由 TTS 实际音频反推**——改一句旁白重新 build 整体自动重排，画面、配音、字幕天然对齐，不手写任何帧数；一条命令同时出 16:9 横屏与 9:16 竖屏（另支持 1:1）；内置两套口播形象（动物卡通·海老豹 / 人物卡通·眼镜青年）一键切换、加新形象只需一个目录三帧图；自动产出各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述与自动合并的章节时间轴）与中英双语字幕（SRT + VTT）；全链路本地（Remotion + ffmpeg + TTS），无剪辑软件、无联网渲染 | Node.js、TypeScript、React、Remotion、小米 MiMo TTS / 火山引擎 TTS / edge-tts、ffmpeg | 2026年10月3日 | wwwzhouhui | 1.2.0 |
 | whiteboard-video-factory | 手绘白板「边画边讲」讲解视频工厂：一句话选题 → 查证、写旁白、出 Logo 与贴纸、画场景、配音对字幕、逐笔渲染、混配乐、出封面、写发布文案全链路本地完成。rough.js + SVG dashoffset 逐笔手绘动画（场景可导出 Excalidraw 回灌渲染），TTS 逐字时间戳同时驱动画面排期与字幕切句（小米通道无时间戳时用静音检测估算），字幕支持**逐段跟读高亮**（卡拉OK式，念到哪一段那一段字转反白、背后套品牌色块，火山/小米/edge 三引擎通用），4 路独立 Chromium 确定性出帧（`framemd5` 可验 0 帧差），三套配音通道（火山引擎 / 小米 MiMo / edge-tts 免费备胎），**时长不限**（渲染按场景分段出片再 concat、TTS 逐场景缓存，场景数不受限，2 分钟到 30 分钟同一套流水线；长片配 `bgm.playlist` 多首轮播避免单曲循环），三画幅封面一次出（4:3 / 3:4 / 9:16 抖音），五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号），自带事实核查、合规自查、成片验收与交付边界公共工序 | Node.js、Playwright（无头 Chromium）、rough.js、Excalidraw DSL、火山引擎 TTS / 小米 MiMo TTS / edge-tts、ffmpeg | 2026年9月29日 | wwwzhouhui | 1.0.0 |
 | hyperframes-10s-video | HyperFrames 声明式分镜动画视频技能：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——① 时长任意（`--total=` 或 `duration` 字段，各幕按比例精确归一，长片靠加幕）；② 配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，附可视化画廊 + 预览页实时换肤）；③ 音频可选（默认无声无音轨，edge-tts 配音一键混音）。含 9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏可切换 | Node.js、GSAP、无头 Chromium、ffmpeg、Python（edge-tts） | 2026年9月24日 | wwwzhouhui | 2.0.0 |
 | hailaobao-gzh-design | 公众号排版技能：AI 按改写规则把 Markdown 文章重排为编辑部风格（序号竖线标题、kicker 语义匹配、金句引用、摘要/信息卡片），**7 套内置风格**（玉石商务、暖色编辑部、极客单色、香槟品牌、雾霾笔记、午夜研究报告、森绿演示），一键生成带「复制到公众号」按钮的自包含 HTML，粘贴到公众号编辑器样式全保留；原始 Markdown 不改、总改动 ≤30%、代码块一字不动 | Node.js（≥16，ESM）、零 npm 依赖 | 2026年9月24日 | hailaobao2026 | 1.0.0 |
@@ -70,6 +72,72 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🎤 IP Talking Head Lecture（IP 数字人口播动画课件视频工厂）
+
+**核心功能：**
+
+- ✅ **一句话概括工作流**：写一个 `script.json`（每场景一段 `narration` 旁白 + `heading` 标题 + `kind` 版式 + `data` 内容槽）→ `iph all <期>` → 拿到 mp4；期目录、配音、时间轴、字幕、发布文案全部由命令生成，**唯一手写的就是 script.json**
+- ✅ **IP 数字人常驻讲课**：主讲形象以圆形头像常驻右下角（横屏）/ 底部（竖屏），待机时极缓浮动，说话时三帧口型（闭口/微张/张口）随音频开合，外圈品牌色「说话光环」+ 声波条；内置两套形象可一键切换——动物卡通（海老豹）与人物卡通（眼镜青年），加新形象 = 一个目录放三帧同名图 + config 登记一行，`iph avatars` 即可见
+- ✅ **六套动画课件版式**：封面 cover / 概念 idea / 步骤 steps / 对比 compare / 数据 numbers（数字滚动 countUp）/ 总结 recap，横屏走左右分栏多列、竖屏自动改纵向堆叠；每个场景按旁白逐条揭示要点，画面跟着声音走
+- ✅ **时长由实际音频反推**：TTS 逐场景合成后用真实音频时长重建时间轴（lead + 音频 + tail），每个词的时间戳同时驱动字幕切句与跟读高亮——改一句旁白重新 build 就整体重排，不需要手调任何帧数
+- ✅ **三通道配音**：小米 MiMo TTS（默认，小句级时间戳）／ 火山引擎（逐字对齐，支持声音复刻）／ edge-tts 免费备胎；语速、响度、音色全在 `config.json`，凭证走 `.env`
+- ✅ **品牌层可配置**：左下水印、**右上角博主角标**（`brand.corner`，text 留空自动用 `brand.name`，可关）、顶部场景进度条，以及**片尾品牌卡**（`brand.endCard`：build 时自动在末尾追加一个静音 outro 场景——标识图或手写体博主名 + 星花 + 品牌色划线逐笔画出 + slogan + 黄色便签 CTA「点赞 · 关注 · 评论区聊聊」），`brand.logo` 给图就代替手写名
+- ✅ **一条命令双画幅**：16:9（1920×1080，B 站/课程）与 9:16（1080×1920，抖音/视频号/小红书）同时出片，另支持 1:1；crf、并行度可调
+- ✅ **发布物料一并产出**：中文 SRT/VTT +（条数对齐时）英文 SRT/VTT、旁白稿表格、各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述与**自动合并的章节时间轴**，满足 YouTube ≥3 章、每章 ≥10s 的规则）
+- ✅ **确定性本地渲染**：Remotion + ffmpeg 全本地，无需剪辑软件、无需云端；配音与逐场景产物带缓存，只改文案时秒级重发布案
+
+**工作流程：**
+
+`iph new "<标题>"` 建期 → 写 `episodes/<期>/script.json`（口播短句、heading ≤12 字）→ `iph voice` 配音自检 → `iph build <期>`（TTS + 时间轴 + 字幕 + 发布文案）→ `iph still` 抽静帧查版式 → `iph render` 出成片 → 抽帧目视验收（角标 / outro / 字幕高亮）→ 交付
+
+**关键命令：**
+
+```bash
+SK="~/.claude/skills/ip-talking-head-lecture"
+I="$SK/bin/iph"
+
+$I new "Meta Muse国内0门槛注册全攻略"      # 建期目录 + script.json 模板
+$I voice                                   # 配音自检：回显引擎/音色/端点并真跑一句
+$I build "Meta Muse国内0门槛注册全攻略"     # TTS + 时间轴 + 字幕 + 发布文案
+$I still "Meta Muse国内0门槛注册全攻略" 8   # 第 8 秒静帧，看版式
+$I render "Meta Muse国内0门槛注册全攻略" --ratio=16:9,9:16
+$I all "Meta Muse国内0门槛注册全攻略"       # build + render 一条龙
+$I avatars                                 # 列出可用口播形象
+$I preset human                            # 切换默认形象（写进 config.json）
+$I srt "Meta Muse国内0门槛注册全攻略"       # 只看字幕条时间与文本
+```
+
+**参数速查：**
+
+| 维度 | 在哪儿改 | 默认 |
+| --- | --- | --- |
+| 配音引擎 / 音色 / 语速 | `config.json` → `tts.engine`（`mi` / `volc` / `edge`）、`tts.voice`、`tts.speed` | 小米 MiMo · 冰糖 @1.15x |
+| TTS 凭证 | `.env`（`VOLC_TTS_API_KEY` / `MI_TTS_API_KEY` 等，**勿提交**） | — |
+| 画幅集合 / 帧率 / 并行度 | `video.ratios` / `fps` / `concurrency` | 16:9 + 9:16 / 30 / 4 |
+| 节奏 | `pacing.leadPadding` / `tailPadding` / `minSceneSeconds` / `sceneGap` | 0.85 / 0.7 / 3.2 / 0.25 |
+| 品牌层 | `brand.name` / `accent` / `slogan` / `corner` / `endCard` / `logo` | 见 config |
+| 数字人形象 | `avatar.preset` 或 `iph preset <名>`；形象目录三帧 `image/mouth-mid/mouth-open` | haibao |
+| 字幕切句 | `cues.*`（每句字数上下限等） | 见 config |
+| 期目录 / 产物目录 | `dirs.projects` / `dirs.build` | `episodes/` / `build/` |
+
+**目录要点：** `bin/iph`（CLI：new / build / publish / render / all / still / srt / voice / kinds / avatars / preset）、`lib/build.mjs`（script.json → 配音 → timeline-16x9/9x16.json + 字幕 + 发布文案，时间轴是"整个视频的唯一真相"）、`lib/tts/`（小米 / 火山 / edge 三通道）、`lib/publish.mjs`（各平台文案渲染）、`remotion/`（React 工程：`SceneShell` 品牌层与角标、`scenes/index.tsx` 六套版式 + outro、`Avatar` 口型数字人）、`references/`（script-format / avatar / voices / publish / delivery-qa 五份）、`templates/`（每期 script.json 模板）
+
+**适用场景：** 有固定 IP 形象（卡通头像即可）的知识口播 / 工具实测 / 热点讲解账号内容；一条稿子要同时喂 B 站横屏与抖音/视频号竖屏；需要改一句话就整体自动重排、拒绝手调时间轴；与 `whiteboard-video-factory`（手绘白板边画边讲）、`voice-to-video`（无形象口播逐词成片）、`remotion-video-factory`（纯图形动画）互补，覆盖「有 IP 真人感出镜」这一环
+
+**示例成片：** 《Meta Muse 爆火，国内 0 门槛注册全攻略》——8 场景 + 自动片尾卡，128.2 秒，16:9 与 9:16 双画幅一次出，含中英双语字幕与各平台发布文案（由文章稿 → `script.json` → `iph all` 全流程产出），点击下方播放器直接在线观看
+
+**横屏 16:9（1366×768）：**
+
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/7269fb42-47e7-4b49-bba8-52acab3f5784" controls muted playsinline width="100%"></video>
+</p>
+
+**竖屏 9:16（768×1366）：**
+
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/7d425a7d-43d1-4dd6-9fcd-9060bf56fe21" controls muted playsinline width="45%"></video>
+</p>
 
 ### 🖊️ Whiteboard Video Factory（手绘白板「边画边讲」讲解视频）
 
@@ -1856,7 +1924,8 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 | ffmpeg | Latest | 视频处理/渲染（video-agent-kit） | https://ffmpeg.org |
 | OpenCV | 4.8+ | 视频抽帧/画面分析（video-agent-kit） | https://opencv.org |
 | Edge TTS | Latest | 免费中文语音合成（video-agent-kit） | https://github.com/rany2/edge-tts |
-| Remotion | 4.x | 口播视频确定性渲染（poetry-cinema-page、remotion-video-factory） | https://www.remotion.dev |
+| Remotion | 4.x | 口播视频确定性渲染（poetry-cinema-page、remotion-video-factory、ip-talking-head-lecture） | https://www.remotion.dev |
+| 小米 MiMo TTS / 火山引擎 TTS | - | 数字人口播配音与逐字/小句时间戳（ip-talking-head-lecture，可选 edge-tts 免费备胎） | https://micmi.global.s.xiaomi.com / https://www.volcengine.com/product/tts |
 
 ### 技术架构
 
@@ -1931,6 +2000,20 @@ skills_collection/
 │   ├── examples/                 # 一期完整示例（旁白、7 场景、4 贴纸、封面函数、资料来源、发布稿）
 │   ├── assets/                   # 小赖手写字体（OFL）+ 样片与封面示例图
 │   └── config.json               # 目录 / 语速 / 配乐 / 笔速 / 字幕 / 品牌层 / 封面画幅
+├── ip-talking-head-lecture/       # IP 数字人口播动画课件视频工厂（Remotion 出片）
+│   ├── SKILL.md                  # 技能入口：硬规矩 + 命令表 + 修改类请求对照表
+│   ├── README.md                 # 使用说明
+│   ├── bin/iph                   # CLI：new / list / build / publish / render / all / still / srt / voice / kinds / avatars / preset
+│   ├── lib/                      # build.mjs（script.json → 配音 → 时间轴/字幕/发布文案）· cues.mjs · publish.mjs
+│   │                             # tts/（小米 MiMo / 火山 / edge 三通道配音，带缓存与逐字时间戳）· paths.cjs
+│   ├── remotion/                 # React 渲染工程：SceneShell（品牌层/角标/进度条）· Avatar（三帧口型数字人）
+│   │                             # scenes/index.tsx（cover/idea/steps/compare/numbers/recap/outro 版式）· src/（含 node_modules，装好即用）
+│   ├── references/               # script-format / avatar / voices / publish / delivery-qa
+│   ├── templates/                # 每期 script.json 模板
+│   ├── assets/                   # 内置两套口播形象（动物卡通·海老豹 / 人物卡通·眼镜青年，各三帧口型）
+│   ├── episodes/                 # 每期唯一手写源 script.json 所在
+│   ├── config.json               # 目录 / 配音 / 画幅 / 节奏 / 形象 / 品牌层（角标 + 片尾卡）
+│   └── .env.example              # TTS 凭证模板（实际 .env 已被 .gitignore 排除）
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
@@ -2166,6 +2249,11 @@ export GITHUB_TOKEN="your-github-token"
 # 企业微信 Webhook（github-trending 可选）
 export WEIXIN_WEBHOOK="your-webhook-url"
 
+# ip-talking-head-lecture（IP 数字人口播视频；凭证写进 skill 根目录 .env，参考 .env.example，勿提交）
+export MI_TTS_API_KEY="your-xiaomi-mimo-tts-key"   # 默认引擎：小米 MiMo TTS
+export VOLC_TTS_API_KEY="your-volcengine-tts-key"  # 火山引擎 TTS（逐字时间戳，可选）
+# 三通道之一 edge-tts 免费无需 Key；引擎/音色/语速在 config.json 的 tts 段切换
+
 # video-agent-kit（视频剪辑与解说；TTS 用 Edge TTS 免费无需配置，ASR 需自备 Key）
 export VE_PLUGIN_ROOT="/path/to/skills_collection/video-agent-kit"  # 插件根目录（可自动探测）
 export VE_EDGE_TTS_VOICE="zh-CN-XiaoxiaoNeural"    # Edge TTS 默认音色（可选）
@@ -2215,6 +2303,10 @@ export VE_SPEECH_ASR_API_KEY="your-api-key"
 "请帮我学习这篇文档 https://example.com/article 并生成知识卡片"
 "请分析这个开源项目的代码架构并生成导师级教学笔记"
 "请帮我整理这份 PDF 文档，生成知识海报（使用孟菲斯网格风格）"
+
+# IP 数字人口播视频
+"请使用 ip-talking-head-lecture 把这篇文章做成数字人口播视频，右下角用我的卡通形象"
+"换成人物卡通形象重出一版，片尾卡换成我的标识图"
 ```
 
 ### 高级用法
@@ -2486,11 +2578,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 28
+- **总技能数**: 29
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 5 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber, hailaobao-gzh-design)
 - **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
-- **视频生成**: 4 (voice-to-video, remotion-video-factory, hyperframes-10s-video, whiteboard-video-factory)
+- **视频生成**: 5 (voice-to-video, remotion-video-factory, hyperframes-10s-video, whiteboard-video-factory, ip-talking-head-lecture)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2499,6 +2591,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 最新版本动态
 
+- **ip-talking-head-lecture**: v1.2.0 (2026-10-03) - 迁入本仓库。IP 卡通数字人口播动画课件视频工厂（Remotion + 小米/火山/edge 三通道 TTS）：右下角圆形 IP 数字人讲课（三帧口型 + 说话光环 + 待机浮动）+ 六套动画课件版式 + 烧录字幕跟读高亮；**时长由 TTS 实际音频反推**，改一句旁白整体自动重排，音画字幕天然对齐；一条命令同出 16:9 / 9:16（另支持 1:1）；内置动物卡通（海老豹）/ 人物卡通（眼镜青年）两套形象一键切换，加新形象 = 一个目录三帧图；自动产出各平台发布文案（YouTube 中英双语 + 章节时间轴自动合并）与中英双语 SRT/VTT；v1.2.0 新增**右上角可自定义博主角标**（`brand.corner`）与**片尾品牌卡**（`brand.endCard`，build 时自动追加静音 outro 场景：标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA，`brand.logo` 可换成博主标识图）
 - **whiteboard-video-factory**: v1.0.0 (2026-09-29) - 初始版本（由 `whiteboard-video` + `video-common` **合并并重命名**），手绘白板边画边讲讲解视频工厂：rough.js 逐笔手绘动画（场景可导出 Excalidraw 回灌）+ 火山/小米/edge-tts 三通道配音 + 字幕逐段跟读高亮（卡拉OK式，色块随语音跳） + TTS 逐字时间戳同时驱动画面排期与字幕切句 + 4 路独立 Chromium 确定性出帧（framemd5 可验）+ 三画幅封面一次出（4:3 / 3:4 / 9:16 抖音）+ 五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号）+ **时长不限**（按场景数伸缩，2 分钟短片到 30 分钟长片同一套流水线；长片可配 `bgm.playlist` 多首轮播，并提供 `wb tts/render <期> <场景>` 断点续跑）+ 自带事实核查 / 合规自查 / 成片验收 / 交付边界公共工序；全链路本地，不开剪辑软件
 - **hailaobao-gzh-design**: v1.0.0 (2026-09-24) - 初始版本，公众号排版：Markdown → 带「复制到公众号」按钮的自包含 HTML，粘进公众号编辑器样式全保留；7 套排版风格（玉石商务 / 暖色编辑部 / 极客单色 / 香槟品牌 / 雾霾笔记 / 午夜研究报告 / 森绿演示）、AI 按规则改写（序号竖线标题 · kicker 语义匹配 · 金句引用 · SummaryCard/InfoCard 卡片 · 总改动 ≤30%）；原始 Markdown 不改动，零 npm 依赖，只需 Node.js ≥ 16
 - **hyperframes-10s-video**: v2.0.0 (2026-09-24) - 初始版本，HyperFrames 声明式分镜动画视频：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——时长任意（`--total=` / `duration` 字段，各幕比例归一、精确到 0.01s，长片靠加幕）、配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，含可视化画廊 + 预览页实时换肤）、音频可选（默认无声无音轨，edge-tts 配音可一键混音）；9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏与帧率可切，无头 Chromium 逐帧确定性渲染
@@ -2560,6 +2653,19 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 10 月 3 日 - version 0.0.32
+
+- ✅ 新增 **ip-talking-head-lecture** Skill v1.2.0（IP 卡通数字人口播动画课件视频工厂，自本机 skill 目录迁入）
+- ✅ 出片链路：唯一手写源 `episodes/<期>/script.json`（每场景 narration/heading/kind/data）→ `bin/iph` CLI → `lib/build.mjs` 逐场景 TTS 合成 → 按**实际音频时长**反推 timeline.json（16:9 / 9:16 各一份，音画字幕天然对齐）→ Remotion/React 确定性渲染 MP4
+- ✅ 画面构成：主画面六套动画课件版式（cover / idea / steps / compare / numbers / recap，横屏左右分栏、竖屏纵向堆叠），主讲 IP 圆形头像常驻右下角（待机浮动 + 三帧口型开合 + 品牌色说话光环 + 声波条），底部烧录字幕逐段跟读高亮，顶部进度条与品牌水印
+- ✅ 三通道配音：小米 MiMo TTS（默认，冰糖音色 @1.15x，小句级时间戳）／ 火山引擎（逐字对齐，支持声音复刻）／ edge-tts 免费备胎；引擎、音色、语速、响度全在 `config.json`，凭证走 `.env`（已 `.gitignore` 排除，**入库前务必确认不提交**）
+- ✅ 形象系统：内置动物卡通（海老豹）与人物卡通（眼镜青年）两套预设，`iph preset <名>` 一键切换；新增形象 = 一个目录放 `image / mouth-mid / mouth-open` 三帧 + config 登记一行；期目录同名文件可覆盖本期形象
+- ✅ v1.2.0 新增品牌层两处可配置项：**右上角博主角标**（`brand.corner.enabled/text`，text 留空自动用 `brand.name`，片尾卡出现时自动隐藏）与**片尾品牌卡**（`brand.endCard`：build 时自动在末尾追加一个静音 `outro` 场景——`brand.logo` 标识图或手写体博主名 + 星花 + 品牌色划线逐笔画出 + slogan + 黄色便签 CTA；`seconds` 调卡片时长，`cta` 留空不出便签，`enabled:false` 关闭）
+- ✅ 发布物料：中/英双语字幕 SRT + VTT（英文需 `publish.en.cues` 与中文字幕条数一致才生成，避免时间轴错位）、旁白稿、各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述，章节时间轴自动合并并满足 ≥3 章、每章 ≥10s）
+- ✅ 使用示例：《Meta Muse 爆火，国内 0 门槛注册全攻略》一期实测——文章稿 → 8 场景 script.json → `iph all` 出 128.2s 双画幅成片 + 全套发布物料；抽帧验收角标、片尾卡与字幕高亮均正常
+- ✅ 注意：`remotion/node_modules` 一并迁入（约 534MB / 10,619 文件），clone 后无需 `npm install` 即可渲染；若做 git 提交，请先确认 `.env`、`build/`、`remotion/node_modules` 等在 `.gitignore` 覆盖范围内
+- ✅ 项目统计：技能 28 → 29；视频生成类 4 → 5
 
 ### 2026 年 9 月 29 日 - version 0.0.31
 
@@ -2979,4 +3085,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 9 月 24 日 (v0.0.29)
+**文档生成时间**: 2026 年 10 月 3 日 (v0.0.32)

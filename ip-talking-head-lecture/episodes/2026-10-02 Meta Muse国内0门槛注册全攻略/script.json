@@ -1,0 +1,161 @@
+{
+  "title": "Meta Muse 爆火，国内 0 门槛注册全攻略",
+
+  "tone": "light",
+  "brand": {
+    "name": "海老豹666",
+    "slogan": "AI 工具实测 · 讲人话",
+    "accent": "#2f9e44"
+  },
+
+  "avatar": {
+    "preset": "haibao"
+  },
+
+  "publish": {
+    "title": "Meta Muse 爆火，国内 0 门槛注册全攻略",
+    "titles": [
+      "13天250万下载的Meta Muse，国内怎么零门槛注册？",
+      "别再花29.9找人代注册了，Meta Muse 5分钟自己搞定"
+    ],
+
+    "videoAccount": "Meta 悄悄上线的 Muse，13 天下载量破 250 万，把 ChatGPT 挤下了美区免费榜第一。\n\n它不是聊天机器人，是长在你云端的「第二大脑」：给一个目标，它自己拆步骤、开浏览器、填表单，关掉 App 还在后台干活。\n\n这条视频把四道门槛、注册流程、还有 10 亿 tokens 邀请码的领法一次讲透。实测 5 分钟跑通，全程聊天搞定，不用自己开浏览器。\n\n邀请码：ZXYS1O（加入后 48 小时内兑换有效）\n注册入口：https://muse.ai/join",
+    "xiaohongshu": "Meta Muse 真的杀疯了🔥 13天下载量破250万，把ChatGPT都挤下免费榜第一。\n\n简单说它是个「第二大脑」：你给目标，它自己拆步骤、开浏览器、填表单、下单，关App也在后台干活，每人独占一台云端虚拟机。\n\n国内注册其实没那么难，我实测5分钟跑通：\n1️⃣ 认清4道门槛：地区/年龄验证/邮箱/网络\n2️⃣ 别硬刚浏览器，用Airtap对话式代注册（免费、不装插件）\n3️⃣ 关键一步：绑信用卡，不绑=等待队列白注册\n4️⃣ 国家、邮编、账单地址必须统一填美国\n\n🎁 重头戏：注册后进 设置→兑现邀请码，48小时内兑换，双方各得约10亿tokens。邀请码 ZXYS1O，先到先得～\n\n⚠️ 相关网络操作请遵守国内法律法规，一个邮箱一个号，批量注册会封号。\n\n#MetaMuse #AI工具 #AIAgent #注册教程 #效率工具 #AI分享",
+    "douyin": "Meta Muse 爆火，13天250万下载。国内怎么零门槛注册？4道门槛+5分钟实操+10亿tokens邀请码，一条视频讲透。不用自己开浏览器，聊天就能搞定。\n\n{{chapters}}\n\n邀请码 ZXYS1O，加入后48小时内兑换。相关操作请遵守法律法规。",
+    "articleLead": "Meta 新上线的 AI Agent「Muse」13 天下载破 250 万。本文实测国内 0 门槛注册全流程：认清地区、年龄、邮箱、网络 4 道门槛，用 Airtap 对话式代注册 5 分钟跑通，最后别忘了 48 小时内兑换 10 亿 tokens 邀请码。",
+
+    "tags": ["Meta Muse", "AI Agent", "注册教程", "Airtap", "10亿tokens"],
+    "hashtags": "#MetaMuse #AI工具 #AIAgent #注册攻略 #效率工具",
+
+    "youtube": {
+      "title": "Meta Muse 爆火，国内 0 门槛注册全攻略｜5 分钟跑通 + 10 亿 tokens 邀请码",
+      "titleEn": "Meta Muse Went Viral — Zero-Barrier Signup Guide (5 Minutes, No Browser Needed)",
+      "desc": "Meta 9 月上线的 AI Agent「Muse」13 天下载量破 250 万。它不是聊天机器人，而是长在你云端的第二大脑：给一个目标，它自己拆步骤、开浏览器、填表单，关掉 App 还在后台继续干活。\n\n本期内容：Muse 到底是什么、注册前的 4 道硬性门槛、为什么推荐用 Airtap 对话式代注册、5 分钟保姆级实操，以及 10 亿 tokens 邀请码的领法与 3 个最容易翻车的坑。\n\n邀请码：ZXYS1O（加入后 48 小时内兑换有效）\n注册入口：https://muse.ai/join\n\n提示：相关网络操作请遵守当地法律法规；一个邮箱只能注册一个账号，批量注册会被封。",
+      "descEn": "Meta's new AI agent Muse hit 2.5M downloads in 13 days. It is not a chatbot — it is a second brain living in your own cloud VM: give it a goal, and it plans steps, opens a browser, fills forms and finishes the job even after you close the app.\n\nIn this video: what Muse actually is, the 4 hard requirements before signing up, why a chat-driven cloud agent beats DIY browser registration, a 5-minute walkthrough, and how to claim the 1B-token invite reward.\n\nReminder: stay compliant with local laws; one email per account, batch signups get banned.",
+      "tags": ["Meta Muse", "AI Agent", "muse.ai", "AI工具", "注册教程"],
+      "cta": "想尝鲜的朋友，按视频流程走一遍，注册完 48 小时内记得兑码。有问题评论区见。",
+      "ctaEn": "Follow the walkthrough and redeem your invite code within 48 hours. Questions? Drop them in the comments.",
+      "chapterMinSeconds": 10
+    }
+  },
+
+  "scenes": [
+    {
+      "kind": "cover",
+      "narration": "Meta悄悄上线了一个叫Muse的AI，13天下载量突破250万，直接把ChatGPT挤下了美区免费榜第一。今天一条视频讲透：它是什么、国内怎么零门槛注册、10亿tokens怎么领。",
+      "heading": "Meta Muse 爆火实测",
+      "sub": "国内 0 门槛注册全攻略",
+      "data": {
+        "eyebrow": "AI 工具实测 · 讲人话",
+        "tags": ["Muse", "注册攻略", "10亿tokens"]
+      }
+    },
+
+    {
+      "kind": "numbers",
+      "narration": "先看数据。上线5天，下载量73万；13天，突破250万。消息传回国内，Meta股价单日暴涨超过11%，一天多了近2000亿美元市值。",
+      "kicker": "它到底有多火",
+      "heading": "三天破73万，十三天250万",
+      "data": {
+        "items": [
+          { "value": 250, "unit": "万", "label": "13 天下载量" },
+          { "value": 11, "unit": "%", "label": "股价单日涨幅" },
+          { "value": 2000, "prefix": "≈", "unit": "亿美元", "label": "单日新增市值" }
+        ],
+        "note": "闲鱼上「Muse 代注册」已经卖到 29.9 一单"
+      }
+    },
+
+    {
+      "kind": "idea",
+      "narration": "但它不是聊天机器人，是长在你云端的第二大脑。你给它一个目标，它自己拆步骤、开浏览器、填表单，你关掉App，它还在后台接着干。而且每个用户独占一台云端虚拟机，数据彼此隔离。",
+      "kicker": "它是什么",
+      "heading": "第二大脑，替你干活",
+      "data": {
+        "icon": "chip",
+        "center": "第二大脑",
+        "points": [
+          { "title": "给目标不给指令", "text": "自己拆步骤、填表、下单" },
+          { "title": "后台继续跑", "text": "关掉 App，任务不停" },
+          { "title": "独占云虚拟机", "text": "独立浏览器与文件系统，敏感操作先经你批准" }
+        ]
+      }
+    },
+
+    {
+      "kind": "steps",
+      "narration": "注册前认清四道门槛。第一，地区只开了美国和加拿大；第二，年龄验证，绑Instagram最省事，不用信用卡；第三，一个能收验证码的邮箱；第四，干净的美区网络环境。缺一条都卡死。",
+      "kicker": "硬性条件",
+      "heading": "先认清 4 道门槛",
+      "data": {
+        "items": [
+          { "title": "地区限制", "text": "仅美加开放，需年满 18 岁", "icon": "target" },
+          { "title": "年龄验证", "text": "绑 Instagram 最省事，免信用卡", "icon": "chat" },
+          { "title": "邮箱", "text": "Gmail、Outlook 都能收验证码", "icon": "book" },
+          { "title": "网络环境", "text": "干净美区 IP，防风控排队", "icon": "layers" }
+        ]
+      }
+    },
+
+    {
+      "kind": "compare",
+      "narration": "自己硬注册，环境不纯要等两三天审核，实测三个号只过一个。更省事的路子是Airtap，一个替你操作浏览器的AI代理。发一句消息，它在云端帮你点完，免费注册，不装插件。",
+      "kicker": "方案怎么选",
+      "heading": "别硬刚浏览器",
+      "data": {
+        "left": {
+          "title": "自己硬注册",
+          "items": ["需要纯净美区 IP", "环境不纯等 2 到 3 天审核", "实测 3 个号只过 1 个"]
+        },
+        "right": {
+          "title": "Airtap 对话式",
+          "items": ["发一句消息，云端帮你点完", "免费注册，无需信用卡", "不装插件，全程实时可见"]
+        }
+      }
+    },
+
+    {
+      "kind": "steps",
+      "narration": "实操四步。第一步，用Google邮箱注册Airtap，国内手机号收不到验证码；第二步，发一句帮我注册muse.ai，把邮箱和生日发给它；第三步最关键，绑一张信用卡，不绑就进等待队列；第四步，国家、邮编、账单地址统一填美国，差一个就验证失败。",
+      "kicker": "保姆级实操",
+      "heading": "5 分钟对话式注册",
+      "data": {
+        "items": [
+          { "title": "注册 Airtap", "text": "用 Google 邮箱，86 手机号收不到码", "icon": "rocket" },
+          { "title": "聊天式注册", "text": "一句「帮我注册 muse.ai」，发邮箱和生日", "icon": "chat" },
+          { "title": "绑定信用卡", "text": "不绑卡＝等待队列，等于白注册", "icon": "target" },
+          { "title": "地址三统一", "text": "国家、邮编、账单地址全是美国", "icon": "book" }
+        ]
+      }
+    },
+
+    {
+      "kind": "numbers",
+      "narration": "重头戏是邀请码。进muse.ai，点左下角设置，兑现邀请码。注意，窗口只有48小时，兑换成功，你和邀请人各得大约10亿tokens。我的邀请码就放在简介里，先到先得。",
+      "kicker": "大羊毛",
+      "heading": "别忘了领 10 亿 tokens",
+      "data": {
+        "items": [
+          { "value": 10, "unit": "亿", "label": "tokens 双方各得" },
+          { "value": 48, "unit": "小时", "label": "兑换窗口" }
+        ],
+        "note": "路径：muse.ai → 左下角 → 设置 → 兑现邀请码"
+      }
+    },
+
+    {
+      "kind": "recap",
+      "narration": "最后提醒三个坑。不绑卡等于白注册；国家、邮编、账单地址必须统一是美国；48小时内记得兑码。还有一条底线，一个邮箱一个号，批量注册会被封，相关操作请遵守法律法规。那29块9，省下来买杯咖啡不香吗？我们下期见。",
+      "kicker": "避坑指南",
+      "heading": "三个坑别踩",
+      "data": {
+        "items": [
+          { "title": "绑卡是最后一公里", "text": "不绑卡＝等待队列" },
+          { "title": "地址三统一", "text": "国家、邮编、账单地址都得是美国" },
+          { "title": "48 小时兑码", "text": "窗口一过，10 亿 tokens 作废" }
+        ],
+        "cta": "5 分钟跑通，29.9 省下来"
+      }
+    }
+  ]
+}

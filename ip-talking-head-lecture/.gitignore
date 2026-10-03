@@ -1,0 +1,7 @@
+node_modules/
+build/
+remotion/public/
+remotion/out/
+remotion/src/generated/timeline.json
+.env
+*.log

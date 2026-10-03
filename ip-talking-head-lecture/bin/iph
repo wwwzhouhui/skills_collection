@@ -1,0 +1,178 @@
+#!/bin/bash
+# IP 数字人口播动画课件视频工作台 —— 一句话脚本 → 配音 + 动画课件 + 右下角数字人 + 字幕
+#
+#   iph new "<标题>"          新建一期：<episodes>/<日期> <标题>/script.json（从模板复制）
+#   iph list                  列出所有期
+#   iph voice                 配音自检：回显引擎/端点/音色，并真跑一句 → build/_voice-check.wav
+#   iph build <期>            合成配音 + 生成时间轴 / 字幕（中英 × SRT/VTT）/ 旁白稿 / 发布文案
+#   iph publish <期>          同 build —— 只改了 publish 段时用（配音走缓存，秒级完成）
+#   iph still <期> [秒]        出静帧看版式（默认第 1 秒）→ build/<期>/work/out/still-*.png
+#   iph render <期>           渲染成片 → build/<期>/outputs/final-<画幅>.mp4
+#   iph all <期>              build + render 一条龙
+#   iph srt <期>              只看字幕条时间与文本（核对断句 / 数英文字幕条数）
+#   iph kinds                 列出可用的课件版式
+#   iph avatars               列出可用的口播形象（动物卡通 / 人物卡通 …）
+#   iph preset <形象名>        切换默认口播形象（写进 config.json）
+#   iph open <期>             打开期目录与后台目录
+#
+#   常用开关：--ratio=16:9,9:16（画幅） --preset=human（本条片子临时换形象）
+#             --force-tts（忽略配音缓存重配） --scene=2（只渲某个场景）
+#   <期> 可以是目录名或标题的任意子串，如 iph all 全流程
+set -e
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+# 交给 Node 的路径必须是 Node 认得的：Git Bash 的 /c/Users/x 会被 Windows 版 Node 解析成 C:\c\Users\x
+ROOT_JS="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then ROOT_JS=$(cygpath -m "$ROOT"); fi
+
+nodejs() { node "$@"; }
+proj_of() { nodejs -e "const p=require('$ROOT_JS/lib/paths.cjs');console.log(p.resolveProject(process.argv[1]))" "$1"; }
+work_of() { nodejs -e "const p=require('$ROOT_JS/lib/paths.cjs');const q=p.projectPaths(p.resolveProject(process.argv[1]));console.log(JSON.stringify({studio:q.studio,project:q.project}))" "$1"; }
+open_dir() {
+  if command -v open >/dev/null 2>&1; then open "$1"
+  elif command -v explorer.exe >/dev/null 2>&1; then explorer.exe "$(cygpath -w "$1" 2>/dev/null || echo "$1")"
+  elif command -v xdg-open >/dev/null 2>&1; then xdg-open "$1"
+  else echo "$1"; fi
+}
+
+cmd="$1"; shift || true
+case "$cmd" in
+  new)
+    [ -z "$1" ] && { echo "用法: iph new \"<标题>\""; exit 1; }
+    dir="$ROOT/episodes/$(date +%Y-%m-%d) $1"
+    [ -e "$dir" ] && { echo "已存在 $dir"; exit 1; }
+    mkdir -p "$dir"
+    sed -e "s/__TITLE__/$1/g" -e "s#__IPH_ROOT__#$ROOT_JS#g" "$ROOT/templates/script.json" > "$dir/script.json"
+    echo "新建：$dir"
+    echo "下一步：编辑 script.json 的 scenes[].narration 与 heading，再跑 iph all \"$1\""
+    ;;
+  list)
+    nodejs -e "const p=require('$ROOT_JS/lib/paths.cjs');const l=p.listProjects();console.log(l.length?l.join('\n'):'(还没有期，先 iph new \"标题\")')"
+    ;;
+  voice)
+    nodejs "$ROOT_JS/lib/voice-check.mjs"
+    ;;
+  build)
+    [ -z "$1" ] && { echo "用法: iph build <期> [--ratio=16:9] [--force-tts]"; exit 1; }
+    proj="$(proj_of "$1")"; shift
+    nodejs "$ROOT_JS/lib/build.mjs" "$proj" "$@"
+    ;;
+  publish)
+    [ -z "$1" ] && { echo "用法: iph publish <期>（只改了 script.json 的 publish 段时用，配音走缓存）"; exit 1; }
+    proj="$(proj_of "$1")"; shift
+    nodejs "$ROOT_JS/lib/build.mjs" "$proj" "$@"
+    ;;
+  still)
+    [ -z "$1" ] && { echo "用法: iph still <期> [秒] [--ratio=16:9] [--preset=human]"; exit 1; }
+    proj="$(proj_of "$1")"; shift
+    sec="1"; case "$1" in [0-9]*) sec="$1"; shift ;; esac
+    # --preset 只在 build 时生效：静帧前先重建时间轴，否则看到的还是上一个形象
+    case " $* " in *" --preset="*)
+      echo "[iph] 检测到 --preset，先重建时间轴（配音走缓存）…"
+      nodejs "$ROOT_JS/lib/build.mjs" "$proj" "$@" ;;
+    esac
+    nodejs "$ROOT_JS/lib/render.mjs" "$proj" --still="$sec" "$@"
+    ;;
+  render)
+    [ -z "$1" ] && { echo "用法: iph render <期> [--ratio=16:9,9:16] [--scene=2] [--preset=human]"; exit 1; }
+    proj="$(proj_of "$1")"; shift
+    case " $* " in *" --preset="*)
+      echo "[iph] 检测到 --preset，先重建时间轴（配音走缓存）…"
+      nodejs "$ROOT_JS/lib/build.mjs" "$proj" "$@" ;;
+    esac
+    nodejs "$ROOT_JS/lib/render.mjs" "$proj" "$@"
+    ;;
+  all)
+    [ -z "$1" ] && { echo "用法: iph all <期> [--ratio=16:9,9:16]"; exit 1; }
+    proj="$(proj_of "$1")"; shift
+    nodejs "$ROOT_JS/lib/build.mjs" "$proj" "$@"
+    nodejs "$ROOT_JS/lib/render.mjs" "$proj" "$@"
+    ;;
+  srt)
+    [ -z "$1" ] && { echo "用法: iph srt <期>"; exit 1; }
+    proj="$(proj_of "$1")"
+    nodejs -e "
+      const fs=require('fs'),path=require('path');
+      const work=require('$ROOT_JS/lib/paths.cjs').projectPaths(process.argv[1]).work;
+      const files=fs.existsSync(work)?fs.readdirSync(work).filter(f=>/^timeline-.+\.json$/.test(f)).sort():[];
+      if(!files.length){console.log('这一期还没有时间轴，先跑：iph build <期>');process.exit(1)}
+      const t=JSON.parse(fs.readFileSync(path.join(work,files[0]),'utf8'));
+      console.log('# '+t.title+' · '+files[0]+' · '+t.width+'x'+t.height+' · '+t.total.toFixed(1)+'s');
+      let n=0;
+      for(const s of t.scenes){
+        console.log('— '+s.kind+'  ('+s.start.toFixed(1)+'s +'+s.duration.toFixed(1)+'s)');
+        for(const c of s.cues||[]){n++;console.log('   '+String(n).padStart(2)+'  ['+c.start.toFixed(2)+'-'+c.end.toFixed(2)+'] '+c.text)}
+      }
+      console.log('');
+      console.log('共 '+n+' 条字幕 —— publish.en.cues 也必须正好 '+n+' 条，条数不符英文字幕会被跳过。');
+    " "$proj"
+    ;;
+  kinds)
+    nodejs -e "
+      const fs=require('fs');const src=fs.readFileSync(path.join('$ROOT_JS','remotion','src','scenes','index.tsx'),'utf8');
+      const m=src.match(/export const SCENES[\s\S]*?=\s*\{([\s\S]*?)\n\};/);
+      const re=/(\w+):\s*\{\s*comp:[^,]+,\s*(bare:\s*(?:true|false),\s*)?desc:\s*'([^']+)'/g;
+      let x;console.log('可用课件版式（script.json 的 scenes[].kind）：');
+      while((x=re.exec(src))) console.log('  '+x[1].padEnd(9)+x[3]);
+      console.log('\n各版式的 data 结构见 references/script-format.md');
+    "
+    ;;
+  avatars)
+    nodejs -e "
+      const fs=require('fs'),path=require('path');
+      const p=require('$ROOT_JS/lib/paths.cjs');
+      const a=p.cfg.avatar||{};
+      const ps=a.presets||{};
+      const keys=Object.keys(ps).filter(k=>!k.startsWith('_'));
+      if(!keys.length){console.log('config.avatar.presets 里还没有形象，见 references/avatar.md');process.exit(0)}
+      console.log('可用口播形象（当前默认 = '+(a.preset||'未设置')+'）：');
+      for(const k of keys){
+        const v=ps[k]||{};
+        const dir=String(v.dir||'').replace(/^~/,p.HOME);
+        const abs=path.isAbsolute(dir)?dir:path.join(p.ROOT,dir);
+        let have=[];
+        try{have=fs.readdirSync(abs).filter(f=>!f.startsWith('.'))}catch{}
+        const stem=(s)=>{for(const x of s){if(have.some(f=>path.basename(f,path.extname(f)).toLowerCase()===x))return true}return false};
+        const ok=stem(['image','avatar'])?'✓':'✗';
+        const mid=stem(['mouth-mid','mouthmid','avatar-mid'])?'✓':'–';
+        const open=stem(['mouth-open','mouthopen','avatar-open'])?'✓':'–';
+        console.log('  '+(k===a.preset?'*':' ')+' '+k.padEnd(10)+(v.label||'').padEnd(20)+' 底图 '+ok+'  口型 '+mid+'/'+open);
+      }
+      console.log('\n切换默认：iph preset <名>     本条片子临时用：iph all <期> --preset=<名>');
+    "
+    ;;
+  preset)
+    [ -z "$1" ] && { echo "用法: iph preset <形象名>（先 iph avatars 看列表）"; exit 1; }
+    nodejs -e "
+      const fs=require('fs'),path=require('path');
+      const f=path.join('$ROOT_JS','config.json');
+      const raw=fs.readFileSync(f,'utf8');
+      const cfg=JSON.parse(raw);
+      const ps=(cfg.avatar||{}).presets||{};
+      const name=process.argv[1];
+      if(!ps[name]||name.startsWith('_')){
+        console.log('没有形象「'+name+'」，可用：'+(Object.keys(ps).filter(k=>!k.startsWith('_')).join(' / ')||'(空)'));
+        process.exit(1);
+      }
+      // 定点替换，不重新序列化整个文件：手写的紧凑排版（一行一个 layout）要保住
+      const re=/^(\s*\"preset\"\s*:\s*)\"[^\"]*\"/m;
+      if(!re.test(raw)){console.log('config.json 里找不到 avatar.preset，请手动改');process.exit(1)}
+      fs.writeFileSync(f,raw.replace(re,'\$1\"'+name+'\"'),'utf8');
+      console.log('默认口播形象已切换为 '+name+'（'+((ps[name]||{}).label||'')+'）');
+      console.log('已出过片的期需要重新 build 才会换形象：iph all <期>');
+    " "$1"
+    ;;
+  open)
+    [ -z "$1" ] && { echo "用法: iph open <期>"; exit 1; }
+    j="$(work_of "$1")"
+    proj="$(nodejs -e "console.log(JSON.parse(process.argv[1]).project)" "$j")"
+    studio="$(nodejs -e "console.log(JSON.parse(process.argv[1]).studio)" "$j")"
+    open_dir "$proj"; open_dir "$studio"
+    ;;
+  ""|-h|--help|help)
+    sed -n '2,/^set -e/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'
+    ;;
+  *)
+    echo "未知命令：$cmd（试 iph help）"; exit 1
+    ;;
+esac

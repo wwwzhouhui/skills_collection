@@ -1,0 +1,123 @@
+{
+  "dirs": {
+    "projects": "./episodes",
+    "build": "./build",
+    "_note": "projects = 每期内容目录（人看人改：script.json、旁白稿.md、封面、README）；build = 后台目录，<期>/work/ 放音频与分段，<期>/outputs/ 放成片。相对路径以 skill 根目录为准"
+  },
+  "tts": {
+    "engine": "mi",
+    "voice": "zh_male_liufei_uranus_bigtts",
+    "resourceId": "seed-tts-2.0",
+    "endpoint": "plan",
+    "speed": 1.15,
+    "loudness": 1,
+    "style": "",
+    "mi": {
+      "baseUrl": "https://token-plan-cn.xiaomimimo.com/v1",
+      "model": "mimo-v2.5-tts",
+      "voice": "冰糖",
+      "style": "语速偏快、语气轻松自然，像在给朋友讲一个他肯定用得上的知识",
+      "_note": "engine=\"mi\" 时生效，凭证 MI_TTS_API_KEY 填 .env。voice 只有九个：mimo_default/冰糖/茉莉/苏打/白桦/Mia/Chloe/Milo/Dean。style 走 user 消息。⚠️接口没有语速参数 → tts.speed 是本地 ffmpeg atempo 后处理；⚠️不返回逐字时间戳 → 字幕按小句对齐（见 lib/timeline.mjs 的 buildCues）"
+    },
+    "edge": {
+      "voice": "zh-CN-YunxiNeural",
+      "python": "C:/Users/wwwzh/.workbuddy/binaries/python/envs/default/Scripts/python.exe",
+      "_note": "免费备胎。换它把 engine 改成 \"edge\""
+    },
+    "_note": "engine 三选一：mi=小米 MiMo（本 skill 默认）｜volc=火山（音色最好，且返回**逐字**时间戳，字幕逐字跟读最准）｜edge=本机 edge-tts 免费备胎。三个引擎音色字段不要混填"
+  },
+  "video": {
+    "ratios": ["16:9", "9:16"],
+    "fps": 30,
+    "crf": 18,
+    "concurrency": 4,
+    "_note": "ratios 决定 build 出几种画幅：16:9=1920x1080（横屏/课程/B站）；9:16=1080x1920（抖音/视频号/小红书）；也支持 1:1=1080x1080。concurrency=并行渲染页数，4 一般够；机器吃力就降到 2"
+  },
+  "layout": {
+    "16:9": {
+      "width": 1920,
+      "height": 1080,
+      "avatar": { "size": 340, "x": 1690, "y": 752 },
+      "subtitle": { "bottom": 136, "fontSize": 46, "maxWidth": 1240 }
+    },
+    "9:16": {
+      "width": 1080,
+      "height": 1920,
+      "avatar": { "size": 280, "x": 880, "y": 1520 },
+      "subtitle": { "bottom": 182, "fontSize": 42, "maxWidth": 940 }
+    },
+    "1:1": {
+      "width": 1080,
+      "height": 1080,
+      "avatar": { "size": 250, "x": 930, "y": 830 },
+      "subtitle": { "bottom": 130, "fontSize": 44, "maxWidth": 940 }
+    },
+    "_note": "每种画幅的数字人位置/大小与字幕几何都在这儿调。数字人建议压在右下角，别压到字幕条。subtitle.maxWidth 必须小于画幅宽度"
+  },
+  "avatar": {
+    "preset": "haibao",
+    "presets": {
+      "haibao": {
+        "label": "动物卡通 · 海老豹",
+        "kind": "animal",
+        "dir": "assets/avatars/haibao",
+        "focus": "50% 24%",
+        "scale": 1.04
+      },
+      "human": {
+        "label": "人物卡通 · 眼镜青年",
+        "kind": "human",
+        "dir": "assets/avatars/human",
+        "focus": "50% 24%",
+        "scale": 1.04
+      },
+      "_note": "内置形象。dir 里放三帧同名文件：image.*（闭口）/ mouth-mid.*（微张）/ mouth-open.*（张口），扩展名不限（png/jpg/webp 都认）。加新形象 = 建一个目录 + 在这里登记一行，然后 iph avatars 就能看到"
+    },
+    "showRing": true,
+    "focus": "50% 24%",
+    "scale": 1.04,
+    "image": "assets/avatar.png",
+    "mouthMid": "assets/avatar-mid.png",
+    "mouthOpen": "assets/avatar-open.png",
+    "_note": "形象三帧口型：闭口 / 微张 / 张口。preset 选内置形象（iph avatars 看列表，iph preset <名> 切换）；下面 image/mouthMid/mouthOpen 是**兜底老路径**，只在 preset 目录找不到素材时才用。focus=圆形裁切对焦点；scale=圆内放大倍数（1.04 让头略大、把肩裁掉一点）。只给一张也能跑（自动退化为挤压动效）"
+  },
+  "brand": {
+    "name": "海老豹666",
+    "slogan": "AI 工具实测 · 讲人话",
+    "accent": "#2f9e44",
+    "watermark": "bottom-left",
+    "logo": "",
+    "corner": {
+      "enabled": true,
+      "text": "",
+      "_note": "右上角博主名角标（在场景进度 01/08 上方）。text 留空 = 用 brand.name；enabled=false 关掉"
+    },
+    "endCard": {
+      "enabled": true,
+      "seconds": 4.2,
+      "cta": "点赞 · 关注 · 评论区聊聊",
+      "_note": "片尾品牌卡：build 时自动在末尾追加一个 outro 场景（静音，logo/手写名 + 品牌色划线 + slogan + 黄色便签 CTA）。seconds=卡片总长；cta 留空则不出便签；不想出卡把 enabled 设 false。logo 图走 brand.logo"
+    },
+    "_note": "accent 是品牌主色（强调下划线、序号、高亮字、光环）；watermark 位置 bottom-left|bottom-right|top-left|top-right；logo=片尾卡的博主标识图（png/jpg 路径，支持 ~ 与相对 skill 根目录；给了就代替手写名，期目录 assets/ 下同名文件优先）；corner/endCard 见各自 _note"
+  },
+  "pacing": {
+    "leadPadding": 0.85,
+    "tailPadding": 0.7,
+    "minSceneSeconds": 3.2,
+    "sceneGap": 0.25,
+    "_note": "leadPadding=场景开头先出画面多久再开口（秒）；tailPadding=说完留白多久；minSceneSeconds=场景最短时长（太短的镜头会闪）；sceneGap=场景之间重叠交叉的时长"
+  },
+  "cues": {
+    "maxChars": 20,
+    "minChars": 6,
+    "_note": "字幕条每行目标字数。火山逐字时间戳会按这个切句；小米通道按原文标点小句聚合"
+  },
+  "bgm": {
+    "file": "assets/bgm.mp3",
+    "gain": 0.14,
+    "speak": 0.32,
+    "gap": 0.62,
+    "tailFade": 2.4,
+    "_note": "配乐不随仓库附带：放一首无版权音乐到 assets/bgm.mp3 就会自动混入；没有就出无配乐成片。gain=总音量，speak=说话时音量倍数，gap=停顿处倍数"
+  }
+}
