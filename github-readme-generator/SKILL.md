@@ -69,7 +69,7 @@ author: wwwzhouhui
 ## 技术交流群
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![image-20260927104256287](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/image-20260927104256287.png)
+![20261006103418_155_9](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20261006103418_155_9.jpg)
 
 ## 作者联系
 - **微信**: laohaibao2025
