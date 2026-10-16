@@ -41,6 +41,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| html-video | HTML→Video 元层 + 中文口播片流水线：封装上游 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端），沉淀**让它在 Windows 跑通并稳定产出中文口播/科普讲解片**的全部增量。核心能力：① 不走模板、`writeFrameHtml()` 直接喂任意动画 HTML 的多帧出片最短路径；② **节拍驱动揭示**（画面按解说句级时间轴逐拍展开，每 3–5 秒有可见变化，杜绝「动画放完干等解说」）；③ **逐词卡拉OK字幕**（纯黑底 colorkey 抠底叠加，有无字幕两版同源可独立验收）；④ **品牌三件套**全走图层叠加、主片零重渲（右上角作者角标 inline-flex 贴角 / 深色片尾卡 concat+anullsrc / 右下 IP 数字人**真实响度包络驱动口型**，20Hz RMS→p15/p90→快攻慢释，`@property inherits:true` 烘 6000 停关键帧，单 IP 配置可选）；⑤ **5 个质检工具**机器判据可进门禁（停滞量化 / 节拍对齐 / 口型-配音同步 / 字幕几何 / 版式描线依赖扫描）；⑥ 竖屏 9:16 四件事（字幕几何实测重标 / 短行拆分 / 安全带放大 / 版式转纵向）。对上游四处未提交补丁：Windows 构建（`chmod` 跨平台）、doctor 探测（`where` + Playwright Chromium）、录制开头裁剪加开关（`HV_LEADIN_TRIM` / `HV_TRIM_WHITE_HEAD`）、跨帧复用浏览器（`HV_REUSE_BROWSER`，默认关行为与上游一致）。全部本机完成，无按次渲染费用、不开剪辑软件 | Node.js（pnpm 9 / corepack）、ffmpeg 6.x、Playwright 无头 Chromium、Hyperframes + Remotion 双引擎、TTS（小米 MiMo / 火山 / edge-tts）、colorkey 图层合成 | 2026年10月3日 | wwwzhouhui | 1.0.0 |
 | ip-talking-head-lecture | IP 卡通数字人口播动画课件视频工厂：一段逐字稿 + 一张 IP 形象图 → Remotion 成片。主讲 IP 以圆形头像常驻右下角讲课（待机浮动 + 三帧口型开合 + 说话光环 + 声波条），主画面自动排版的六套动画课件版式（封面 / 概念 / 步骤 / 对比 / 数据 / 总结），底部烧录字幕并做跟读高亮，品牌水印 + 顶部进度条 + **右上角可自定义博主角标** + **片尾自动追加品牌卡**（标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA）；配音三通道（小米 MiMo / 火山引擎逐字对齐 / edge-tts 免费备胎），**时长由 TTS 实际音频反推**——改一句旁白重新 build 整体自动重排，画面、配音、字幕天然对齐，不手写任何帧数；一条命令同时出 16:9 横屏与 9:16 竖屏（另支持 1:1）；内置两套口播形象（动物卡通·海老豹 / 人物卡通·眼镜青年）一键切换、加新形象只需一个目录三帧图；自动产出各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述与自动合并的章节时间轴）与中英双语字幕（SRT + VTT）；全链路本地（Remotion + ffmpeg + TTS），无剪辑软件、无联网渲染 | Node.js、TypeScript、React、Remotion、小米 MiMo TTS / 火山引擎 TTS / edge-tts、ffmpeg | 2026年10月3日 | wwwzhouhui | 1.2.0 |
 | whiteboard-video-factory | 手绘白板「边画边讲」讲解视频工厂：一句话选题 → 查证、写旁白、出 Logo 与贴纸、画场景、配音对字幕、逐笔渲染、混配乐、出封面、写发布文案全链路本地完成。rough.js + SVG dashoffset 逐笔手绘动画（场景可导出 Excalidraw 回灌渲染），TTS 逐字时间戳同时驱动画面排期与字幕切句（小米通道无时间戳时用静音检测估算），字幕支持**逐段跟读高亮**（卡拉OK式，念到哪一段那一段字转反白、背后套品牌色块，火山/小米/edge 三引擎通用），4 路独立 Chromium 确定性出帧（`framemd5` 可验 0 帧差），三套配音通道（火山引擎 / 小米 MiMo / edge-tts 免费备胎），**时长不限**（渲染按场景分段出片再 concat、TTS 逐场景缓存，场景数不受限，2 分钟到 30 分钟同一套流水线；长片配 `bgm.playlist` 多首轮播避免单曲循环），三画幅封面一次出（4:3 / 3:4 / 9:16 抖音），五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号），自带事实核查、合规自查、成片验收与交付边界公共工序 | Node.js、Playwright（无头 Chromium）、rough.js、Excalidraw DSL、火山引擎 TTS / 小米 MiMo TTS / edge-tts、ffmpeg | 2026年9月29日 | wwwzhouhui | 1.0.0 |
 | hyperframes-10s-video | HyperFrames 声明式分镜动画视频技能：一段文字 → 横屏动画视频 + 同名 SRT 字幕。**三个维度全参数化**——① 时长任意（`--total=` 或 `duration` 字段，各幕按比例精确归一，长片靠加幕）；② 配色 10 套皮肤（tech/wuding/aurora/sunset/ocean/forest/midnight/gold/candy/paper，附可视化画廊 + 预览页实时换肤）；③ 音频可选（默认无声无音轨，edge-tts 配音一键混音）。含 9 种场景类型、抽帧核验、字幕自动生成（不手写）、横竖屏可切换 | Node.js、GSAP、无头 Chromium、ffmpeg、Python（edge-tts） | 2026年9月24日 | wwwzhouhui | 2.0.0 |
@@ -72,6 +73,22 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🧩 HTML Video Meta（html-video —— HTML→MP4 元层 + 中文口播片流水线）
+
+**核心功能：**
+
+- ✅ **上游引擎本机化**：封装 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Apache-2.0，Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端），补四处未提交补丁后 Windows 全功能可用：`pnpm -r build` 构建修复（POSIX chmod → 跨平台）、`doctor` 体检修复（`where` 探测 + 识别 Playwright 自带 Chromium）、录制开头裁剪加开关、跨帧复用浏览器（见下）
+- ✅ **口播片最短路径（不走模板）**：`bootstrap()` 复用 CLI wiring → `writeFrameHtml()` 喂**任意自定义动画 HTML** → content-graph 写 `durationSec` 硬时长（= 实测配音 + 0.6s 尾巴）→ `exportMp4()`；改口播稿 → 重跑 TTS → 重渲，音画时间轴同源
+- ✅ **节拍驱动揭示**：帧源只标 `data-beat=N` / `data-at=秒`，`animation-delay` 由构建期从配音 SRT 句级时间轴反算——画面每 3–5 秒一次可见变化、跟解说逐句走；相位提前量（实测随机器负载 0.31–0.75s 浮动）取多轮中位数并每轮复核
+- ✅ **逐词卡拉OK字幕**：字幕层单独渲染纯黑底视频，`colorkey` 抠底叠加——有字幕/无字幕两版同源，字幕像素可独立验收（胶囊三态：未读/正在读高亮/已读）
+- ✅ **品牌三件套全走图层叠加、主片零重渲**：右上角作者角标（playwright 透明 PNG + `inline-flex` 紧贴真角落）；深色片尾卡（单帧项目 + `anullsrc` 静音 + concat filter，配色对齐主片 token）；右下 IP 数字人（**真实响度包络驱动口型**：narration.wav → 20Hz RMS → 说话窗 p15/p90 归一 → γ0.75 → 快攻慢释，烘进 `@property --m`（必须 `inherits:true`）6000 停关键帧；words.json 说话区间门控 `--spk` 管光环/声波条/收口；`brand.json` `layer.active` 单 IP 可选）
+- ✅ **5 个质检工具，机器判据可进门禁**：measure-motion（停滞量化，双阈值并报防低对比误判）/ probe-phase（权威节拍复核）/ verify-beat-sync（交叉参考，含 3 种测量陷阱说明）/ check-mouth-sync（口型-配音同步：响/轻/间隙三组口部亮度 + 包络相关性）/ verify-subtitle（字幕几何按视频高度实测重标）
+- ✅ **录制裁剪开关（上游没有的关键补丁）**：`HV_LEADIN_TRIM=0` 跳过墙钟裁剪（防 newPage 被拖到 ~10.7s 时整段动画被静默裁光、每帧只剩 262 字节空文件）；`HV_TRIM_WHITE_HEAD=1` 帧级白屏头检测消多镜头切换白闪。**默认全关，行为与上游逐字节一致**
+- ✅ **竖屏 9:16 四件事**：libass 字号按视频高度缩放要逐档实测；字幕先拆 ≤22 字短行再合；底部安全带 158→300px；版式全面转纵向堆叠
+- ✅ **12+ 条实测坑沉淀**：`<path pathLength="1">` 必写（否则描线动画变 1px 点线，墨量恰 50%）、帧内零外链（防字体 CDN 拖慢 + FOUT）、concat filter 不可用 demuxer（8s 变 35s）、`@property inherits` 坑、冻结式 QA 被 `[data-beat]` 特异性反杀（正解 Web Animations API）……全部来自 4 条成片、5 遍全量重渲
+
+**实践成品：** qwen38-omni-video 项目（文章链接 → 7 场 / 306.58s 中文口播片，含逐词字幕 + 品牌三件套，README 附全部验收读数：停滞 0.5s、口型 corr 0.53、五图层 PSNR 全绿、−16.1 LUFS）。
 
 ### 🎤 IP Talking Head Lecture（IP 数字人口播动画课件视频工厂）
 
@@ -1981,6 +1998,9 @@ skills_collection/
 │   ├── references/               # 7 套 scheme 目录 / 改写规则 / 扩展语法 / 演示文排版模式
 │   ├── scripts/                  # schemes.mjs（风格样式生成）+ typeset.mjs（主渲染脚本）
 │   └── examples/                 # demo 与 remotion-demo 两组样例输入输出
+├── html-video/                   # HTML→Video 元层 + 中文口播片流水线（上游 nexu-io/html-video 本机化）
+│   ├── SKILL.md                  # 环境表 / 命令速查 / 上游三处补丁 / 口播片最短路径 / 节拍揭示 / 5 个质检工具 / 竖屏 / 品牌三件套 / 实测坑
+│   └── README.md                 # 使用说明（能力清单 + 补丁动机 + 出片命令）
 ├── hyperframes-10s-video/        # HyperFrames 声明式分镜动画视频技能
 │   ├── SKILL.md                  # 完整 SOP 与 8 条铁律
 │   ├── README.md                 # 使用说明（时长/配色/音频三开关）
@@ -2550,7 +2570,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20261006103418_155_9.jpg)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20261016200151_1_3.jpg)
 
 ---
 
@@ -2578,11 +2598,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 29
+- **总技能数**: 30
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 5 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber, hailaobao-gzh-design)
 - **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
-- **视频生成**: 5 (voice-to-video, remotion-video-factory, hyperframes-10s-video, whiteboard-video-factory, ip-talking-head-lecture)
+- **视频生成**: 6 (voice-to-video, remotion-video-factory, hyperframes-10s-video, whiteboard-video-factory, ip-talking-head-lecture, html-video)
 - **数据采集**: 2 (wechat-article-fetcher, wechat-article-aggregator)
 - **API 文档**: 1 (siliconflow-api-skills)
 - **工作流工具**: 1 (dify-dsl-generator)
@@ -2653,6 +2673,21 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 10 月 4 日 - version 0.0.34
+
+- ✅ **html-video 渲染提速 ①：跨帧复用浏览器**（第 4 处本机补丁 `HV_REUSE_BROWSER=1`，`adapter-hyperframes/render.ts`）——chromium 模块级单例跨 `render()` 复用、context 仍每帧新建（recordVideo 的 sink 挂 context 不可共享）、并发 render 自动各开专用浏览器、`isConnected()` 检出崩溃重启、finally 清残留录屏 context；一次性脚本渲完 `await closeSharedBrowser()` 释放（否则 playwright 连接钉住进程不退出）。实测 3s 帧×6 连续渲染 137.9s → 78.6s（**每帧省 ≈11s**），输出逐帧 3.000s 无差；默认不设变量行为与上游一致
+- ✅ **html-video 渲染提速 ②：长层分段并行录制**（数字人层 `build-avatar-layer.mjs --segments=K`）——300s 实时录制的墙钟成本 = 视频长度，「降帧提速」是伪命题；正解是把长动画切 K 段并行录：每段 HTML 给**所有**动画 delay 平移 `-T0`（负延迟纯声明式、零竞态；漏一条无 delay 的动画则该元素接缝断相位——光环 r1 踩过），K 个 node 子进程各渲各段 → concat（同 encoder 用 demuxer+copy，失败退 filter 重编码）。实测 K=4 墙钟 330s→184s，与连续版三接缝两侧 |diff|>32 占比全 0.000%；等价性验证工具（effect 时刻 = localTime − delay、状态与时间戳必须同一 evaluate 读）与全部坑已入 SKILL.md「渲染提速」节
+
+### 2026 年 10 月 3 日 - version 0.0.33
+
+- ✅ 新增 **html-video** Skill v1.0.0（HTML→Video 元层 + 中文口播片流水线，自本机 `~/.agents/skills/html-video` 迁入）——封装上游 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Apache-2.0，Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端）
+- ✅ 对上游三处未提交补丁（`git diff` 即完整补丁，默认行为与上游一致）：`cli/package.json` Windows 构建修复（POSIX chmod → 跨平台）、`cli/doctor.ts` Windows 体检修复（`where` 探测 + 识别 Playwright 自带 Chromium）、`adapter-hyperframes/render.ts` 录制开头裁剪加开关（`HV_LEADIN_TRIM=0` 防动画被静默裁光、`HV_TRIM_WHITE_HEAD=1` 帧级白屏头检测消切换白闪）
+- ✅ 口播片方法论（上游完全没有的知识层，SKILL.md 308 行）：不走模板直接 `writeFrameHtml()` 喂任意动画 HTML + `durationSec` 硬时长（= 实测配音 + 0.6s 尾巴）；**节拍驱动揭示**（data-beat 延迟从配音 SRT 反算，画面每 3–5 秒一次可见变化）；**逐词卡拉OK字幕**（纯黑底 colorkey 抠底，有无字幕两版同源）；**品牌三件套图层叠加、主片零重渲**（inline-flex 角标贴角 / 深色片尾卡 concat+anullsrc / 单 IP 数字人**真实响度包络口型**，`@property inherits:true` 关键坑）
+- ✅ 5 个质检工具与判据入册：measure-motion（停滞双阈值）/ probe-phase（权威节拍复核）/ verify-beat-sync（交叉参考 + 3 种测量陷阱）/ check-mouth-sync（口型-配音同步三组对照 + 相关性）/ verify-subtitle（字幕几何实测）；另有竖屏 9:16 四件事与 12+ 条实测坑（`pathLength="1"`、零外链、concat filter、冻结式 QA 反杀等）
+- ✅ 使用示例：《Qwen3.8-Omni-Flash》一条实测——文章链接 → 7 场 / 306.58s 中文口播成片（逐词字幕 + 角标 + 深色片尾 + 口型联动雪豹 IP），全部验收读数记录在项目 README（停滞 0.5s、口型 corr 0.53、五图层 PSNR 全绿、−16.1 LUFS）
+- ✅ 新增 **multi-skin-kit 多皮肤参考包**（`html-video/multi-skin-kit/`，同日增补）：口播片「一套帧源、八种配色出片」机制——`_system.css` 拆「基础 token + color-mix 派生」（默认皮肤与重构前像素级一致，diff>2 像素 = 0）；`skins/*.css` = :root 覆盖 + 规则覆盖（glitch 的 CRT 扫描线为示例），`build-frames.mjs --theme=` 注入；`--neutral` 单 token 扛浅色皮肤（深皮=白/浅皮=黑，抵达可见性档位自动等效）；八套皮肤从上游 23 模板风格提炼（报纸米白/瑞士红白/暗夜信号/故障霓虹/禅意米茶/黑金/宝蓝电力）；附 token 迁移脚本与皮肤画廊脚本（真实渲染静帧拼预览页供挑选）
+- ✅ 项目统计：技能 29 → 30；视频生成类 5 → 6
 
 ### 2026 年 10 月 3 日 - version 0.0.32
 
@@ -3085,4 +3120,4 @@ MIT License
 
 **开始使用**: 选择一个 Skill，按照使用说明安装，然后在 Claude Code 中尽情使用吧！
 
-**文档生成时间**: 2026 年 10 月 3 日 (v0.0.32)
+**文档生成时间**: 2026 年 10 月 4 日 (v0.0.34)
