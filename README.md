@@ -41,6 +41,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| wsl-disk-cleanup | WSL 磁盘一键清理：不进 WSL Linux 终端、不用管理员权限，通过 Windows 侧 `wsl.exe` 完成「枚举发行版 → 只读扫描 Docker 容器/镜像/卷/占用 → 列清单用户确认范围 → 停用 1Panel 防容器自愈重建 → Docker 全清 → ext4.vhdx 原生压缩 → 前后对比报告」。脚本经 stdin 管道送入 WSL 执行（避开命令替换与路径转换陷阱）；`--compact` 前自动处理 sparse 互斥；WSL ≥ 3.0.3 即可，旧版降级 diskpart 方案内置。实测：vhdx 80G→57G、Docker 数据 24G→150M、宿主机磁盘可用 +8G | Bash、wsl.exe（WSL 3.0.3+）、Docker CLI、systemd | 2026年10月17日 | wwwzhouhui | 1.0.0 |
 | html-video | HTML→Video 元层 + 中文口播片流水线：封装上游 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端），沉淀**让它在 Windows 跑通并稳定产出中文口播/科普讲解片**的全部增量。核心能力：① 不走模板、`writeFrameHtml()` 直接喂任意动画 HTML 的多帧出片最短路径；② **节拍驱动揭示**（画面按解说句级时间轴逐拍展开，每 3–5 秒有可见变化，杜绝「动画放完干等解说」）；③ **逐词卡拉OK字幕**（纯黑底 colorkey 抠底叠加，有无字幕两版同源可独立验收）；④ **品牌三件套**全走图层叠加、主片零重渲（右上角作者角标 inline-flex 贴角 / 深色片尾卡 concat+anullsrc / 右下 IP 数字人**真实响度包络驱动口型**，20Hz RMS→p15/p90→快攻慢释，`@property inherits:true` 烘 6000 停关键帧，单 IP 配置可选）；⑤ **5 个质检工具**机器判据可进门禁（停滞量化 / 节拍对齐 / 口型-配音同步 / 字幕几何 / 版式描线依赖扫描）；⑥ 竖屏 9:16 四件事（字幕几何实测重标 / 短行拆分 / 安全带放大 / 版式转纵向）。对上游四处未提交补丁：Windows 构建（`chmod` 跨平台）、doctor 探测（`where` + Playwright Chromium）、录制开头裁剪加开关（`HV_LEADIN_TRIM` / `HV_TRIM_WHITE_HEAD`）、跨帧复用浏览器（`HV_REUSE_BROWSER`，默认关行为与上游一致）。全部本机完成，无按次渲染费用、不开剪辑软件 | Node.js（pnpm 9 / corepack）、ffmpeg 6.x、Playwright 无头 Chromium、Hyperframes + Remotion 双引擎、TTS（小米 MiMo / 火山 / edge-tts）、colorkey 图层合成 | 2026年10月3日 | wwwzhouhui | 1.0.0 |
 | ip-talking-head-lecture | IP 卡通数字人口播动画课件视频工厂：一段逐字稿 + 一张 IP 形象图 → Remotion 成片。主讲 IP 以圆形头像常驻右下角讲课（待机浮动 + 三帧口型开合 + 说话光环 + 声波条），主画面自动排版的六套动画课件版式（封面 / 概念 / 步骤 / 对比 / 数据 / 总结），底部烧录字幕并做跟读高亮，品牌水印 + 顶部进度条 + **右上角可自定义博主角标** + **片尾自动追加品牌卡**（标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA）；配音三通道（小米 MiMo / 火山引擎逐字对齐 / edge-tts 免费备胎），**时长由 TTS 实际音频反推**——改一句旁白重新 build 整体自动重排，画面、配音、字幕天然对齐，不手写任何帧数；一条命令同时出 16:9 横屏与 9:16 竖屏（另支持 1:1）；内置两套口播形象（动物卡通·海老豹 / 人物卡通·眼镜青年）一键切换、加新形象只需一个目录三帧图；自动产出各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述与自动合并的章节时间轴）与中英双语字幕（SRT + VTT）；全链路本地（Remotion + ffmpeg + TTS），无剪辑软件、无联网渲染 | Node.js、TypeScript、React、Remotion、小米 MiMo TTS / 火山引擎 TTS / edge-tts、ffmpeg | 2026年10月3日 | wwwzhouhui | 1.2.0 |
 | whiteboard-video-factory | 手绘白板「边画边讲」讲解视频工厂：一句话选题 → 查证、写旁白、出 Logo 与贴纸、画场景、配音对字幕、逐笔渲染、混配乐、出封面、写发布文案全链路本地完成。rough.js + SVG dashoffset 逐笔手绘动画（场景可导出 Excalidraw 回灌渲染），TTS 逐字时间戳同时驱动画面排期与字幕切句（小米通道无时间戳时用静音检测估算），字幕支持**逐段跟读高亮**（卡拉OK式，念到哪一段那一段字转反白、背后套品牌色块，火山/小米/edge 三引擎通用），4 路独立 Chromium 确定性出帧（`framemd5` 可验 0 帧差），三套配音通道（火山引擎 / 小米 MiMo / edge-tts 免费备胎），**时长不限**（渲染按场景分段出片再 concat、TTS 逐场景缓存，场景数不受限，2 分钟到 30 分钟同一套流水线；长片配 `bgm.playlist` 多首轮播避免单曲循环），三画幅封面一次出（4:3 / 3:4 / 9:16 抖音），五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号），自带事实核查、合规自查、成片验收与交付边界公共工序 | Node.js、Playwright（无头 Chromium）、rough.js、Excalidraw DSL、火山引擎 TTS / 小米 MiMo TTS / edge-tts、ffmpeg | 2026年9月29日 | wwwzhouhui | 1.0.0 |
@@ -2570,7 +2571,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 欢迎加入技术交流群，分享你的 Skills 和使用心得：
 
-![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/20261016200151_1_3.jpg)
+![技术交流群](https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/d51aa2bf-8da0-4368-8ba7-de256fafa2ac.jpg)
 
 ---
 
