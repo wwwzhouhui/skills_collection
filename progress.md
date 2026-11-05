@@ -40,3 +40,28 @@
 仓库外变动：原 C 盘技能目录改为 junction；本轮临时原目录副本位于 `%USERPROFILE%\.agents\skills\.workbuddy-data-migrator.move-backup-20261105`，按获批方案保留至发布核验完成，只清理这个临时副本，不清理技能内部历史备份。未改变其他技能、工作区或 WorkBuddy 数据。
 
 回滚点：迁入前仓库基线为 `311d266650540cf58f2f24729d46ce3a54d1a8c6`。先按 `docs/workbuddy-data-migrator.md` 的校验复制步骤恢复 C 盘真实安装目录，再针对本次迁入提交执行 `git revert`。可在仓库中用 `git log -1 --format=%H -- workbuddy-data-migrator/SKILL.md` 获取迁入提交号，审核后回退；不要强推、不要 reset 丢弃其他工作区修改。回滚完成后仅在日志末尾追加记录。
+
+## 2026-11-05 - Task: 确认 GitHub 发布并完成临时副本清理
+
+### What was done
+
+- 已提交并推送主体变更 `2b13bf2ff589baa6888f81196fee5222236838a7`，包含本次九个文件；远程分支为 `origin/feat/workbuddy-data-migrator`，未修改或合并 `main`。
+- 提交署名经用户明确确认，仅本次使用 `wwwzhouhui <75271002@qq.com>`；未修改全局或仓库 Git 身份配置。
+- 发布核验完成后，重新检查本轮临时原目录副本及六文件 SHA-256，仅删除六个已确认重复文件并非递归移除空目录；技能内部历史备份、仓库真实目录和原安装入口保留。
+
+### Testing
+
+- 首次 commit 因 `Author identity unknown` 失败，未创建提交；用户确认本次署名后，提交成功。
+- PASS：暂存区严格为本次九个路径；每个暂存对象与工作文件原始字节一致，`git diff --cached --check` 通过。
+- PASS：`git push -u origin feat/workbuddy-data-migrator` 成功；`git ls-remote` 返回提交号与本地主体提交 `2b13bf2ff589baa6888f81196fee5222236838a7` 一致。
+- PASS：清理前临时副本为普通目录，无内部重解析点，六文件共 35,927 字节；与仓库和安装入口的 SHA-256 均一致。清理后仅该临时副本不存在，正式技能仍为六个文件且内部历史备份存在。
+- 未执行 WorkBuddy 数据迁移、强推、自动合并或 Release；其他本地修改未加入本次提交。
+
+### Notes
+
+本轮改动文件：
+
+- `progress.md`：仅追加发布、身份确认及临时副本清理结果，不改写前一轮记录。
+- `%USERPROFILE%\.agents\skills\.workbuddy-data-migrator.move-backup-20261105`：删除本次临时副本内六个已校验重复文件及空目录，不删除正式文件或内部历史备份。
+
+回滚方式：临时副本内容仍完整保存在仓库及主体提交中；按 `docs/workbuddy-data-migrator.md` 的校验复制步骤可恢复 C 盘真实安装目录。若需撤销主体仓库变更，先恢复安装入口，再审核执行 `git revert 2b13bf2ff589baa6888f81196fee5222236838a7`；保留历史日志，另行追加回滚说明。
