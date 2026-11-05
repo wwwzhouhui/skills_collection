@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-0.0.32-green.svg)
-![Skills](https://img.shields.io/badge/skills-29-orange.svg)
+![Skills](https://img.shields.io/badge/skills-33-orange.svg)
 
 > 分享一些好用的 Claude Code Skills，自用、学习两相宜，适用于 Claude Code v2.0 及以上版本。
 
@@ -29,6 +29,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 - **工作流工具**: Dify DSL/YML 文件生成器
 - **API 文档**: 硅基流动云服务平台完整文档
 - **合规审查**: 微信公众号文章合规审查（违规风险识别、修改建议）
+- **系统维护**: WorkBuddy 用户数据安全迁移（workbuddy-data-migrator）——只读预检、确认退出、完整复制与 SHA-256 校验、目录联接、备份保留及回滚
 
 ### 适用场景
 
@@ -41,6 +42,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
+| workbuddy-data-migrator | WorkBuddy 数据安全迁移：将当前用户 `.workbuddy` 整目录迁到非系统盘，默认目标为 `D:\aiwork\WorkBuddy_C`；先只读检查，确认退出后复制并校验 SHA-256，保留旧备份、建立 NTFS junction，支持按本轮状态文件回滚；旧备份清理须另行确认，不把会话、数据库或身份材料当作可删除缓存 | Windows PowerShell 5.1、robocopy、NTFS junction | 2026年11月5日 | hailaobao2026 | 未标注 |
 | article-cover-generator | 文章封面 AI 生成：输入文章标题+内容（或文章文件路径），自动提炼主题视觉符号并按实测模板撰写中文提示词，调用第三方中转站 gpt-image-2.5 文生图，一个脚本走完 创建任务→轮询→下载→尺寸校验；支持 16:9 / 9:16 / 3:4 / 4:3 / 1:1 五种比例（比例精确匹配），中文大标题直出实测无错别字；API Key 走技能根目录 .env 零硬编码，缺配置时报可照抄指引，零 npm 依赖 | Node.js（≥18，内置 fetch）、gpt-image-2.5 中转站 API | 2026年10月25日 | wwwzhouhui | 1.0.0 |
 | wsl-disk-cleanup | WSL 磁盘一键清理：不进 WSL Linux 终端、不用管理员权限，通过 Windows 侧 `wsl.exe` 完成「枚举发行版 → 只读扫描 Docker 容器/镜像/卷/占用 → 列清单用户确认范围 → 停用 1Panel 防容器自愈重建 → Docker 全清 → ext4.vhdx 原生压缩 → 前后对比报告」。脚本经 stdin 管道送入 WSL 执行（避开命令替换与路径转换陷阱）；`--compact` 前自动处理 sparse 互斥；WSL ≥ 3.0.3 即可，旧版降级 diskpart 方案内置。实测：vhdx 80G→57G、Docker 数据 24G→150M、宿主机磁盘可用 +8G | Bash、wsl.exe（WSL 3.0.3+）、Docker CLI、systemd | 2026年10月17日 | wwwzhouhui | 1.0.0 |
 | html-video | HTML→Video 元层 + 中文口播片流水线：封装上游 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端），沉淀**让它在 Windows 跑通并稳定产出中文口播/科普讲解片**的全部增量。核心能力：① 不走模板、`writeFrameHtml()` 直接喂任意动画 HTML 的多帧出片最短路径；② **节拍驱动揭示**（画面按解说句级时间轴逐拍展开，每 3–5 秒有可见变化，杜绝「动画放完干等解说」）；③ **逐词卡拉OK字幕**（纯黑底 colorkey 抠底叠加，有无字幕两版同源可独立验收）；④ **品牌三件套**全走图层叠加、主片零重渲（右上角作者角标 inline-flex 贴角 / 深色片尾卡 concat+anullsrc / 右下 IP 数字人**真实响度包络驱动口型**，20Hz RMS→p15/p90→快攻慢释，`@property inherits:true` 烘 6000 停关键帧，单 IP 配置可选）；⑤ **5 个质检工具**机器判据可进门禁（停滞量化 / 节拍对齐 / 口型-配音同步 / 字幕几何 / 版式描线依赖扫描）；⑥ 竖屏 9:16 四件事（字幕几何实测重标 / 短行拆分 / 安全带放大 / 版式转纵向）。对上游四处未提交补丁：Windows 构建（`chmod` 跨平台）、doctor 探测（`where` + Playwright Chromium）、录制开头裁剪加开关（`HV_LEADIN_TRIM` / `HV_TRIM_WHITE_HEAD`）、跨帧复用浏览器（`HV_REUSE_BROWSER`，默认关行为与上游一致）。全部本机完成，无按次渲染费用、不开剪辑软件 | Node.js（pnpm 9 / corepack）、ffmpeg 6.x、Playwright 无头 Chromium、Hyperframes + Remotion 双引擎、TTS（小米 MiMo / 火山 / edge-tts）、colorkey 图层合成 | 2026年10月3日 | wwwzhouhui | 1.0.0 |
@@ -75,6 +77,39 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | excel-report-generator | 自动化 Excel 报表生成器，支持从 CSV、DataFrame、数据库生成专业 Excel 报表，包含图表、样式、模板填充等高级功能 | Python、pandas、openpyxl、xlsxwriter | 2025年11月12日 | hailaobao2026 | 1.0.0 |
 
 ## Skill 功能详解
+
+### 🗂️ WorkBuddy Data Migrator（WorkBuddy 数据安全迁移）
+
+**核心功能：**
+
+- ✅ **先检查、后确认**：只读检查数据体积、文件数、相关进程、目录联接状态、目标磁盘与空间；获得明确迁移授权且用户确认完全退出 WorkBuddy 后才搬迁
+- ✅ **整目录保留**：默认源为 `%USERPROFILE%\.workbuddy`，默认目标为 `D:\aiwork\WorkBuddy_C`；目标就是最终数据目录，不再追加 `.workbuddy`，用户明确指定其他路径时以本次指定为准
+- ✅ **完整性校验**：robocopy 复制前后检查源和目标的 SHA-256 清单；拒绝非空目标、目录嵌套及不支持的重解析点，不跳过异常文件继续搬迁
+- ✅ **原入口可用、旧数据可回退**：原目录改名保留为备份，以 NTFS junction 维持原入口；按本轮状态文件回滚，迁移后数据有变化时默认拒绝回滚
+- ✅ **不默认清理**：不强杀进程、不自动提权、不改登录协议、不上传数据；旧备份保留期间 C 盘对应占用仍在，删除备份必须另行确认
+
+**工作流程：**
+
+只读预检 → 展示精确路径与备份策略 → 确认授权并退出软件 → 完整复制与 SHA-256 校验 → 保留原目录备份并建立 junction → 用户验证登录、历史会话与新内容持久化。文件校验不能替代应用验收。
+
+**关键命令（仅检查，不迁移）：**
+
+```powershell
+$tool = Join-Path $env:USERPROFILE '.agents\skills\workbuddy-data-migrator\scripts\workbuddy-migrate.ps1'
+& $tool -Action Inspect -Target 'D:\aiwork\WorkBuddy_C'
+```
+
+实际迁移与回滚必须按 [技能说明](workbuddy-data-migrator/SKILL.md) 完成确认，不把预设路径或命令示例视为授权。
+
+**适用场景：**
+
+- WorkBuddy 的 `.workbuddy` 占用系统盘，希望整目录迁到其他本地固定 NTFS 盘
+- 先了解数据体积和迁移条件，不立即搬迁
+- 迁移后需要保留历史数据并有明确回滚入口
+
+**安装与验证边界：**
+
+在 ZCode 中使用 `%USERPROFILE%\.agents\skills\workbuddy-data-migrator` 入口；技能真实文件可由仓库维护，原入口保留目录联接。本次入库验证为技能文件完整性、语法与当前会话加载，未执行真实 WorkBuddy 数据迁移。安装、目录联接与回滚方法见 [维护说明](docs/workbuddy-data-migrator.md)。
 
 ### 🖼️ Article Cover Generator（文章封面 AI 生成）
 
@@ -1982,6 +2017,7 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 | Remotion | 4.x | 口播视频确定性渲染（poetry-cinema-page、remotion-video-factory、ip-talking-head-lecture） | https://www.remotion.dev |
 | 小米 MiMo TTS / 火山引擎 TTS | - | 数字人口播配音与逐字/小句时间戳（ip-talking-head-lecture，可选 edge-tts 免费备胎） | https://micmi.global.s.xiaomi.com / https://www.volcengine.com/product/tts |
 | gpt-image-2.5（中转站 API） | - | 文章封面文生图（article-cover-generator） | https://image.mlgb7.com |
+| Windows PowerShell / robocopy | 5.1 / Windows 内置 | WorkBuddy 数据复制、SHA-256 校验与 NTFS junction 管理（workbuddy-data-migrator） | https://learn.microsoft.com/powershell/ |
 
 ### 技术架构
 
@@ -2022,6 +2058,15 @@ skills_collection/
 
 ```
 skills_collection/
+├── workbuddy-data-migrator/      # WorkBuddy 数据安全迁移（Windows）
+│   ├── SKILL.md                 # 技能说明，作者 hailaobao2026
+│   ├── scripts/                 # PowerShell 迁移辅助脚本
+│   ├── references/              # 安全与恢复说明
+│   ├── docs/                    # 默认目标说明及历史原文备份
+│   └── progress.md              # 技能已有变更记录
+├── docs/
+│   └── workbuddy-data-migrator.md # 仓库维护、安装入口与回滚说明
+├── progress.md                  # 本次仓库迁移与验证记录
 ├── poetry-cinema-page/           # 沉浸式古诗词网页生成技能
 │   ├── SKILL.md
 │   ├── README.md
@@ -2244,6 +2289,7 @@ skills_collection/
 - Claude Code v2.0 及以上版本
 - Python 3.7+（部分技能需要）
 - Node.js 16+（部分技能需要）
+- workbuddy-data-migrator：仅 Windows，使用 Windows PowerShell 5.1、系统 robocopy 和本地固定 NTFS 盘；也可在 ZCode 中调用
 
 ### 安装步骤
 
@@ -2264,6 +2310,21 @@ cp -r */ ~/.claude/skills/
 ```
 
 如果你想用中文搜索和安装 skills，可以顺手看看 Skills宝：https://skilery.com
+
+### WorkBuddy 技能安装（Windows / ZCode）
+
+此技能的脚本示例使用 `%USERPROFILE%\.agents\skills\workbuddy-data-migrator`，不要直接套用上面的 `.claude` 安装路径。在仓库根目录运行以下 PowerShell 命令，将真实技能目录关联到 ZCode 的用户级入口；已有同名入口时停止，不覆盖：
+
+```powershell
+$skill = (Resolve-Path -LiteralPath '.\workbuddy-data-migrator').Path
+$installRoot = Join-Path $env:USERPROFILE '.agents\skills'
+$entry = Join-Path $installRoot 'workbuddy-data-migrator'
+if (Test-Path -LiteralPath $entry) { throw '安装入口已存在，请先检查，勿覆盖。' }
+[System.IO.Directory]::CreateDirectory($installRoot) | Out-Null
+New-Item -ItemType Junction -Path $entry -Target $skill
+```
+
+本机此次已保留该入口，无需重复运行安装命令；F 盘和仓库路径需保持可用。若在其他客户端安装，应按其技能发现规则选择入口，并从实际安装目录调用脚本。详见 [WorkBuddy 技能维护说明](docs/workbuddy-data-migrator.md)。
 
 ### 配置说明
 
@@ -2379,6 +2440,10 @@ export VE_SPEECH_ASR_API_KEY="your-api-key"
 # 文章封面生成
 "请使用 article-cover-generator 给这篇文章生成一张 16:9 公众号封面：<文章路径>"
 "帮《零代码搓一个小米语音克隆站》这篇文章配一张 3:4 封面"
+
+# WorkBuddy 数据迁移
+"请使用 workbuddy-data-migrator 看看 .workbuddy 多大，先别搬。"
+"检查迁移到 D:\aiwork\WorkBuddy_C 的条件，先不要执行迁移。"
 ```
 
 ### 高级用法
@@ -2650,7 +2715,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 
 ### 技能统计
 
-- **总技能数**: 31
+- **总技能数**: 33（按本页 Skills 清单统计）
 - **自动化工具**: 5 (excel-report-generator, ppt-generator-skill, github-trending, github-trending-wan, github-readme-generator)
 - **内容生成**: 6 (xiaohuihui-tech-article, mp-cover-generator, xiaohuihui-dify-tech-article, knowledge-absorber, hailaobao-gzh-design, article-cover-generator)
 - **AI 多模态**: 7 (jimeng_mcp_skill, seedance-video-creator, wan-cover-plus, ai-teaching-media, grok-imagine-image, video-agent-kit, poetry-cinema-page)
@@ -2660,8 +2725,11 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - **工作流工具**: 1 (dify-dsl-generator)
 - **效率工具**: 2 (obsidian-search, photo-homework-a4)
 - **合规审查**: 1 (wechat-compliance-reviewer)
+- **系统维护**: 2 (wsl-disk-cleanup, workbuddy-data-migrator)
 
 ### 最新版本动态
+
+- **workbuddy-data-migrator**: 2026-11-05 迁入本仓库（技能未标注版本）— 作者 `hailaobao2026`；默认数据目标 `D:\aiwork\WorkBuddy_C`，只读预检、明确确认、SHA-256 完整性校验、NTFS junction、备份保留与按状态文件回滚；当前环境安装入口保持可用，未执行真实数据迁移
 
 - **ip-talking-head-lecture**: v1.2.0 (2026-10-03) - 迁入本仓库。IP 卡通数字人口播动画课件视频工厂（Remotion + 小米/火山/edge 三通道 TTS）：右下角圆形 IP 数字人讲课（三帧口型 + 说话光环 + 待机浮动）+ 六套动画课件版式 + 烧录字幕跟读高亮；**时长由 TTS 实际音频反推**，改一句旁白整体自动重排，音画字幕天然对齐；一条命令同出 16:9 / 9:16（另支持 1:1）；内置动物卡通（海老豹）/ 人物卡通（眼镜青年）两套形象一键切换，加新形象 = 一个目录三帧图；自动产出各平台发布文案（YouTube 中英双语 + 章节时间轴自动合并）与中英双语 SRT/VTT；v1.2.0 新增**右上角可自定义博主角标**（`brand.corner`）与**片尾品牌卡**（`brand.endCard`，build 时自动追加静音 outro 场景：标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA，`brand.logo` 可换成博主标识图）
 - **whiteboard-video-factory**: v1.0.0 (2026-09-29) - 初始版本（由 `whiteboard-video` + `video-common` **合并并重命名**），手绘白板边画边讲讲解视频工厂：rough.js 逐笔手绘动画（场景可导出 Excalidraw 回灌）+ 火山/小米/edge-tts 三通道配音 + 字幕逐段跟读高亮（卡拉OK式，色块随语音跳） + TTS 逐字时间戳同时驱动画面排期与字幕切句 + 4 路独立 Chromium 确定性出帧（framemd5 可验）+ 三画幅封面一次出（4:3 / 3:4 / 9:16 抖音）+ 五平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号）+ **时长不限**（按场景数伸缩，2 分钟短片到 30 分钟长片同一套流水线；长片可配 `bgm.playlist` 多首轮播，并提供 `wb tts/render <期> <场景>` 断点续跑）+ 自带事实核查 / 合规自查 / 成片验收 / 交付边界公共工序；全链路本地，不开剪辑软件
@@ -2693,6 +2761,7 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 - MCP: 2
 - YAML/DSL: 1
 - Bash/Shell: 2
+- PowerShell: 1（workbuddy-data-migrator）
 
 ### 维护状态
 
@@ -2725,6 +2794,14 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 11 月 5 日 - WorkBuddy 数据迁移技能入库
+
+- ✅ 新增 **workbuddy-data-migrator**，完整迁入技能说明、PowerShell 脚本、安全参考、目标路径说明和历史记录；作者 `hailaobao2026`，未新增技能版本号
+- ✅ 默认数据目标保持 `D:\aiwork\WorkBuddy_C`，保留迁移前确认、完整性校验、旧备份与回滚规则；此次只迁移技能文件，不搬迁 WorkBuddy 数据
+- ✅ 仓库内保存真实文件，原 `%USERPROFILE%\.agents\skills\workbuddy-data-migrator` 入口使用目录联接，当前会话已成功加载
+- ✅ README 补充安装、只读使用和验证边界；按 Skills 清单统一为 33 项，系统维护分类包含已有的 `wsl-disk-cleanup` 与本次新增技能
+- ✅ 维护与回滚方法见 [docs/workbuddy-data-migrator.md](docs/workbuddy-data-migrator.md)
 
 ### 2026 年 10 月 25 日 - version 0.0.35
 
