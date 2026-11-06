@@ -8,20 +8,23 @@
 | ZCode 用户级安装入口 | `%USERPROFILE%\.agents\skills\workbuddy-data-migrator` |
 | 技能默认迁移的数据目标 | `D:\aiwork\WorkBuddy_C` |
 
-本次将技能文件迁入仓库，原安装入口改为指向仓库真实目录的 NTFS junction。没有迁移、扫描或清理 `%USERPROFILE%\.workbuddy` 数据。作者保持 `hailaobao2026`，默认数据目标保持不变。
+仓库最初将 Windows 版技能迁入版本管理，原安装入口改为指向仓库真实目录的 NTFS junction。当前版本已在原有安全流程上增加 Linux/macOS 支持，但没有迁移、扫描或清理本机 `%USERPROFILE%\.workbuddy` 数据。
 
 今后修改仓库内的技能文件，原安装入口会访问同一份内容，不需要另行复制。F 盘和仓库路径必须保持可用；移动仓库前应先调整安装入口。不要在仓库内用 junction 代替真实源码，也不要把迁移状态文件、会话、数据库或凭据加入仓库。
 
 ## 文件范围
 
-完整保留技能原有六个文件：
+当前技能目录包含以下文件：
 
-- `SKILL.md`：技能规则、作者及默认数据目标。
-- `scripts/workbuddy-migrate.ps1`：迁移辅助脚本，未修改。
-- `references/safety-and-recovery.md`：安全与恢复说明。
-- `docs/target-directory.md`：默认数据目标使用说明。
+- `SKILL.md`：三平台使用流程、安全确认及资源入口。
+- `scripts/workbuddy-migrate.ps1`：Windows Inspect / Migrate / Rollback 脚本。
+- `scripts/workbuddy_migrate.py`：Linux/macOS Inspect / Migrate / Rollback 脚本。
+- `scripts/selftest_posix.py`：只使用临时测试数据的 POSIX 端到端自检。
+- `references/safety-and-recovery.md`：共同安全边界、状态机与恢复说明。
+- `references/platform-paths.md`：平台路径、链接机制与支持限制。
+- `docs/target-directory.md`：Windows 默认数据目标说明。
 - `docs/SKILL.before-target-change.2026-11-04.md.bak`：历史原文备份，不是当前配置。
-- `progress.md`：技能已有历史记录，保留原样；本次迁移记录在仓库根 `progress.md`。
+- `progress.md`：技能迁移历史记录；仓库发布记录写在根目录 `progress.md`。
 
 历史记录含本机路径，按完整目录迁移保留。不要把历史备份里的旧目标路径当成当前配置，也不要自动覆盖回当前技能。
 
@@ -42,13 +45,12 @@ New-Item -ItemType Junction -Path $entry -Target $skill
 
 ## 验证方式与边界
 
-- 迁入前后逐文件比对相对路径、数量、字节数及 SHA-256：六个文件，共 35,927 字节。
-- 核对 `name: workbuddy-data-migrator`、`author: hailaobao2026` 和默认数据目标。
-- 用 PowerShell `System.Management.Automation.Language.Parser.ParseFile` 仅解析脚本语法，不执行或点源加载脚本。
-- 检查原安装入口的 `LinkType` 和 `Target`，从入口读取文件并重新加载技能。
-- 提交前检查 README 清单数量、文档链接、Git 差异及暂存范围；不提交仓库中其他未完成改动。
+- Windows 脚本使用 PowerShell 解析器执行语法检查，不点源或操作真实数据。
+- Linux/macOS 脚本先执行 Python 语法编译，再通过 `scripts/selftest_posix.py` 在临时目录完成 Inspect / Migrate / Rollback 端到端自检。
+- 提交前检查 Git 差异、空白错误和暂存范围；不提交仓库中其他未完成改动。
+- Windows 迁移逻辑未在本轮使用真实 WorkBuddy 数据执行；Linux 自检只覆盖模拟数据；macOS 仍需在目标机先运行自检。
 
-本次验证不包含 WorkBuddy 真实数据的 `Inspect`、`Migrate`、`Rollback` 或应用验收。实际迁移仍须按 [技能说明](../workbuddy-data-migrator/SKILL.md) 重新检查并征得明确确认。
+实际迁移仍须按 [技能说明](../workbuddy-data-migrator/SKILL.md) 重新检查路径、空间和进程，并取得明确确认。
 
 ## 撤销本次安装位置迁移
 

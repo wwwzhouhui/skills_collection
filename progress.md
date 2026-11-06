@@ -65,3 +65,36 @@
 - `%USERPROFILE%\.agents\skills\.workbuddy-data-migrator.move-backup-20261105`：删除本次临时副本内六个已校验重复文件及空目录，不删除正式文件或内部历史备份。
 
 回滚方式：临时副本内容仍完整保存在仓库及主体提交中；按 `docs/workbuddy-data-migrator.md` 的校验复制步骤可恢复 C 盘真实安装目录。若需撤销主体仓库变更，先恢复安装入口，再审核执行 `git revert 2b13bf2ff589baa6888f81196fee5222236838a7`；保留历史日志，另行追加回滚说明。
+
+## 2026-11-06 - Task: 合并 WorkBuddy 跨平台迁移更新到主分支
+
+### What was done
+
+- 将功能分支 `feat/workbuddy-data-migrator` 的跨平台更新合并到 `main`，保留原有 Windows 目录联接方案，并增加 Linux/macOS 符号链接迁移脚本、临时数据自检和平台说明。
+- Windows 状态文件改为临时文件写入后原子替换，降低写入中断留下不完整 JSON 的风险。
+- 同步更新仓库维护文档，使文件清单、验证方式和平台边界与当前九文件技能目录一致。
+- 使用独立 Git worktree 完成合并，未带入原工作区其他目录的未提交修改或未跟踪文件。
+
+### Testing
+
+- PASS：合并预演无冲突，合并后的功能改动严格为 `workbuddy-data-migrator` 下六个文件；维护文档与本日志为本轮要求的同步记录。
+- PASS：PowerShell 迁移脚本通过 `System.Management.Automation.Language.Parser.ParseFile` 语法解析，未执行真实数据迁移。
+- PASS：两个 Python 脚本在 WSL Python 3 下通过隔离语法编译。
+- PASS：POSIX 临时数据端到端自检通过，结果为 `26 passed, 0 failed`，覆盖 Inspect、Migrate、链接核验、变更后回滚拒绝、显式回滚及危险目标拒绝。
+- PASS：`git diff --cached --check` 通过；主分支与功能分支上重复的二维码更新补丁内容一致，没有形成额外文件差异。
+- 未执行真实 WorkBuddy 数据迁移、Windows robocopy 实机迁移、macOS 实机迁移或应用验收。
+
+### Notes
+
+改动文件清单：
+
+- `workbuddy-data-migrator/SKILL.md`：扩展为 Windows、Linux 和 macOS 三平台迁移流程。
+- `workbuddy-data-migrator/references/platform-paths.md`：新增平台路径、链接机制及限制说明。
+- `workbuddy-data-migrator/references/safety-and-recovery.md`：补充三平台共同安全边界、状态机和恢复规则。
+- `workbuddy-data-migrator/scripts/selftest_posix.py`：新增只使用临时测试数据的 POSIX 端到端自检。
+- `workbuddy-data-migrator/scripts/workbuddy-migrate.ps1`：状态文件改为临时写入后原子替换。
+- `workbuddy-data-migrator/scripts/workbuddy_migrate.py`：新增 Linux/macOS Inspect、Migrate 与 Rollback 实现。
+- `docs/workbuddy-data-migrator.md`：同步当前文件范围、验证入口和平台验证边界。
+- `progress.md`：追加本轮合并、验证与回滚记录。
+
+回滚方式：先确认后续提交未依赖新增的 POSIX 脚本，再执行 `git revert -m 1 "$(git log -1 --format=%H --grep='^merge: 合并 WorkBuddy 跨平台迁移更新$' main)"`；不要强推或重置其他人的主分支历史。回滚只撤销仓库代码，不触碰任何真实 WorkBuddy 数据、迁移目标或备份目录。
