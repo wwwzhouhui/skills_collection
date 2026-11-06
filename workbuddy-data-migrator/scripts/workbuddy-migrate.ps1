@@ -162,7 +162,14 @@ function Assert-Junction([string]$Path, [string]$Expected) {
 }
 
 function Save-State($State, [string]$Path) {
-    $State | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Path -Encoding UTF8
+    $temp = $Path + '.tmp'
+    $json = $State | ConvertTo-Json -Depth 8
+    [IO.File]::WriteAllText($temp, $json, (New-Object System.Text.UTF8Encoding($false)))
+    if (Test-Path -LiteralPath $Path) {
+        [IO.File]::Replace($temp, $Path, $null)
+    } else {
+        [IO.File]::Move($temp, $Path)
+    }
 }
 
 if ($Action -eq 'Rollback') {
