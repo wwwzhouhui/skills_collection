@@ -1,0 +1,120 @@
+{
+  "dirs": {
+    "projects": "./episodes",
+    "build": "./build",
+    "_note": "projects = 每期内容目录（人看、人改的：scenes.js、场景图、贴纸、旁白稿、字幕、封面、README、发布.md），可以指到 Obsidian 仓库里；build = 后台目录，每期 <期>/work/ 放中间产物（音频/逐帧/分段视频），<期>/outputs/final.mp4 是成片。相对路径以本仓库根目录为准，~ 表示家目录"
+  },
+  "tts": {
+    "engine": "mi",
+    "voice": "zh_male_liufei_uranus_bigtts",
+    "resourceId": "seed-tts-2.0",
+    "endpoint": "plan",
+    "speed": 1.15,
+    "loudness": 1,
+    "style": "",
+    "mi": {
+      "baseUrl": "https://token-plan-cn.xiaomimimo.com/v1",
+      "model": "mimo-v2.5-tts",
+      "voice": "冰糖",
+      "style": "",
+      "_note": "小米 MiMo 通道（engine=\"mi\" 时生效，凭证 MI_TTS_API_KEY 填 .env）。走 OpenAI 形态的 {baseUrl}/chat/completions，正文必须放在 assistant 角色消息里（本仓库已按此实现）。voice 只有九个：mimo_default / 冰糖 / 茉莉 / 苏打 / 白桦 / Mia / Chloe / Milo / Dean —— 写错会在报错里列出全部可选值。style=自然语言风格指令，会作为 user 消息一起发（如「语速偏快、语气轻松」），留空则不发。⚠️这个接口没有语速参数：config 的 tts.speed 对小米通道是**本地 ffmpeg atempo 后处理**。⚠️也**不返回逐字时间戳**，句子级时间由静音检测估算（见 lib/tts/mi.mjs），字幕后验精度略低于火山。参数速查见 references/voices-mi.md。"
+    },
+    "edge": {
+      "voice": "zh-CN-YunxiNeural",
+      "python": "",
+      "rate": "",
+      "volume": "+0%",
+      "pitch": "+0Hz",
+      "_note": "本机备胎通道（edge-tts，免费、无需付费凭证）。voice 常用：zh-CN-YunxiNeural（云希·男·讲解）、zh-CN-XiaoxiaoNeural（晓晓·女）、zh-CN-YunjianNeural（云健·男·有力）、zh-CN-YunyangNeural（云扬·男·新闻）。python 指向已装 edge_tts 的解释器，留空则用 PATH 里的 python。rate 留空则按 tts.speed 换算（1.2 → +20%）。改 voice/speed 会自动重配（缓存键含音色与语速），强制重配 FORCE_TTS=1。"
+    },
+    "_note": "engine 三选一：volc=火山（默认推荐，音色好、返回逐字时间戳、字幕最准）｜mi=小米 MiMo mimo-v2.5-tts（走 tp- 开头的 token-plan Key，**无逐字时间戳**，句子时间靠静音检测估算）｜edge=本机 edge-tts 免费备胎。三个引擎各自有音色字段，不要混填：火山 voice（本层）/ 小米 mi.voice / edge.edge.voice。speed=语速倍率（1=原速，图解片建议 1.1~1.2，讲解口吻别太快），loudness=音量倍率，style=风格描述。火山专属：endpoint=调用域（\"plan\" 方舟套餐域，ark- 开头 Key 只认这个 | \"standard\" | 留空按 Key 前缀自动判定）；resourceId 与音色必须配套（2.0 音色 *_uranus_bigtts→seed-tts-2.0）。改了 voice/speed/style/endpoint 会自动重配对应场景（缓存键含这些），强制重配 FORCE_TTS=1。先跑 `dg voice` 自检凭证/域/音色。"
+  },
+  "bgm": {
+    "file": "assets/bgm.mp3",
+    "playlist": [],
+    "trim": [],
+    "gain": 0.5,
+    "speak": 0.1,
+    "gap": 0.22,
+    "rampSeconds": 0.35,
+    "tailFadeSeconds": 3.5,
+    "_note": "配乐不随仓库附带：放一首无版权音乐到 assets/bgm.mp3（或改 file 指到别处），没有就出无配乐成片。trim=[起, 止] 秒截一段循环，留空用整首。**长片（>5 分钟）建议改用 playlist**：多首按顺序拼成一整段再整体循环。条目形如 {\"file\":\"assets/bgm-1.mp3\",\"trim\":[0,90],\"gain\":0.9}。说话时音量 ×speak、停顿 ×gap，rampSeconds 缓坡，tailFadeSeconds 尾部淡出；gain 总音量，嫌吵就调小，临时试听 dg mix <期> 0.4"
+  },
+  "render": {
+    "fps": 30,
+    "leadSeconds": 0.3,
+    "holdSeconds": 0.7,
+    "workers": 4,
+    "paper": "#E9E9E4",
+    "motion": {
+      "animSeconds": 0.38,
+      "stagger": 0.16,
+      "risePx": 14,
+      "popScale": 0.94,
+      "leadIn": 0.08,
+      "overflow": 0.3,
+      "wipeSpeed": 1600,
+      "wipeMin": 0.22,
+      "wipeMax": 0.7,
+      "_note": "入场动画：animSeconds=每个元素淡入+缩放+上移的时长；stagger=同拍内相邻元素的错峰间隔；risePx=上移距离；popScale=起始缩放；leadIn=拍起点到第一个元素入场的间隔；overflow=一拍元素太多时允许溢出到下一拍的最长秒数；wipeSpeed/wipeMin/wipeMax=线条擦出速度与上下限（px/s 与秒）。⚠️与白板版不同：每拍元素从拍起点按固定错峰入场、超了只压缩 stagger，**误差不跨拍累积**，所以没有「画面越到后面越落后」的问题；一拍 15 个元素以上才会顶满溢出。fps/leadSeconds 也是字面量进了 render.js 的 ffmpeg 参数（有启动自检），改了会报错提醒同步。"
+    },
+    "chromium": "",
+    "_note": "workers=并行出帧的页面数（每页一个 Chromium 渲染进程，交错截图，成片逐帧一致）；1=串行。paper=全片背景色（米白）。chromium=可执行文件路径，留空自动从 ms-playwright 缓存里选。"
+  },
+  "captions": {
+    "enabled": true,
+    "fontSize": 46,
+    "baselineY": 1022,
+    "safeTop": 960,
+    "minChars": 6,
+    "maxChars": 26,
+    "leadSeconds": 0.08,
+    "tailSeconds": 0.25,
+    "highlight": {
+      "enabled": false,
+      "color": "",
+      "textColor": "#FFFFFF",
+      "keepHalo": false,
+      "opacity": 1,
+      "radius": 12,
+      "padX": 10,
+      "padY": 5,
+      "minUnitChars": 2,
+      "maxUnitChars": 4
+    },
+    "_note": "烧录字幕：粗体白字 + 墨色描边（参考目标频道的样式），居中于底部；safeTop 以下 110px 留给字幕，场景元素别越界（dg scenes 会警告）。SRT 另存期目录 字幕.srt。highlight=跟读高亮（**默认关**——目标风格是干净的白字黑边；想要 B 站风卡拉OK高亮就把 enabled 改 true：语音念到哪个高亮单元，就在那一段背后套一个色块（color 留空 = 用品牌色 brand.accent）、文字转白。粒度 minUnitChars/maxUnitChars 同白板版）。"
+  },
+  "brand": {
+    "name": "图解实验室",
+    "slogan": "把一个概念讲透",
+    "accent": "#E8833A",
+    "ink": "#2B2B2B",
+    "logo": "",
+    "watermark": {
+      "enabled": true,
+      "position": "top-right",
+      "opacity": 0.78,
+      "size": 34,
+      "margin": 52,
+      "drawInSeconds": 1.0
+    },
+    "endCard": {
+      "enabled": true,
+      "seconds": 5.5,
+      "cta": "点赞 · 关注 · 评论区聊聊",
+      "holdSeconds": 1.5
+    },
+    "_note": "品牌层。name=水印/片尾的频道名（改成你自己的）；accent=品牌橙（标题、下划线、强调）；ink=墨色；logo=可选透明底 png 路径（~ 可用），给了就代替文字名；watermark.position=top-right|top-left|bottom-right|bottom-left，drawInSeconds=第一场景开头淡入的时长（0 则直接出现）；endCard=片尾品牌卡（名字+橙色下划线+slogan+CTA 徽章，静音，BGM 继续；seconds 总长，最后 holdSeconds 静止展示）。"
+  },
+  "cover": {
+    "ratios": [
+      "4:3",
+      "3:4",
+      "9:16"
+    ],
+    "seriesTag": "图解讲清楚",
+    "frame": false,
+    "frameColor": "#2B2B2B",
+    "_note": "封面：ratios 出几种画幅（4:3=1440×1080 公众号/横版，3:4=1080×1440 视频号竖版/小红书，9:16=1080×1920 抖音/快手竖版；也支持 16:9=1920×1080、1:1=1080×1080）；seriesTag=左上角系列标签默认文案（scenes.js 里 tag 可覆盖）。**别在标签里写死时长**。frame=false（图解风封面不带边框，靠留白与贴纸）。封面内容在 scenes.js 的 cover 函数里写，dg cover 按 ratios 出 <期>/封面-4x3.png 等。9:16 版式把标题与贴纸压在中央安全区（抖音封面上下会被裁）。"
+  }
+}

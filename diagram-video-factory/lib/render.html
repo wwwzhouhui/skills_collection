@@ -1,0 +1,361 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; padding: 0; background: #E9E9E4; width: 1920px; height: 1080px; overflow: hidden; }
+  svg { display: block; }
+  text { font-family: 'MiSans', 'HarmonyOS Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif; white-space: pre; }
+  #warm { position: absolute; opacity: 0; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="warm">预热字体 图解 0123</div>
+<svg id="stage" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect id="bg1" width="1920" height="1080" fill="#E9E9E4" />
+  <g id="layer"></g>
+  <g id="brand"></g>
+  <g id="caption" style="display:none">
+    <rect id="capBox" x="0" y="0" width="0" height="0" rx="12" ry="12" fill="#E8833A" style="display:none"></rect>
+    <text id="capText" x="960" y="1022" text-anchor="middle" font-size="46" font-weight="700" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="11" stroke-linejoin="round" paint-order="stroke"></text>
+  </g>
+</svg>
+<script>
+// 图解动画渲染器（扁平矢量风）：元素按旁白节拍逐个"生长"出现——淡入 + 轻微上移 + 从 94% 放大到 1，
+// 线条/箭头用描边擦出（wipe）。与白板版逐笔动画的关键差别：每个元素的入场时长固定、不相互推挤，
+// 某一拍元素多时只压缩同拍内的错峰间隔，误差不会累积到后面的拍——画面跟不跟得上旁白由排期公式保证。
+const NS = 'http://www.w3.org/2000/svg';
+const layer = document.getElementById('layer');
+const brandLayer = document.getElementById('brand');
+let items = [];        // 场景元素 {node, kind, start, end, anim, cx, cy, ...}
+let brandItems = [];   // 水印元素（同结构）
+let MOTION = { animSeconds: 0.38, stagger: 0.16, risePx: 14, popScale: 0.94, leadIn: 0.08, overflow: 0.3, wipeSpeed: 1600, wipeMin: 0.22, wipeMax: 0.7, paper: '#E9E9E4' };
+
+const isCJK = (ch) => /[　-鿿＀-￯]/.test(ch);
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const easeOut = (v) => 1 - Math.pow(1 - clamp01(v), 3);
+
+function mk(tag, attrs) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; }
+
+function radiusOf(el) {
+  if (el.radius != null) return Math.max(0, Math.min(el.radius, Math.min(el.width, el.height) / 2));
+  if (!el.roundness) return 0;
+  return Math.min(32, Math.min(el.width, el.height) * 0.25);
+}
+function roundRectPath(x, y, w, h, r) {
+  if (r <= 0) return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`;
+  return `M ${x + r} ${y} L ${x + w - r} ${y} Q ${x + w} ${y} ${x + w} ${y + r} L ${x + w} ${y + h - r} Q ${x + w} ${y + h} ${x + w - r} ${y + h} L ${x + r} ${y + h} Q ${x} ${y + h} ${x} ${y + h - r} L ${x} ${y + r} Q ${x} ${y} ${x + r} ${y} Z`;
+}
+
+// 形状 → { d, fill, stroke, strokeWidth, dash } 的干净矢量描述（无 rough.js，坐标即所见）
+function shapePaths(el) {
+  const out = [];
+  const { x, y, width: w, height: h } = el;
+  const sw = el.strokeWidth || 2, stroke = el.strokeColor || '#2B2B2B';
+  const fill = el.backgroundColor && el.backgroundColor !== 'transparent' ? el.backgroundColor : null;
+  const dash = el.strokeStyle === 'dashed' ? '16 12' : el.strokeStyle === 'dotted' ? '3 9' : null;
+  switch (el.type) {
+    case 'rectangle':
+      out.push({ d: roundRectPath(x, y, w, h, radiusOf(el)), fill, stroke, sw, dash }); break;
+    case 'ellipse':
+      out.push({ d: `M ${x + w / 2 - w / 2} ${y + h / 2} a ${w / 2} ${h / 2} 0 1 0 ${w} 0 a ${w / 2} ${h / 2} 0 1 0 ${-w} 0`, fill, stroke, sw, dash }); break;
+    case 'diamond':
+      out.push({ d: `M ${x + w / 2} ${y} L ${x + w} ${y + h / 2} L ${x + w / 2} ${y + h} L ${x} ${y + h / 2} Z`, fill, stroke, sw, dash }); break;
+    case 'line': case 'arrow': {
+      const pts = el.points.map((p) => [x + p[0], y + p[1]]);
+      const hasFill = !!fill;
+      const d = pts.map((p, i) => `${i ? 'L' : 'M'} ${p[0]} ${p[1]}`).join(' ') + (hasFill ? ' Z' : '');
+      out.push({ d, fill: hasFill ? fill : null, stroke: hasFill && !stroke ? 'none' : stroke, sw: hasFill && !stroke ? 0 : sw, dash, lineJoin: el.roundness ? 'round' : 'miter' });
+      // 箭头：实心三角
+      const head = (tip, prev) => {
+        const ang = Math.atan2(tip[1] - prev[1], tip[0] - prev[0]);
+        const size = 17 + sw * 1.6;
+        const p1 = [tip[0] - Math.cos(ang - Math.PI / 7.2) * size, tip[1] - Math.sin(ang - Math.PI / 7.2) * size];
+        const p2 = [tip[0] - Math.cos(ang + Math.PI / 7.2) * size, tip[1] - Math.sin(ang + Math.PI / 7.2) * size];
+        return `M ${tip[0]} ${tip[1]} L ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]} Z`;
+      };
+      if (el.type === 'arrow' && el.endArrowhead !== null && pts.length >= 2) out.push({ d: head(pts[pts.length - 1], pts[pts.length - 2]), fill: stroke, stroke: 'none', sw: 0, head: true });
+      if (el.type === 'arrow' && el.startArrowhead && pts.length >= 2) out.push({ d: head(pts[0], pts[1]), fill: stroke, stroke: 'none', sw: 0, head: true });
+      break;
+    }
+  }
+  return out;
+}
+
+function buildShape(el, into) {
+  const g = mk('g', {});
+  const parts = [];
+  for (const p of shapePaths(el)) {
+    const node = mk('path', { d: p.d, fill: p.fill || 'none', stroke: p.stroke && p.stroke !== 'none' ? p.stroke : 'none', 'stroke-width': p.sw || 0, 'stroke-linecap': 'round', 'stroke-linejoin': p.lineJoin || 'round' });
+    if (p.dash) node.setAttribute('stroke-dasharray', p.dash);
+    g.appendChild(node);
+    parts.push({ node, head: !!p.head, dash: p.dash });
+  }
+  into.appendChild(g);
+  const bbox = { cx: el.x + el.width / 2, cy: el.y + el.height / 2 };
+  const wipeLen = parts.filter((p) => !p.head).reduce((s, p) => s + (p.node.getTotalLength ? p.node.getTotalLength() : 0), 0);
+  return { g, parts, cx: bbox.cx, cy: bbox.cy, wipeLen };
+}
+
+// 文字：整组淡入（不逐字擦出——图解风的文字以块为单位出现）
+function buildText(el, into) {
+  const g = mk('g', {});
+  const lines = el.text.split('\n');
+  const lh = el.fontSize * (el.lineHeight || 1.25);
+  const nodes = [];
+  lines.forEach((line, i) => {
+    let ax = el.x, anchor = 'start';
+    if (el.textAlign === 'center') { ax = el.x + el.width / 2; anchor = 'middle'; }
+    if (el.textAlign === 'right') { ax = el.x + el.width; anchor = 'end'; }
+    const t = mk('text', { x: ax, y: el.y + i * lh + el.fontSize * 0.92, 'font-size': el.fontSize, fill: el.strokeColor, 'text-anchor': anchor, 'font-weight': el.weight || 700 });
+    if (el.italic) t.setAttribute('font-style', 'italic');
+    t.textContent = line;
+    g.appendChild(t);
+    nodes.push(t);
+  });
+  into.appendChild(g);
+  return { g, nodes, cx: el.x + el.width / 2, cy: el.y + el.height / 2, parts: [] };
+}
+
+function buildImage(el, files, into) {
+  const f = files[el.fileId];
+  const g = mk('g', {});
+  const im = mk('image', { x: el.x, y: el.y, width: el.width, height: el.height, preserveAspectRatio: 'none' });
+  if (f) im.setAttributeNS('http://www.w3.org/1999/xlink', 'href', f.dataURL);
+  g.appendChild(im);
+  into.appendChild(g);
+  return { g, nodes: [im], cx: el.x + el.width / 2, cy: el.y + el.height / 2, parts: [] };
+}
+
+function buildAll(elements, files, into) {
+  return elements.map((el) => {
+    if (el.type === 'image') return { el, kind: 'image', anim: el.anim || 'rise', ...buildImage(el, files, into) };
+    if (el.type === 'text') return { el, kind: 'text', anim: el.anim || 'rise', ...buildText(el, into) };
+    const anim = el.anim || (el.type === 'line' || el.type === 'arrow' ? 'wipe' : 'rise');
+    return { el, kind: 'shape', anim, ...buildShape(el, into) };
+  });
+}
+
+// 元素自身入场时长：rise/pop/fade 固定；wipe 按线长（长线擦得久一点）
+function itemDuration(b) {
+  if (b.anim === 'wipe') return Math.max(MOTION.wipeMin, Math.min(MOTION.wipeMax, b.wipeLen / MOTION.wipeSpeed + 0.12));
+  return MOTION.animSeconds;
+}
+
+// 排期：每拍内按"逻辑单元"（DSL 的 gid，复合图形一个整体）错峰入场。
+// 密拍两级压缩：先压错峰间隔到 0.02s；还不行就等比例缩短入场时长（下限 0.25×）——
+// 压缩只在拍内进行，误差不跨拍累积，所以不存在"画面越到后面越落后"。
+function schedule(built, beatOf, beats) {
+  for (let bi = 0; bi < beats.length; bi++) {
+    const [t0, t1] = beats[bi];
+    const list = built.filter((b, i) => beatOf[i] === bi);
+    if (!list.length) continue;
+    // 按 gid 分组（无 gid 的元素各成一组）
+    const groups = [];
+    const byGid = new Map();
+    list.forEach((b) => {
+      const key = b.el.gid != null ? b.el.gid : 'i' + b.el.id;
+      if (!byGid.has(key)) { const g = { items: [] }; byGid.set(key, g); groups.push(g); }
+      byGid.get(key).items.push(b);
+    });
+    for (const g of groups) g.dur = Math.max(...g.items.map(itemDuration));
+    const start0 = t0 + MOTION.leadIn;
+    const avail = Math.max(0.3, t1 + MOTION.overflow - start0);
+    const span = groups.reduce((s, g) => s + g.dur, 0);
+    let stagger = MOTION.stagger;
+    if (groups.length > 1 && span + stagger * (groups.length - 1) > avail)
+      stagger = Math.max(0.02, (avail - span) / (groups.length - 1));
+    let scale = 1;
+    if (span > avail) {
+      scale = Math.max(0.25, (avail * 0.94) / span);
+      if (groups.length > 1) stagger = Math.min(stagger, Math.max(0.02, (avail - span * scale) / (groups.length - 1)));
+    }
+    let t = start0;
+    for (const g of groups) {
+      const d = g.dur * scale;
+      g.items.forEach((b) => { b.start = t; b.end = t + d; });
+      t += d + stagger;
+    }
+  }
+  return built;
+}
+
+// 画布尺寸（封面用 1080×1440 等）；render.js 同时 setViewportSize
+window.setCanvas = function (w, h) {
+  const svg = document.getElementById('stage');
+  svg.setAttribute('width', w); svg.setAttribute('height', h); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  document.body.style.width = w + 'px'; document.body.style.height = h + 'px';
+  const r = document.getElementById('bg1');
+  r.setAttribute('width', w); r.setAttribute('height', h);
+};
+window.setMotion = function (opts) { Object.assign(MOTION, opts || {}); document.getElementById('bg1').setAttribute('fill', MOTION.paper); };
+
+// 贴纸/Logo 解码完再截图：并行渲染时每页各自装场景，第一帧可能落在图片已露出的时刻
+window.imagesReady = () => Promise.all([...document.querySelectorAll('#layer image, #brand image')].map((im) => im.decode().catch(() => {})));
+
+window.loadScene = function (elements, beatOf, beats, files) {
+  layer.innerHTML = '';
+  const built = buildAll(elements, files || {}, layer);
+  items = schedule(built, beatOf, beats || []);
+  return items.length;
+};
+
+// 诊断用（lib/diag-schedule.mjs）：dump 排期结果，不渲染
+window.__diagItems = function () {
+  return items.map((b) => ({ el: b.el, start: b.start, end: b.end, dur: itemDuration(b), kind: b.kind }));
+};
+
+// ---- 品牌水印（扁平版）：粗体名 + 品牌色短下划线，drawWindow 内快速淡入，否则常驻 ----
+window.setBrand = function (brand, drawWindow) {
+  brandLayer.innerHTML = ''; brandItems = [];
+  if (!brand || !brand.watermark || brand.watermark.enabled === false || !brand.name) return 0;
+  const wm = brand.watermark;
+  const size = wm.size || 34, margin = wm.margin || 52, pos = wm.position || 'top-right';
+  brandLayer.setAttribute('opacity', wm.opacity == null ? 0.78 : wm.opacity);
+  const ink = brand.ink || '#2B2B2B', accent = brand.accent || '#E8833A';
+  let w = 0; for (const ch of brand.name) w += isCJK(ch) ? size : size * 0.55;
+  const h = size * 1.25;
+  const x = pos.endsWith('left') ? margin : 1920 - margin - w;
+  const y = pos.startsWith('bottom') ? 940 - h : margin;
+  const g = mk('g', {});
+  const t = mk('text', { x, y: y + size, 'font-size': size, 'font-weight': 800, fill: ink });
+  t.textContent = brand.name;
+  g.appendChild(t);
+  const uy = y + h + 6, uw = w * 0.55;
+  g.appendChild(mk('rect', { x, y: uy, width: uw, height: Math.max(5, size * 0.12), rx: 3, fill: accent }));
+  g.appendChild(mk('rect', { x: x + uw + 8, y: uy + 2, width: w - uw - 8, height: Math.max(3, size * 0.07), rx: 2, fill: accent, opacity: 0.7 }));
+  brandLayer.appendChild(g);
+  brandItems = [{ node: g, g, parts: [], nodes: [t], cx: x + w / 2, cy: y + h / 2, anim: 'fade',
+    start: drawWindow ? drawWindow[0] : -10, end: drawWindow ? Math.max(drawWindow[0] + 0.2, drawWindow[1]) : -9 }];
+  return 1;
+};
+
+// 推进一个元素到进度 f（0~1）
+function progressItem(b, f) {
+  if (f <= 0) { b.g.style.opacity = 0; return; }
+  if (b.anim === 'wipe') {
+    const g = f >= 1 ? 1 : easeOut(f);
+    b.g.style.opacity = 1;
+    let acc = 0;
+    for (const p of b.parts) {
+      if (p.head) { p.node.style.opacity = f > 0.55 ? clamp01((f - 0.55) / 0.45) : 0; continue; }
+      const len = p.len || (p.len = p.node.getTotalLength());
+      const s0 = acc / (b.wipeLen || 1), s1 = (acc + len) / (b.wipeLen || 1); acc += len;
+      const lf = clamp01((g - s0) / (s1 - s0 || 1));
+      p.node.setAttribute('stroke-dasharray', `${len}`);
+      p.node.setAttribute('stroke-dashoffset', `${len * (1 - lf)}`);
+    }
+    return;
+  }
+  const e = easeOut(f);
+  b.g.style.opacity = e;
+  if (b.anim === 'rise') {
+    const s = MOTION.popScale + (1 - MOTION.popScale) * e;
+    const dy = (1 - e) * MOTION.risePx;
+    b.g.setAttribute('transform', `translate(${b.cx},${b.cy}) scale(${s}) translate(${-b.cx},${-b.cy - dy})`);
+  } else if (b.anim === 'pop') {
+    // 轻微过冲的弹出
+    const back = f < 1 ? 1 + 0.08 * Math.sin(Math.min(1, f) * Math.PI) : 1;
+    const s = MOTION.popScale + (1 - MOTION.popScale + 0.04 * (back - 1)) * e;
+    b.g.setAttribute('transform', `translate(${b.cx},${b.cy}) scale(${s}) translate(${-b.cx},${-b.cy})`);
+  }
+}
+
+// —— 字幕：粗体白字 + 墨色描边（跟读高亮可选，默认关） ——
+const captionG = document.getElementById('caption');
+const capText = document.getElementById('capText');
+const capBox = document.getElementById('capBox');
+const INK_HALO = '#1A1A1A', CAP_FILL = '#FFFFFF';
+let cues = [], HL = null, capCue = null, hlIdx = -2;
+
+window.setCaptions = function (list, style) {
+  cues = list || []; capCue = null; hlIdx = -2;
+  if (!style) return;
+  capText.setAttribute('font-size', style.fontSize);
+  capText.setAttribute('y', style.baselineY);
+  HL = style.highlight && style.highlight.enabled !== false ? style.highlight : null;
+};
+
+function buildCaption(c) {
+  capText.textContent = '';
+  const units = HL && c.units && c.units.length ? c.units : null;
+  if (!units) {
+    capText.setAttribute('text-anchor', 'middle');
+    capText.setAttribute('x', '960');
+    capText.textContent = c.text;
+    capBox.style.display = 'none';
+  } else {
+    capText.setAttribute('text-anchor', 'start');
+    capText.removeAttribute('x');
+    const spans = units.map((u) => { const t = document.createElementNS(NS, 'tspan'); t.textContent = u.text; capText.appendChild(t); return t; });
+    const w = spans.map((t) => t.getComputedTextLength());
+    let x = 960 - w.reduce((a, b) => a + b, 0) / 2;
+    spans.forEach((t, i) => { t.setAttribute('x', x.toFixed(2)); x += w[i]; });
+  }
+  capCue = c; hlIdx = -2;
+}
+
+function paintHighlight(i) {
+  const spans = [...capText.children];
+  const on = spans[i];
+  spans.forEach((s, k) => {
+    s.setAttribute('fill', k === i ? (HL.textColor || CAP_FILL) : CAP_FILL);
+    if (k === i && HL.keepHalo !== true) s.setAttribute('stroke', 'none');
+    else { s.setAttribute('stroke', HL.haloColor || INK_HALO); s.setAttribute('stroke-width', HL.haloWidth == null ? 11 : HL.haloWidth); }
+  });
+  // 色块按这一段的包围盒摆。⚠️别用 Range.getBoundingClientRect() 量局部字符段（只量得出第一个字），
+  // 用 tspan.getExtentOfChar（返回用户坐标，本页 1:1 就是画布坐标），下标用码点数 [...str]。
+  const EDGE = /[\s，。、；：！？…,.!?;:]/;
+  const chars = [...on.textContent];
+  let a0 = 0, b0 = chars.length;
+  while (a0 < b0 && EDGE.test(chars[a0])) a0++;
+  while (b0 > a0 && EDGE.test(chars[b0 - 1])) b0--;
+  const n = on.getNumberOfChars();
+  let left, right, top, hgt;
+  if (b0 > a0 && n > 1) {
+    const f = on.getExtentOfChar(Math.min(a0, n - 1));
+    const l = on.getExtentOfChar(Math.min(b0 - 1, n - 1));
+    left = f.x; right = l.x + l.width; top = f.y; hgt = f.height;
+  } else {
+    const bb = on.getBBox();
+    left = bb.x; right = bb.x + bb.width; top = bb.y; hgt = bb.height;
+  }
+  const px = HL.padX == null ? 10 : HL.padX, py = HL.padY == null ? 6 : HL.padY;
+  capBox.setAttribute('x', (left - px).toFixed(1));
+  capBox.setAttribute('y', (top - py).toFixed(1));
+  capBox.setAttribute('width', (right - left + px * 2).toFixed(1));
+  capBox.setAttribute('height', (hgt + py * 2).toFixed(1));
+  capBox.setAttribute('rx', HL.radius == null ? 12 : HL.radius);
+  capBox.setAttribute('fill', HL.color || '#E8833A');
+  capBox.setAttribute('opacity', HL.opacity == null ? 1 : HL.opacity);
+  capBox.style.display = '';
+}
+
+function updateCaption(t) {
+  const c = cues.find((q) => t >= q.start && t < q.end);
+  if (!c) { captionG.style.display = 'none'; return; }
+  captionG.style.display = '';
+  if (c !== capCue) buildCaption(c);
+  const units = HL && c.units && c.units.length ? c.units : null;
+  if (!units) { capBox.style.display = 'none'; hlIdx = -1; return; }
+  let i = -1;
+  for (let k = 0; k < units.length && t >= units[k].start; k++) i = k;
+  if (i < 0) { capBox.style.display = 'none'; hlIdx = -1; return; }   // 还没念到第一个字：先亮整行、不套色块
+  if (i === hlIdx) return;
+  hlIdx = i;
+  paintHighlight(i);
+}
+
+const bg1 = document.getElementById('bg1');
+window.seek = function (t) {
+  // 每帧整屏重画：Chromium 默认只重画变化区域，动画附近的抗锯齿会带上一帧的痕迹。
+  // 底色矩形原地重插一次 = 整屏失效，每帧只由 t 决定，多页并行才能和单页逐帧一致。
+  bg1.parentNode.insertBefore(bg1, bg1.nextSibling);
+  updateCaption(t);
+  for (const b of brandItems) progressItem(b, (t - b.start) / (b.end - b.start));
+  for (const b of items) progressItem(b, (t - b.start) / (b.end - b.start));
+  return true;
+};
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ from .apimart import ApimartProvider
 from .atlascloud import AtlasCloudProvider
 from .agnes import AgnesProvider
 from .volcengine import VolcengineProvider
+from .qwenimage import QwenImageProvider
 
 if TYPE_CHECKING:
     from .base import BaseProvider
@@ -15,6 +16,7 @@ _PROVIDERS = {
     "atlascloud": AtlasCloudProvider,
     "agnes": AgnesProvider,
     "volcengine": VolcengineProvider,
+    "qwenimage": QwenImageProvider,
 }
 
 

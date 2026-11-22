@@ -43,7 +43,7 @@ Claude Skills 是 Claude Code 的扩展能力，通过编写技能文档（Skill
 | Skill 名称 | 功能说明 | 技术栈 | 更新时间 | 作者 | 版本 |
 | ----------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- | ---------- | ----- |
 | workbuddy-data-migrator | WorkBuddy 数据安全迁移：将当前用户 `.workbuddy` 整目录迁到非系统盘，默认目标为 `D:\aiwork\WorkBuddy_C`；先只读检查，确认退出后复制并校验 SHA-256，保留旧备份、建立 NTFS junction，支持按本轮状态文件回滚；旧备份清理须另行确认，不把会话、数据库或身份材料当作可删除缓存 | Windows PowerShell 5.1、robocopy、NTFS junction | 2026年11月5日 | hailaobao2026 | 未标注 |
-| article-cover-generator | 文章封面 AI 生成：输入文章标题+内容（或文章文件路径），自动提炼主题视觉符号并按实测模板撰写中文提示词，调用第三方中转站 gpt-image-2.5 文生图，一个脚本走完 创建任务→轮询→下载→尺寸校验；支持 16:9 / 9:16 / 3:4 / 4:3 / 1:1 五种比例（比例精确匹配），中文大标题直出实测无错别字；API Key 走技能根目录 .env 零硬编码，缺配置时报可照抄指引，零 npm 依赖 | Node.js（≥18，内置 fetch）、gpt-image-2.5 中转站 API | 2026年10月25日 | wwwzhouhui | 1.0.0 |
+| article-cover-generator | 文章封面 AI 生成：输入文章标题+内容（或文章文件路径），自动提炼主题视觉符号并撰写中文提示词；默认使用第三方中转站 gpt-image-2.5，也可选择魔搭社区 ModelScope 的 MiniMax/MiniMax-H3-Image，一个脚本分别适配两套异步协议并走完创建任务→轮询→下载→格式/尺寸检测；支持 16:9 / 9:16 / 3:4 / 4:3 / 1:1 五种构图比例，密钥按服务分别存技能根目录 .env，零 npm 依赖 | Node.js（≥18，内置 fetch）、gpt-image-2.5 中转站 API、ModelScope MiniMax-H3-Image API | 2026年11月17日 | wwwzhouhui | 1.1.0 |
 | wsl-disk-cleanup | WSL 磁盘一键清理：不进 WSL Linux 终端、不用管理员权限，通过 Windows 侧 `wsl.exe` 完成「枚举发行版 → 只读扫描 Docker 容器/镜像/卷/占用 → 列清单用户确认范围 → 停用 1Panel 防容器自愈重建 → Docker 全清 → ext4.vhdx 原生压缩 → 前后对比报告」。脚本经 stdin 管道送入 WSL 执行（避开命令替换与路径转换陷阱）；`--compact` 前自动处理 sparse 互斥；WSL ≥ 3.0.3 即可，旧版降级 diskpart 方案内置。实测：vhdx 80G→57G、Docker 数据 24G→150M、宿主机磁盘可用 +8G | Bash、wsl.exe（WSL 3.0.3+）、Docker CLI、systemd | 2026年10月17日 | wwwzhouhui | 1.0.0 |
 | html-video | HTML→Video 元层 + 中文口播片流水线：封装上游 [nexu-io/html-video](https://github.com/nexu-io/html-video)（Hyperframes + Remotion 双引擎、23 模板、自带 studio 网页端），沉淀**让它在 Windows 跑通并稳定产出中文口播/科普讲解片**的全部增量。核心能力：① 不走模板、`writeFrameHtml()` 直接喂任意动画 HTML 的多帧出片最短路径；② **节拍驱动揭示**（画面按解说句级时间轴逐拍展开，每 3–5 秒有可见变化，杜绝「动画放完干等解说」）；③ **逐词卡拉OK字幕**（纯黑底 colorkey 抠底叠加，有无字幕两版同源可独立验收）；④ **品牌三件套**全走图层叠加、主片零重渲（右上角作者角标 inline-flex 贴角 / 深色片尾卡 concat+anullsrc / 右下 IP 数字人**真实响度包络驱动口型**，20Hz RMS→p15/p90→快攻慢释，`@property inherits:true` 烘 6000 停关键帧，单 IP 配置可选）；⑤ **5 个质检工具**机器判据可进门禁（停滞量化 / 节拍对齐 / 口型-配音同步 / 字幕几何 / 版式描线依赖扫描）；⑥ 竖屏 9:16 四件事（字幕几何实测重标 / 短行拆分 / 安全带放大 / 版式转纵向）。对上游四处未提交补丁：Windows 构建（`chmod` 跨平台）、doctor 探测（`where` + Playwright Chromium）、录制开头裁剪加开关（`HV_LEADIN_TRIM` / `HV_TRIM_WHITE_HEAD`）、跨帧复用浏览器（`HV_REUSE_BROWSER`，默认关行为与上游一致）。全部本机完成，无按次渲染费用、不开剪辑软件 | Node.js（pnpm 9 / corepack）、ffmpeg 6.x、Playwright 无头 Chromium、Hyperframes + Remotion 双引擎、TTS（小米 MiMo / 火山 / edge-tts）、colorkey 图层合成 | 2026年10月3日 | wwwzhouhui | 1.0.0 |
 | ip-talking-head-lecture | IP 卡通数字人口播动画课件视频工厂：一段逐字稿 + 一张 IP 形象图 → Remotion 成片。主讲 IP 以圆形头像常驻右下角讲课（待机浮动 + 三帧口型开合 + 说话光环 + 声波条），主画面自动排版的六套动画课件版式（封面 / 概念 / 步骤 / 对比 / 数据 / 总结），底部烧录字幕并做跟读高亮，品牌水印 + 顶部进度条 + **右上角可自定义博主角标** + **片尾自动追加品牌卡**（标识图或手写名 + 品牌色划线 + slogan + 黄色便签 CTA）；配音三通道（小米 MiMo / 火山引擎逐字对齐 / edge-tts 免费备胎），**时长由 TTS 实际音频反推**——改一句旁白重新 build 整体自动重排，画面、配音、字幕天然对齐，不手写任何帧数；一条命令同时出 16:9 横屏与 9:16 竖屏（另支持 1:1）；内置两套口播形象（动物卡通·海老豹 / 人物卡通·眼镜青年）一键切换、加新形象只需一个目录三帧图；自动产出各平台发布文案（视频号 / 小红书 / 抖音 / B 站 / 公众号 + YouTube 中英双语标题描述与自动合并的章节时间轴）与中英双语字幕（SRT + VTT）；全链路本地（Remotion + ffmpeg + TTS），无剪辑软件、无联网渲染 | Node.js、TypeScript、React、Remotion、小米 MiMo TTS / 火山引擎 TTS / edge-tts、ffmpeg | 2026年10月3日 | wwwzhouhui | 1.2.0 |
@@ -115,22 +115,26 @@ $tool = Join-Path $env:USERPROFILE '.agents\skills\workbuddy-data-migrator\scrip
 
 **核心功能：**
 
-- ✅ **文章 → 封面一条龙**：输入文章标题 + 内容（或文章文件路径），自动提炼主题与视觉符号、按验证过的模板撰写中文提示词，调用第三方中转站 gpt-image-2.5 文生图生成封面并下载到本地
-- ✅ **五种比例**：16:9（公众号头图）/ 9:16（短视频竖版）/ 3:4（小红书）/ 4:3（默认）/ 1:1，比例精确匹配（实际出图像素与请求 size 存在缩放，比例不变，以脚本报告为准）
-- ✅ **中文大标题直出**：提示词模板把文章标题原文写进画面顶部横幅，实测主副标题渲染清晰无错别字；小字细节不要求生成，规避 AI 小字糊化
-- ✅ **异步任务全封装**：`POST /v1/images/generations`（async + size）→ 轮询 `/api/image-tasks?ids=` → 下载 → PNG/JPEG/WebP 尺寸校验，约 40~90 秒出图，末行输出机器可读 JSON（path/width/height/task_id）
-- ✅ **密钥不进代码**：API Key 等配置存技能根目录 `.env`（脚本内零硬编码），缺配置时打印可照抄的格式指引并退出（不产生误计费）；提供 `.env.example` 模板，`.gitignore` 已排除 `.env`
-- ✅ **零依赖**：只需 Node.js ≥ 18（内置 fetch），无 npm 包
+- ✅ **文章 → 封面一条龙**：输入文章标题 + 内容（或文章文件路径），自动提炼主题与视觉符号、按模板撰写中文提示词并把图片下载到本地
+- ✅ **双模型可选**：默认第三方中转站 `gpt-image-2.5`；通过 `--model MiniMax/MiniMax-H3-Image` 选择魔搭社区 ModelScope 的 MiniMax-H3-Image，两套创建/轮询协议由同一脚本分别适配
+- ✅ **五种构图比例**：16:9（公众号头图）/ 9:16（短视频竖版）/ 3:4（小红书）/ 4:3（默认）/ 1:1；GPT 路径发送 size，ModelScope 路径把比例写入提示词，均以下载图片的实际尺寸和人工预览为准
+- ✅ **异步任务全封装**：选择模型 → 创建任务 → 轮询原任务 → 下载 → PNG/JPEG/WebP 格式与尺寸检测，末行输出机器可读 JSON（path/width/height/task_id/provider/model）
+- ✅ **密钥不进代码**：GPT 与 ModelScope 密钥分别存技能根目录 `.env` 或当前进程环境变量，推荐使用 `ARTICLE_COVER_*` 命名空间；端点与密钥必须来自同一配置来源，`.env.example` 只放空占位符，`.gitignore` 已排除真实 `.env`
+- ✅ **防重复计费**：创建请求只提交一次；发送后连接中断时不会自动再建任务，已有 task_id 的轮询网络错误只查询原任务
+- ✅ **零依赖**：只需 Node.js ≥ 18（内置 fetch），无 npm 包；附 12 项模拟接口测试（本轮在 Windows Node.js v24.21.0 通过）
 
 **工作流程：**
 
-确认标题/内容/比例（缺省 4:3）→ 读文章提炼核心视觉符号（2~4 个，不堆砌）→ 按模板写中文提示词（扁平插画 + 蓝紫渐变 + 标题横幅 + 主题 UI 卡片）→ `gen_cover.mjs` 生成下载 → 本地预览交付（对象存储 URL 带签名会过期，以本地文件为准）
+确认标题/内容/比例/模型（缺省 4:3 + gpt-image-2.5）→ 读文章提炼核心视觉符号（2~4 个，不堆砌）→ 按模板写中文提示词 → `gen_cover.mjs` 走所选模型的异步协议 → 本地预览核对文字、构图和比例后交付
 
 **关键命令：**
 
 ```bash
-# 提示词存成 UTF-8 文本后一键生成（--ratio 可选 16:9 / 9:16 / 3:4 / 4:3 / 1:1）
-node scripts/gen_cover.mjs --prompt-file prompt.txt --ratio 16:9 --out 封面.png
+# 默认 gpt-image-2.5
+node article-cover-generator/scripts/gen_cover.mjs --prompt-file prompt.txt --ratio 16:9 --out 封面.png
+
+# 魔搭社区 MiniMax-H3-Image
+node article-cover-generator/scripts/gen_cover.mjs --model MiniMax/MiniMax-H3-Image --prompt-file prompt.txt --ratio 16:9 --out 封面.png
 ```
 
 **适用场景：**
@@ -141,7 +145,7 @@ node scripts/gen_cover.mjs --prompt-file prompt.txt --ratio 16:9 --out 封面.pn
 
 **配置说明（首次使用）：**
 
-复制 `.env.example` 为 `.env`，填入你的中转站 apikey（`API_KEY` 必填，`API_BASE` / `MODEL` 可选，不填用默认值）。`.env` 含密钥：勿提交到仓库、勿截图分享。
+复制 `.env.example` 为 `.env`。GPT 填 `ARTICLE_COVER_API_KEY`（`ARTICLE_COVER_API_BASE` 可选）；MiniMax 填 `ARTICLE_COVER_MODELSCOPE_API_KEY`（对应 BASE 可选）。`--model` 优先于 `ARTICLE_COVER_MODEL`；技能目录 `.env` 兼容旧配置名，进程环境只读取 `ARTICLE_COVER_*`，并只校验当前模型的密钥。同一服务的 BASE 与 KEY 必须来自同一配置来源。`.env` 含密钥，勿提交或截图分享。详细协议、配置、验证和回滚见 [维护说明](docs/article-cover-generator.md)。
 
 **效果图：**
 
@@ -2016,7 +2020,7 @@ python3 gemai_image_generator.py --prompt "架构图" --style realistic --aspect
 | Edge TTS | Latest | 免费中文语音合成（video-agent-kit） | https://github.com/rany2/edge-tts |
 | Remotion | 4.x | 口播视频确定性渲染（poetry-cinema-page、remotion-video-factory、ip-talking-head-lecture） | https://www.remotion.dev |
 | 小米 MiMo TTS / 火山引擎 TTS | - | 数字人口播配音与逐字/小句时间戳（ip-talking-head-lecture，可选 edge-tts 免费备胎） | https://micmi.global.s.xiaomi.com / https://www.volcengine.com/product/tts |
-| gpt-image-2.5（中转站 API） | - | 文章封面文生图（article-cover-generator） | https://image.mlgb7.com |
+| gpt-image-2.5（中转站）/ MiniMax-H3-Image（ModelScope） | - | 文章封面双模型文生图（article-cover-generator） | https://image.mlgb7.com / https://modelscope.cn/models/MiniMax/MiniMax-H3-Image |
 | Windows PowerShell / robocopy | 5.1 / Windows 内置 | WorkBuddy 数据复制、SHA-256 校验与 NTFS junction 管理（workbuddy-data-migrator） | https://learn.microsoft.com/powershell/ |
 
 ### 技术架构
@@ -2065,6 +2069,7 @@ skills_collection/
 │   ├── docs/                    # 默认目标说明及历史原文备份
 │   └── progress.md              # 技能已有变更记录
 ├── docs/
+│   ├── article-cover-generator.md  # 双模型配置、协议、验证与回滚说明
 │   └── workbuddy-data-migrator.md # 仓库维护、安装入口与回滚说明
 ├── progress.md                  # 本次仓库迁移与验证记录
 ├── poetry-cinema-page/           # 沉浸式古诗词网页生成技能
@@ -2118,12 +2123,13 @@ skills_collection/
 │   ├── episodes/                 # 每期唯一手写源 script.json 所在
 │   ├── config.json               # 目录 / 配音 / 画幅 / 节奏 / 形象 / 品牌层（角标 + 片尾卡）
 │   └── .env.example              # TTS 凭证模板（实际 .env 已被 .gitignore 排除）
-├── article-cover-generator/     # 文章封面 AI 生成技能（gpt-image-2.5 文生图）
-│   ├── SKILL.md                  # 技能入口：提示词模板 + 工作流程 + 失败处理
+├── article-cover-generator/     # 文章封面 AI 生成技能（GPT / ModelScope MiniMax 双模型）
+│   ├── SKILL.md                  # 技能入口：模型选择 + 提示词模板 + 工作流程 + 失败处理
 │   ├── scripts/
-│   │   └── gen_cover.mjs         # 一键脚本：创建任务 → 轮询 → 下载 → 尺寸校验
+│   │   ├── gen_cover.mjs         # 双协议脚本：创建任务 → 轮询 → 下载 → 格式/尺寸检测
+│   │   └── gen_cover.test.mjs    # 12 项 node:test 模拟接口测试，不消耗生图额度
 │   ├── assets/                   # 示例成图
-│   └── .env.example              # API 配置模板（实际 .env 勿提交，.gitignore 已排除）
+│   └── .env.example              # 两套服务配置模板（实际 .env 勿提交，.gitignore 已排除）
 ├── github-trending/              # GitHub Trending 追踪技能
 │   ├── Skill.md
 │   └── fetch_trending.py
@@ -2381,7 +2387,9 @@ export VOLC_TTS_API_KEY="your-volcengine-tts-key"  # 火山引擎 TTS（逐字�
 # 三通道之一 edge-tts 免费无需 Key；引擎/音色/语速在 config.json 的 tts 段切换
 
 # article-cover-generator（文章封面 AI 生成；凭证写进 skill 根目录 .env，参考 .env.example，勿提交）
-# .env 三项：API_BASE（默认 https://image.mlgb7.com）/ API_KEY（必填，中转站 apikey）/ MODEL（默认 gpt-image-2.5）
+# 默认 GPT：ARTICLE_COVER_MODEL=gpt-image-2.5 / ARTICLE_COVER_API_BASE=https://image.mlgb7.com / ARTICLE_COVER_API_KEY=<中转站 apikey>
+# 可选 MiniMax：命令加 --model MiniMax/MiniMax-H3-Image，并配置 ARTICLE_COVER_MODELSCOPE_API_KEY（对应 BASE 有默认值）
+# 兼容技能目录 .env 的旧名 MODEL / API_BASE / API_KEY / MODELSCOPE_API_BASE / MODELSCOPE_API_KEY；进程环境只读 ARTICLE_COVER_*；同一服务的 BASE 与 KEY 必须同源
 
 # video-agent-kit（视频剪辑与解说；TTS 用 Edge TTS 免费无需配置，ASR 需自备 Key）
 export VE_PLUGIN_ROOT="/path/to/skills_collection/video-agent-kit"  # 插件根目录（可自动探测）
@@ -2794,6 +2802,14 @@ Skills 是纯文本配置文件，无需构建部署，直接复制到 Claude Co
 ---
 
 ## 更新说明
+
+### 2026 年 11 月 17 日 - article-cover-generator v1.1.0 双模型支持
+
+- ✅ 在保留默认 `gpt-image-2.5` 中转站路径的基础上，新增魔搭社区 ModelScope `MiniMax/MiniMax-H3-Image` 选择；同一 Node.js 脚本分别适配两套异步创建、轮询和下载协议
+- ✅ 命令新增 `--model`，GPT 与 ModelScope 使用独立密钥配置，推荐 `ARTICLE_COVER_*` 命名空间并兼容旧配置名；端点与密钥必须来自同一配置来源，用户提供的 Token 未写入仓库文件或脚本输出
+- ✅ 创建任务不再自动重复提交，避免响应丢失时产生重复计费；无效 CLI 参数在网络请求前拦截，非图片 2xx 响应拒绝落盘，并修复纯文件名/默认输出路径建目录问题；结果 JSON 增加 `provider` 与 `model`
+- ✅ 新增 12 项 Node 内置模拟测试（Windows Node.js v24.21.0 通过）；一次获准的真实 ModelScope 验证成功生成并下载有效 PNG。实测请求 16:9 提示词仍返回 760×1280，故 MiniMax 路径只承诺提示构图比例，必须按实际尺寸验收，不宣称精确画幅
+- ✅ 配置、协议差异、验证边界与回滚说明见 [docs/article-cover-generator.md](docs/article-cover-generator.md)
 
 ### 2026 年 11 月 5 日 - WorkBuddy 数据迁移技能入库
 

@@ -32,3 +32,6 @@ xiaohuihui-tech-article/.ipynb_checkpoints/gemai_image_generator-checkpoint.py
 .omc/state/idle-notif-cooldown.json
 .omc/project-memory.json
 article-cover-generator/.env
+seedance-2x/.env
+__pycache__/
+*.pyc

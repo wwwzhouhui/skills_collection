@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-11-12",
+  "active": [
+    "wwwzhouhui/skills_collection",
+    "wwwzhouhui/2025dify-dsl/dify-for-dsl",
+    "wwwzhouhui/seedance2.0",
+    "wwwzhouhui/jimeng-free-api-all_4.0/jimeng-free-api-all",
+    "xiaohuihui202504/wechat_downloader",
+    "wwwzhouhui/mermaid_mcp_server",
+    "wwwzhouhui/in_animation",
+    "wwwzhouhui/jupyter_claudecode_codex",
+    "wwwzhouhui/pdftranslate_web",
+    "wwwzhouhui/qizhi_getpoints",
+    "wwwzhouhui/nano_banana_pro_gradio",
+    "wwwzhouhui/jimeng-mcp-server",
+    "wwwzhouhui/video-parser",
+    "wwwzhouhui/doubao-seedance-ttv-itv",
+    "wwwzhouhui/anyrouter2proxy",
+    "xiaohuihui202504/AI-video-Replicate",
+    "xiaohuihui202504/navigation-website",
+    "xiaohuihui202504/jimeng-slides",
+    "xiaohuihui202504/JiMeng_XiaoHongShu",
+    "wwwzhouhui/model-checker",
+    "hailaobao2026/packet-capture-extension",
+    "zhouqyu666/litellm-AgentRouter",
+    "hailaobao2026/ai-teaching-video-platform",
+    "hailaobao2026/ai-teaching-edulab",
+    "hailaobao2026/ai-teaching-miniCPM"
+  ],
+  "excluded": [
+    {
+      "dir": "xiaohuihui202504/linuxdo-helper-extension",
+      "reason": "README.md 损坏：尾部 5449 字节为 NUL，且全文无「技术交流群」章节，无二维码可换"
+    },
+    {
+      "dir": "wwwzhouhui/doubao_mcp_server",
+      "reason": "README.md 为 14007 字节全 NUL 的空文件，无二维码可换"
+    }
+  ],
+  "rounds": [
+    {
+      "date": "2026-10-24",
+      "from": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/d51aa2bf-8da0-4368-8ba7-de256fafa2ac.jpg",
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261024100147846.png",
+      "repos": 25,
+      "pushed": 25,
+      "note": "第三轮，二维码格式由 jpg 变 png"
+    },
+    {
+      "date": "2026-10-29",
+      "from": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261024100147846.png",
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/Screenshot_20261029_102501_com.tencent.mm.jpg",
+      "repos": 25,
+      "pushed": 25,
+      "note": "8 个仓库首轮网络失败，重试后全部成功"
+    },
+    {
+      "date": "2026-11-05",
+      "from": null,
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261105195502197.png",
+      "repos": 25,
+      "pushed": 25
+    },
+    {
+      "date": "2026-11-12",
+      "from": null,
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261111235439994.png",
+      "repos": 25,
+      "pushed": 25
+    }
+  ]
+}

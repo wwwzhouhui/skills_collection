@@ -1,0 +1,21 @@
+{
+  "_comment": "机器相关配置。换电脑首次使用请改这里的路径。projects.json 只存仓库清单，本文件只存路径与行为开关。",
+  "base_dir": "F:/work/code/github",
+  "skill_source": "F:/work/code/github/wwwzhouhui/skills_collection/github-readme-generator",
+  "runtime_skills_dir": "C:/Users/75271/.workbuddy/skills",
+  "runtime_skill_name": "github-readme-generator",
+  "qr_section_keyword": "技术交流群",
+  "skill_files": ["SKILL.md", "README.md", "templates/*.md"],
+  "install_exclude": ["google_search_worldcup.py", "logs", "requirements-dev.txt"],
+  "upload": {
+    "api": "http://127.0.0.1:36677/upload",
+    "timeout": 90,
+    "unique_filename": true
+  },
+  "git": {
+    "commit_message": "docs: 更新技术交流群二维码为最新版本",
+    "identity_fallback": "<owner>@users.noreply.github.com",
+    "push_retry": 2
+  },
+  "backup_root": null
+}
