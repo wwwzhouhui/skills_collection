@@ -9,7 +9,7 @@ author: wwwzhouhui
 
 ## 这个 skill 解决什么
 
-「技术交流群二维码过期了」这件事以前要做五遍手工活：换 SKILL.md、改 6 个模板、重装 skill、改 25 个仓库 README、逐个 commit push。现在只要**丢一张图进来**，五项一次跑完。
+「技术交流群二维码过期了」这件事以前要做五遍手工活：换 SKILL.md、改 6 个模板、重装 skill、改在册仓库 README、逐个 commit push。现在只要**丢一张图进来**，五项一次跑完。
 
 核心价值不是「批量替换」，而是**不出错**：
 - 只改「技术交流群」那一张图，作者微信码、打赏码一个字都不碰（改动前后用图片 URL 集合做护栏，多改一处整文件回退）
@@ -103,7 +103,7 @@ python scripts/qr_rotator.py plan --list "<清单文件>"
 python scripts/qr_rotator.py update-repos --url "<URL>" --policy keep
 ```
 
-只处理 `projects.json` 里在册的仓库。
+只处理 `projects.json` 里在册的仓库（当前 26 个，新增仓库要先进清单才会被带上）。
 
 **4.3 先看再改（可选但推荐）：**
 
@@ -131,7 +131,7 @@ python scripts/qr_rotator.py push
 
 **推送是对外动作。** 除非用户明确说了「直接推送 / 全部做完不用问」，否则推送前先把第 4 步的汇总表贴出来并确认一次。
 
-## 清单增长：25 → 26 → 27 的强制决策
+## 清单增长与强制决策
 
 用户下次给 26 个或 27 个目录时，`plan` 会算出 `added` / `removed`。**这是唯一必须打断询问的地方**，不能自己替用户选。
 
@@ -139,8 +139,8 @@ python scripts/qr_rotator.py push
 
 | 选项 | policy | 行为 | 适用 |
 |---|---|---|---|
-| **合并（推荐）** | `merge` | 原有 25 + 新增全部，一起换 | 用户只是「又加了几个项目」 |
-| **只处理原有** | `keep` | 忽略新增，只动在册 25 个 | 新增项目还没准备好 |
+| **合并（推荐）** | `merge` | 原有全部 + 新增全部，一起换 | 用户只是「又加了几个项目」 |
+| **只处理原有** | `keep` | 忽略新增，只动在册仓库 | 新增项目还没准备好 |
 | **只处理新增** | `new-only` | 只换新加的那几个 | 补跑上次漏掉的 |
 | **完全按新清单** | `replace` | 以新清单为准，`removed` 不再更新 | 用户下线了某些项目 |
 
@@ -161,7 +161,7 @@ python scripts/qr_rotator.py verify                 # 全量
 python scripts/qr_rotator.py verify --check-remote   # 额外抽查远端 HEAD（慢）
 ```
 
-四段检查：skill 源码 8 处、运行环境副本字节一致、25 个仓库 README 当前链接、git 是否干净。全绿才叫完成，退出码 0；有任何 `DRIFT` 都以非零退出。
+四段检查：skill 源码 8 处、运行环境副本字节一致、在册仓库 README 当前链接、git 是否干净。全绿才叫完成，退出码 0；有任何 `DRIFT` 都以非零退出。
 
 ## 出问题怎么退
 
