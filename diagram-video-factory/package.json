@@ -1,0 +1,15 @@
+{
+  "name": "diagram-video-factory-skill",
+  "version": "1.0.0",
+  "description": "扁平图解动画风讲解视频工厂：元素随旁白逐个生长动画 + 语义色纪律 + 章节制结构 + 参考文献收尾 + 火山/小米/edge-tts 配音字幕 + 品牌层 + 三画幅封面与各平台发布文案，内含查证/合规/验收公共工序，以 AI skill 形式开源",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": { "dg": "bin/dg" },
+  "scripts": {
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "lz-string": "^1.5.0",
+    "playwright": "1.58"
+  }
+}

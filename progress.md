@@ -98,3 +98,35 @@
 - `progress.md`：追加本轮合并、验证与回滚记录。
 
 回滚方式：先确认后续提交未依赖新增的 POSIX 脚本，再执行 `git revert -m 1 "$(git log -1 --format=%H --grep='^merge: 合并 WorkBuddy 跨平台迁移更新$' main)"`；不要强推或重置其他人的主分支历史。回滚只撤销仓库代码，不触碰任何真实 WorkBuddy 数据、迁移目标或备份目录。
+## 2026-11-17 - Task: article-cover-generator 新增 ModelScope MiniMax-H3-Image 选择
+
+### What was done
+
+- 保留 `gpt-image-2.5` 默认路径并新增 `MiniMax/MiniMax-H3-Image` 模型选择，同一 Node.js 入口分别适配 GPT 中转站与 ModelScope 的异步创建、轮询和图片下载协议；旧版自定义 GPT 模型仍可继续使用。
+- 配置改用 `ARTICLE_COVER_*` 命名空间并兼容技能目录 `.env` 的旧变量名，GPT 与 ModelScope 凭证分离；进程环境只读取命名空间变量，端点与密钥必须来自同一配置来源，避免环境变量碰撞时把本地密钥发送到意外地址。
+- 创建任务只提交一次，网络结果不明确时标记为不可安全重试；无效/重复/缺值参数、无效比例和尺寸均在联网前拒绝，轮询临时错误只查询同一个 task_id。
+- 下载结果在写盘前验证 PNG、JPEG 或 WebP 结构并读取实际尺寸，错误页不再作为图片落盘；同时修复纯文件名和默认输出路径的目录创建问题。
+- 同步技能说明、配置模板、根 README 和双模型维护文档，明确 MiniMax 当前只能通过提示词约束比例，不能承诺精确画幅。
+
+### Testing
+
+- PASS：Windows Node.js `v24.21.0` 下，`node --check` 通过生产脚本和测试脚本语法检查。
+- PASS：`node --test article-cover-generator/scripts/gen_cover.test.mjs` 共 12 项全部通过，覆盖默认 GPT、自定义 GPT 兼容、通用进程变量隔离、ModelScope 请求合同与首图下载、失败即停、所选模型密钥隔离、端点密钥同源、创建不重试、轮询恢复、无效输入零网络请求、错误页拒绝落盘和纯文件名输出。
+- PASS：经用户明确授权只进行 1 次真实 ModelScope 创建；任务返回 `SUCCEED`，下载 910,426 字节的有效 PNG，脚本读取实际尺寸 760×1280，临时图片随后删除。提示词要求 16:9 但服务返回竖图，因此文档明确记录该限制；未再次创建任务验证比例。
+- PASS：目标文件未命中用户提供的 Token；Token 只用于单次进程环境变量注入，未写入仓库文件或脚本输出。由于 Token 曾在对话中明文提供，交付时提醒用户在 ModelScope 后台轮换。
+- PASS：`git diff --check` 通过本轮受跟踪文件；Git 仅提示现有 `core.autocrlf` 将来可能把 LF 转为 CRLF，本轮未修改 Git 配置或全量转码。
+- 未执行：GPT 真实接口、JPEG/WebP 线上下载、Node.js 18 实机测试、提交、推送或发布；仓库原有大量无关未提交/未跟踪内容保持不动。
+
+### Notes
+
+改动文件清单：
+
+- `article-cover-generator/scripts/gen_cover.mjs`：新增双模型路由、ModelScope 异步协议、安全配置合并、参数校验、计费安全和图片结构/尺寸校验。
+- `article-cover-generator/scripts/gen_cover.test.mjs`：新增 12 项零依赖模拟接口与回归测试。
+- `article-cover-generator/.env.example`：增加两套服务的空凭证模板、命名空间和旧变量兼容说明。
+- `article-cover-generator/SKILL.md`：补充模型选择、凭证、比例差异、交付检查和失败处理规则。
+- `docs/article-cover-generator.md`：新增双模型配置、协议、计费边界、验证结果与回滚说明。
+- `README.md`：同步技能清单、功能、命令、配置、技术栈、目录树和 2026-11-17 更新记录，不改写 2026-10-25 历史条目或技能数量。
+- `progress.md`：仅在末尾追加本轮实现与验证记录。
+
+回滚方式：仓库当前存在其他未完成改动，禁止使用 `git reset --hard` 或整仓覆盖。审核工作区后，仅还原上述 `article-cover-generator` 受跟踪文件和根 README 的本轮差异，删除本轮新增的 `gen_cover.test.mjs` 与 `docs/article-cover-generator.md`，并在本日志末尾另行追加回滚记录；已有本地 `.env` 含用户凭证，不属于版本回滚范围，不要删除或提交。

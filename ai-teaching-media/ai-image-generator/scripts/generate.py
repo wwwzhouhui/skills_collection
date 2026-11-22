@@ -406,6 +406,7 @@ def main():
         "atlascloud": bool(os.environ.get("ATLASCLOUD_API_KEY")),
         "agnes": bool(os.environ.get("AGNES_API_KEY")),
         "volcengine": bool(os.environ.get("VOLCENGINE_API_KEY") or os.environ.get("ARK_API_KEY")),
+        "qwenimage": bool(os.environ.get("QWEN_IMAGE_API_KEY")),
     }
     present = [k for k, v in has_map.items() if v]
     if args.provider:
@@ -415,7 +416,7 @@ def main():
         print(f"  自动检测: 仅发现 {provider_name.upper()}_API_KEY, 使用 {provider_name}")
     elif len(present) == 0:
         print("✗ 未发现任何 provider API Key")
-        print("  请设置 MULERUN_API_KEY / APIMART_API_KEY / ATLASCLOUD_API_KEY / AGNES_API_KEY 之一")
+        print("  请设置 MULERUN_API_KEY / APIMART_API_KEY / ATLASCLOUD_API_KEY / AGNES_API_KEY / QWEN_IMAGE_API_KEY 之一")
         sys.exit(1)
     else:
         print(f"✗ 检测到多个 provider key: {', '.join(present)}")
