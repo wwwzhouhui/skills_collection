@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-12",
+  "updated_at": "2026-11-22",
   "active": [
     "wwwzhouhui/skills_collection",
     "wwwzhouhui/2025dify-dsl/dify-for-dsl",
@@ -26,7 +26,8 @@
     "zhouqyu666/litellm-AgentRouter",
     "hailaobao2026/ai-teaching-video-platform",
     "hailaobao2026/ai-teaching-edulab",
-    "hailaobao2026/ai-teaching-miniCPM"
+    "hailaobao2026/ai-teaching-miniCPM",
+    "wwwzhouhui/aitop100_nano_banana"
   ],
   "excluded": [
     {
@@ -68,6 +69,14 @@
       "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261111235439994.png",
       "repos": 25,
       "pushed": 25
+    },
+    {
+      "date": "2026-11-22",
+      "from": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261111235439994.png",
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261122103449168.png",
+      "repos": 25,
+      "pushed": 25,
+      "note": "hailaobao2026 的 4 个仓库因旧 PAT 失效首轮 403，换经典 PAT 后补推成功；本轮结束后清单增至 26"
     }
   ]
 }

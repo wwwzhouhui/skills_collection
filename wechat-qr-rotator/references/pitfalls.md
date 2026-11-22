@@ -96,7 +96,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 现象：`SSL/TLS handshake failure` 或直接卡到超时，重试一次就好。走本地代理时更明显。
 
 - 单仓库别死等：脚本给 push 2 次重试，间隔 3 秒
-- 批量 25 个仓库整体超时上限设大到 10 分钟
+- 批量几十个仓库整体超时上限设大到 10 分钟
 - 判断网络是否真的不通：`curl -o /dev/null -w "%{http_code}" https://api.github.com`，拿到 200 就是瞬时抖动
 
 ## 11. remote URL 里内嵌明文 Token（安全问题）
