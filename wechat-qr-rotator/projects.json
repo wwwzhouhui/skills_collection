@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-22",
+  "updated_at": "2026-11-28",
   "active": [
     "wwwzhouhui/skills_collection",
     "wwwzhouhui/2025dify-dsl/dify-for-dsl",
@@ -77,6 +77,14 @@
       "repos": 25,
       "pushed": 25,
       "note": "hailaobao2026 的 4 个仓库因旧 PAT 失效首轮 403，换经典 PAT 后补推成功；本轮结束后清单增至 26"
+    },
+    {
+      "date": "2026-11-28",
+      "from": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261122103449168.png",
+      "to": "https://mypicture-1258720957.cos.ap-nanjing.myqcloud.com/Obsidian/image-20261128201656089.png",
+      "repos": 26,
+      "pushed": 26,
+      "note": "清单增至 26 后的首轮；25 个仓库与 skills_collection 均一次推送成功；SKILL.md 的 alt 由文件名改回「技术交流群」"
     }
   ]
 }
